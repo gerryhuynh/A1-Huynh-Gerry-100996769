@@ -41,11 +41,11 @@ public class EventDeck {
   }
 
   public void shuffle() {
-    return;
+    Collections.shuffle(cards);
   }
 
   public List<EventCard> getCards() {
-    return new ArrayList<>();
+    return cards;
   }
 
   public int getNumQCards() {

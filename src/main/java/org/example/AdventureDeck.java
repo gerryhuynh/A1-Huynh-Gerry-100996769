@@ -50,11 +50,11 @@ public class AdventureDeck {
     }
 
     public void shuffle() {
-        return;
+        Collections.shuffle(cards);
     }
 
     public List<AdventureCard> getCards() {
-        return new ArrayList<>();
+        return cards;
     }
 
     public int getNumFoeCards() {
