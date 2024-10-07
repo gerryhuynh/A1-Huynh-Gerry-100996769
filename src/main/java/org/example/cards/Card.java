@@ -1,14 +1,12 @@
-package org.example;
+package org.example.cards;
 
-public class AdventureCard {
+public abstract class Card {
   private final String type;
   private final String subtype;
-  private final int value;
 
-  public AdventureCard(String type, String subtype, int value) {
+  public Card(String type, String subtype) {
     this.type = type;
     this.subtype = subtype;
-    this.value = value;
   }
 
   public String getType() {
@@ -17,9 +15,5 @@ public class AdventureCard {
 
   public String getSubtype() {
     return subtype;
-  }
-
-  public int getValue() {
-    return value;
   }
 }

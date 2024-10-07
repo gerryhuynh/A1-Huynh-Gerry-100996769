@@ -1,5 +1,10 @@
 package org.example;
 
+import org.example.cards.AdventureCard;
+import org.example.cards.EventCard;
+import org.example.decks.AdventureDeck;
+import org.example.decks.EventDeck;
+
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
