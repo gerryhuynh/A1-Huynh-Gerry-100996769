@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,14 @@ public class EventDeck {
 
   public int size() {
     return cards.size();
+  }
+
+  public void shuffle() {
+    return;
+  }
+
+  public List<EventCard> getCards() {
+    return new ArrayList<>();
   }
 
   public int getNumQCards() {

@@ -4,6 +4,9 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class MainTest {
   @Nested
   @DisplayName("RESP_1: Adventure Deck Setup")
@@ -218,6 +221,29 @@ class MainTest {
       void RESP_2_test_4_4() {
         assertEquals(2, eventDeck.getECards().get("Prosperity"));
       }
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_3: Shuffles Decks")
+  class RESP_3 {
+    private final AdventureDeck adventureDeck = new AdventureDeck();
+    private final EventDeck eventDeck = new EventDeck();
+
+    @Test
+    @DisplayName("RESP_3_test_1: shuffles Adventure Deck")
+    void RESP_3_test_1() {
+      List<AdventureCard> originalDeck = new ArrayList<>(adventureDeck.getCards());
+      adventureDeck.shuffle();
+      assertNotEquals(originalDeck, adventureDeck.getCards(), "Adventure Deck has been shuffled");
+    }
+
+    @Test
+    @DisplayName("RESP_3_test_2: shuffles Event Deck")
+    void RESP_3_test_2() {
+      List<EventCard> originalDeck = new ArrayList<>(eventDeck.getCards());
+      eventDeck.shuffle();
+      assertNotEquals(originalDeck, eventDeck.getCards(), "Event Deck has been shuffled");
     }
   }
 }
