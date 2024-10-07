@@ -2,53 +2,45 @@ package org.example.decks;
 
 import java.util.Map;
 import org.example.cards.AdventureCard;
+import org.example.enums.adventure.AdventureType;
+import org.example.enums.adventure.FoeType;
+import org.example.enums.adventure.WeaponType;
 
-public class AdventureDeck extends Deck<AdventureCard> {
+public class AdventureDeck extends Deck<AdventureCard, AdventureType> {
 
     @Override
     protected void prepareDeck() {
         cards.clear();
 
-        // Foe cards
-        addCards("F", "F5", 5, 8);
-        addCards("F", "F10", 10, 7);
-        addCards("F", "F15", 15, 8);
-        addCards("F", "F20", 20, 7);
-        addCards("F", "F25", 25, 7);
-        addCards("F", "F30", 30, 4);
-        addCards("F", "F35", 35, 4);
-        addCards("F", "F40", 40, 2);
-        addCards("F", "F50", 50, 2);
-        addCards("F", "F70", 70, 1);
+        for (FoeType foeType : FoeType.values()) {
+            addCards(foeType);
+        }
 
-        // Weapon cards
-        addCards("W", "D5", 5, 6);
-        addCards("W", "H10", 10, 12);
-        addCards("W", "S10", 10, 16);
-        addCards("W", "B15", 15, 8);
-        addCards("W", "L20", 20, 6);
-        addCards("W", "E30", 30, 2);
+        for (WeaponType weaponType : WeaponType.values()) {
+            addCards(weaponType);
+        }
     }
 
-    private void addCards(String type, String subtype, int value, int count) {
-        for (int i = 0; i < count; i++) {
-            cards.add(new AdventureCard(type, subtype, value));
+    @Override
+    protected void addCards(AdventureType type) {
+        for (int i = 0; i < type.getDefaultCount(); i++) {
+            cards.add(new AdventureCard(type));
         }
     }
 
     public int getNumFoeCards() {
-        return getNumCardsByType("F");
+        return getNumCardsByType(FoeType.class);
     }
 
     public int getNumWeaponCards() {
-        return getNumCardsByType("W");
+        return getNumCardsByType(WeaponType.class);
     }
 
-    public Map<String, Integer> getFoeCards() {
-        return getCardsByType("F");
+    public Map<FoeType, Integer> getFoeCards() {
+        return getCardsByType(FoeType.class);
     }
 
-    public Map<String, Integer> getWeaponCards() {
-        return getCardsByType("W");
+    public Map<WeaponType, Integer> getWeaponCards() {
+        return getCardsByType(WeaponType.class);
     }
 }

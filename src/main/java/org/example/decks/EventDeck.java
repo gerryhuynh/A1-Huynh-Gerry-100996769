@@ -2,44 +2,44 @@ package org.example.decks;
 
 import java.util.Map;
 import org.example.cards.EventCard;
-
-public class EventDeck extends Deck<EventCard> {
+import org.example.enums.event.EventType;
+import org.example.enums.event.QType;
+import org.example.enums.event.EType;
+public class EventDeck extends Deck<EventCard, EventType> {
 
 	@Override
 	protected void prepareDeck() {
 		cards.clear();
 
-		// Q cards
-		addCards("Q", "Q2", 3);
-		addCards("Q", "Q3", 4);
-		addCards("Q", "Q4", 3);
-		addCards("Q", "Q5", 2);
+		for (QType qType : QType.values()) {
+			addCards(qType);
+		}
 
-		// E cards
-		addCards("E", "Plague", 1);
-		addCards("E", "Queen's Favor", 2);
-		addCards("E", "Prosperity", 2);
+		for (EType eType : EType.values()) {
+			addCards(eType);
+		}
 	}
 
-	private void addCards(String type, String subtype, int count) {
-		for (int i = 0; i < count; i++) {
-			cards.add(new EventCard(type, subtype, () -> {}));
+	@Override
+	protected void addCards(EventType type) {
+		for (int i = 0; i < type.getDefaultCount(); i++) {
+			cards.add(new EventCard(type, () -> {}));
 		}
 	}
 
 	public int getNumQCards() {
-		return getNumCardsByType("Q");
+		return getNumCardsByType(QType.class);
 	}
 
 	public int getNumECards() {
-		return getNumCardsByType("E");
+		return getNumCardsByType(EType.class);
 	}
 
-	public Map<String, Integer> getQCards() {
-		return getCardsByType("Q");
+	public Map<QType, Integer> getQCards() {
+		return getCardsByType(QType.class);
 	}
 
-	public Map<String, Integer> getECards() {
-		return getCardsByType("E");
+	public Map<EType, Integer> getECards() {
+		return getCardsByType(EType.class);
 	}
 }

@@ -4,7 +4,10 @@ import org.example.cards.AdventureCard;
 import org.example.cards.EventCard;
 import org.example.decks.AdventureDeck;
 import org.example.decks.EventDeck;
-
+import org.example.enums.adventure.FoeType;
+import org.example.enums.adventure.WeaponType;
+import org.example.enums.event.EType;
+import org.example.enums.event.QType;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,61 +46,61 @@ class MainTest {
       @Test
       @DisplayName("RESP_1_test_3_2: has 8 F5 cards")
       void RESP_1_test_3_2() {
-        assertEquals(8, adventureDeck.getFoeCards().get("F5"));
+        assertEquals(8, adventureDeck.getFoeCards().get(FoeType.F5));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_3: has 7 F10 cards")
       void RESP_1_test_3_3() {
-        assertEquals(7, adventureDeck.getFoeCards().get("F10"));
+        assertEquals(7, adventureDeck.getFoeCards().get(FoeType.F10));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_4: has 8 F15 cards")
       void RESP_1_test_3_4() {
-        assertEquals(8, adventureDeck.getFoeCards().get("F15"));
+        assertEquals(8, adventureDeck.getFoeCards().get(FoeType.F15));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_5: has 7 F20 cards")
       void RESP_1_test_3_5() {
-        assertEquals(7, adventureDeck.getFoeCards().get("F20"));
+        assertEquals(7, adventureDeck.getFoeCards().get(FoeType.F20));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_6: has 7 F25 cards")
       void RESP_1_test_3_6() {
-        assertEquals(7, adventureDeck.getFoeCards().get("F25"));
+        assertEquals(7, adventureDeck.getFoeCards().get(FoeType.F25));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_7: has 4 F30 cards")
       void RESP_1_test_3_7() {
-        assertEquals(4, adventureDeck.getFoeCards().get("F30"));
+        assertEquals(4, adventureDeck.getFoeCards().get(FoeType.F30));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_8: has 4 F35 cards")
       void RESP_1_test_3_8() {
-        assertEquals(4, adventureDeck.getFoeCards().get("F35"));
+        assertEquals(4, adventureDeck.getFoeCards().get(FoeType.F35));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_9: has 2 F40 cards")
       void RESP_1_test_3_9() {
-        assertEquals(2, adventureDeck.getFoeCards().get("F40"));
+        assertEquals(2, adventureDeck.getFoeCards().get(FoeType.F40));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_10: has 2 F50 cards")
       void RESP_1_test_3_10() {
-        assertEquals(2, adventureDeck.getFoeCards().get("F50"));
+        assertEquals(2, adventureDeck.getFoeCards().get(FoeType.F50));
       }
 
       @Test
       @DisplayName("RESP_1_test_3_11: has 1 F70 card")
       void RESP_1_test_3_11() {
-        assertEquals(1, adventureDeck.getFoeCards().get("F70"));
+        assertEquals(1, adventureDeck.getFoeCards().get(FoeType.F70));
       }
     }
 
@@ -113,37 +116,37 @@ class MainTest {
       @Test
       @DisplayName("RESP_1_test_4_2: has 6 D5 cards")
       void RESP_1_test_4_2() {
-        assertEquals(6, adventureDeck.getWeaponCards().get("D5"));
+        assertEquals(6, adventureDeck.getWeaponCards().get(WeaponType.D5));
       }
 
       @Test
       @DisplayName("RESP_1_test_4_3: has 12 H10 cards")
       void RESP_1_test_4_3() {
-        assertEquals(12, adventureDeck.getWeaponCards().get("H10"));
+        assertEquals(12, adventureDeck.getWeaponCards().get(WeaponType.H10));
       }
 
       @Test
       @DisplayName("RESP_1_test_4_4: has 16 S10 cards")
       void RESP_1_test_4_4() {
-        assertEquals(16, adventureDeck.getWeaponCards().get("S10"));
+        assertEquals(16, adventureDeck.getWeaponCards().get(WeaponType.S10));
       }
 
       @Test
       @DisplayName("RESP_1_test_4_5: has 8 B15 cards")
       void RESP_1_test_4_5() {
-        assertEquals(8, adventureDeck.getWeaponCards().get("B15"));
+        assertEquals(8, adventureDeck.getWeaponCards().get(WeaponType.B15));
       }
 
       @Test
       @DisplayName("RESP_1_test_4_6: has 6 L20 cards")
       void RESP_1_test_4_6() {
-        assertEquals(6, adventureDeck.getWeaponCards().get("L20"));
+        assertEquals(6, adventureDeck.getWeaponCards().get(WeaponType.L20));
       }
 
       @Test
       @DisplayName("RESP_1_test_4_7: has 2 E30 cards")
       void RESP_1_test_4_7() {
-        assertEquals(2, adventureDeck.getWeaponCards().get("E30"));
+        assertEquals(2, adventureDeck.getWeaponCards().get(WeaponType.E30));
       }
     }
   }
@@ -178,25 +181,25 @@ class MainTest {
       @Test
       @DisplayName("RESP_2_test_3_2: has 3 Q2 cards")
       void RESP_2_test_3_2() {
-        assertEquals(3, eventDeck.getQCards().get("Q2"));
+        assertEquals(3, eventDeck.getQCards().get(QType.Q2));
       }
 
       @Test
       @DisplayName("RESP_2_test_3_3: has 4 Q3 cards")
       void RESP_2_test_3_3() {
-        assertEquals(4, eventDeck.getQCards().get("Q3"));
+        assertEquals(4, eventDeck.getQCards().get(QType.Q3));
       }
 
       @Test
       @DisplayName("RESP_2_test_3_4: has 3 Q4 cards")
       void RESP_2_test_3_4() {
-        assertEquals(3, eventDeck.getQCards().get("Q4"));
+        assertEquals(3, eventDeck.getQCards().get(QType.Q4));
       }
 
       @Test
       @DisplayName("RESP_2_test_3_5: has 2 Q5 cards")
       void RESP_2_test_3_5() {
-        assertEquals(2, eventDeck.getQCards().get("Q5"));
+        assertEquals(2, eventDeck.getQCards().get(QType.Q5));
       }
     }
 
@@ -212,19 +215,19 @@ class MainTest {
       @Test
       @DisplayName("RESP_2_test_4_2: has 1 Plague card")
       void RESP_2_test_4_2() {
-        assertEquals(1, eventDeck.getECards().get("Plague"));
+        assertEquals(1, eventDeck.getECards().get(EType.PLAGUE));
       }
 
       @Test
       @DisplayName("RESP_2_test_4_3: has 2 Queen's Favor card")
       void RESP_2_test_4_3() {
-        assertEquals(2, eventDeck.getECards().get("Queen's Favor"));
+        assertEquals(2, eventDeck.getECards().get(EType.QUEENS_FAVOR));
       }
 
       @Test
       @DisplayName("RESP_2_test_4_4: has 2 Prosperity card")
       void RESP_2_test_4_4() {
-        assertEquals(2, eventDeck.getECards().get("Prosperity"));
+        assertEquals(2, eventDeck.getECards().get(EType.PROSPERITY));
       }
     }
   }

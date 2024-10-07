@@ -1,12 +1,14 @@
 package org.example.cards;
 
-public class AdventureCard extends Card {
+import org.example.enums.adventure.AdventureType;
+
+public class AdventureCard extends Card<AdventureType> {
   private final int value;
 
-  public AdventureCard(String type, String subtype, int value) {
-    super(type, subtype);
+  public AdventureCard(AdventureType type) {
+    super(type);
     
-    this.value = value;
+    this.value = type.getValue();
   }
 
   public int getValue() {
