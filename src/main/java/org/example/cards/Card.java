@@ -1,19 +1,15 @@
 package org.example.cards;
 
-public abstract class Card {
-  private final String type;
-  private final String subtype;
+import org.example.enums.CardType;
 
-  public Card(String type, String subtype) {
+public abstract class Card<T extends CardType> {
+  private final T type;
+
+  public Card(T type) {
     this.type = type;
-    this.subtype = subtype;
   }
 
-  public String getType() {
+  public T getType() {
     return type;
-  }
-
-  public String getSubtype() {
-    return subtype;
   }
 }
