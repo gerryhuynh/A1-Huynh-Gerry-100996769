@@ -139,4 +139,85 @@ class MainTest {
       }
     }
   }
+
+  @Nested
+  @DisplayName("RESP_2: Event Deck Setup")
+  class RESP_2 {
+    private final EventDeck eventDeck = new EventDeck();
+
+    @Test
+    @DisplayName("RESP_2_test_1: has 17 cards")
+    void RESP_2_test_1() {
+      assertEquals(17, eventDeck.size(), "Total cards equal 17");
+    }
+
+    @Test
+    @DisplayName("RESP_2_test_2: has 17 cards with only Q and E cards")
+    void RESP_2_test_2() {
+      int totalQAndECards = eventDeck.size();
+      assertEquals(17, totalQAndECards, "Q and E cards equal 17");
+    }
+
+    @Nested
+    @DisplayName("RESP_2_test_3: Q Cards")
+    class RESP_2_test_3 {
+      @Test
+      @DisplayName("RESP_2_test_3_1: has 12 cards")
+      void RESP_2_test_3_1() {
+        assertEquals(12, eventDeck.getNumQCards());
+      }
+
+      @Test
+      @DisplayName("RESP_2_test_3_2: has 3 Q2 cards")
+      void RESP_2_test_3_2() {
+        assertEquals(3, eventDeck.getQCards().get("Q2"));
+      }
+
+      @Test
+      @DisplayName("RESP_2_test_3_3: has 4 Q3 cards")
+      void RESP_2_test_3_3() {
+        assertEquals(4, eventDeck.getQCards().get("Q3"));
+      }
+
+      @Test
+      @DisplayName("RESP_2_test_3_4: has 3 Q4 cards")
+      void RESP_2_test_3_4() {
+        assertEquals(3, eventDeck.getQCards().get("Q4"));
+      }
+
+      @Test
+      @DisplayName("RESP_2_test_3_5: has 2 Q5 cards")
+      void RESP_2_test_3_5() {
+        assertEquals(2, eventDeck.getQCards().get("Q5"));
+      }
+    }
+
+    @Nested
+    @DisplayName("RESP_2_test_4: E Cards")
+    class RESP_2_test_4 {
+      @Test
+      @DisplayName("RESP_2_test_4_1: has 5 cards")
+      void RESP_2_test_4_1() {
+        assertEquals(5, eventDeck.getNumECards());
+      }
+
+      @Test
+      @DisplayName("RESP_2_test_4_2: has 1 Plague card")
+      void RESP_2_test_4_2() {
+        assertEquals(1, eventDeck.getECards().get("Plague"));
+      }
+
+      @Test
+      @DisplayName("RESP_2_test_4_3: has 2 Queen's Favor card")
+      void RESP_2_test_4_3() {
+        assertEquals(2, eventDeck.getECards().get("Queen's Favor"));
+      }
+
+      @Test
+      @DisplayName("RESP_2_test_4_4: has 2 Prosperity card")
+      void RESP_2_test_4_4() {
+        assertEquals(2, eventDeck.getECards().get("Prosperity"));
+      }
+    }
+  }
 }
