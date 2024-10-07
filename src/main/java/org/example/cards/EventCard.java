@@ -1,10 +1,12 @@
 package org.example.cards;
 
-public class EventCard extends Card {
+import org.example.enums.event.EventType;
+
+public class EventCard extends Card<EventType> {
   private final Runnable effect;
 
-  public EventCard(String type, String subtype, Runnable effect) {
-    super(type, subtype);
+  public EventCard(EventType type, Runnable effect) {
+    super(type);
     
     this.effect = effect;
   }
