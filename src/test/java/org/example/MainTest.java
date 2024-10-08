@@ -9,6 +9,8 @@ import org.example.enums.adventure.WeaponType;
 import org.example.enums.event.EType;
 import org.example.enums.event.QType;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,120 +36,31 @@ class MainTest {
       assertEquals(100, totalFoeAndWeaponCards, "Foe + Weapon cards equals 100 cards");
     }
 
-    @Nested
-    @DisplayName("RESP_1_test_3: Foe Cards")
-    class RESP_1_test_3 {
-      @Test
-      @DisplayName("RESP_1_test_3_1: has 50 cards")
-      void RESP_1_test_3_1() {
-        assertEquals(50, adventureDeck.getNumFoeCards());
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_2: has 8 F5 cards")
-      void RESP_1_test_3_2() {
-        assertEquals(8, adventureDeck.getFoeCards().get(FoeType.F5));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_3: has 7 F10 cards")
-      void RESP_1_test_3_3() {
-        assertEquals(7, adventureDeck.getFoeCards().get(FoeType.F10));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_4: has 8 F15 cards")
-      void RESP_1_test_3_4() {
-        assertEquals(8, adventureDeck.getFoeCards().get(FoeType.F15));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_5: has 7 F20 cards")
-      void RESP_1_test_3_5() {
-        assertEquals(7, adventureDeck.getFoeCards().get(FoeType.F20));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_6: has 7 F25 cards")
-      void RESP_1_test_3_6() {
-        assertEquals(7, adventureDeck.getFoeCards().get(FoeType.F25));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_7: has 4 F30 cards")
-      void RESP_1_test_3_7() {
-        assertEquals(4, adventureDeck.getFoeCards().get(FoeType.F30));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_8: has 4 F35 cards")
-      void RESP_1_test_3_8() {
-        assertEquals(4, adventureDeck.getFoeCards().get(FoeType.F35));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_9: has 2 F40 cards")
-      void RESP_1_test_3_9() {
-        assertEquals(2, adventureDeck.getFoeCards().get(FoeType.F40));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_10: has 2 F50 cards")
-      void RESP_1_test_3_10() {
-        assertEquals(2, adventureDeck.getFoeCards().get(FoeType.F50));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_3_11: has 1 F70 card")
-      void RESP_1_test_3_11() {
-        assertEquals(1, adventureDeck.getFoeCards().get(FoeType.F70));
-      }
+    @Test
+    @DisplayName("RESP_1_test_3: has 50 Foe cards")
+    void RESP_1_test_3() {
+      assertEquals(50, adventureDeck.getNumFoeCards());
     }
 
-    @Nested
-    @DisplayName("RESP_1_test_4: Weapon Cards")
-    class RESP_1_test_4 {
-      @Test
-      @DisplayName("RESP_1_test_4_1: has 50 cards")
-      void RESP_1_test_4_1() {
-        assertEquals(50, adventureDeck.getNumWeaponCards());
-      }
+    @Test
+    @DisplayName("RESP_1_test_4: has 50 Weapon cards")
+    void RESP_1_test_4() {
+      assertEquals(50, adventureDeck.getNumWeaponCards());
+    }
 
-      @Test
-      @DisplayName("RESP_1_test_4_2: has 6 D5 cards")
-      void RESP_1_test_4_2() {
-        assertEquals(6, adventureDeck.getWeaponCards().get(WeaponType.D5));
-      }
 
-      @Test
-      @DisplayName("RESP_1_test_4_3: has 12 H10 cards")
-      void RESP_1_test_4_3() {
-        assertEquals(12, adventureDeck.getWeaponCards().get(WeaponType.H10));
-      }
+    @ParameterizedTest(name = "RESP_1_test_5_{index}: has correct number of {0} cards")
+    @EnumSource(FoeType.class)
+    void RESP_1_test_5(FoeType foeType) {
+      String testName = String.format("has %d %s cards", foeType.getDefaultCount(), foeType.name());
+      assertEquals(foeType.getDefaultCount(), adventureDeck.getFoeCards().get(foeType), testName);
+    }
 
-      @Test
-      @DisplayName("RESP_1_test_4_4: has 16 S10 cards")
-      void RESP_1_test_4_4() {
-        assertEquals(16, adventureDeck.getWeaponCards().get(WeaponType.S10));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_4_5: has 8 B15 cards")
-      void RESP_1_test_4_5() {
-        assertEquals(8, adventureDeck.getWeaponCards().get(WeaponType.B15));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_4_6: has 6 L20 cards")
-      void RESP_1_test_4_6() {
-        assertEquals(6, adventureDeck.getWeaponCards().get(WeaponType.L20));
-      }
-
-      @Test
-      @DisplayName("RESP_1_test_4_7: has 2 E30 cards")
-      void RESP_1_test_4_7() {
-        assertEquals(2, adventureDeck.getWeaponCards().get(WeaponType.E30));
-      }
+    @ParameterizedTest(name = "RESP_1_test_6_{index}: has correct number of {0} cards")
+    @EnumSource(WeaponType.class)
+    void RESP_1_test_6(WeaponType weaponType) {
+      String testName = String.format("has %d %s cards", weaponType.getDefaultCount(), weaponType.name());
+      assertEquals(weaponType.getDefaultCount(), adventureDeck.getWeaponCards().get(weaponType), testName);
     }
   }
 
@@ -169,66 +82,30 @@ class MainTest {
       assertEquals(17, totalQAndECards, "Q and E cards equal 17");
     }
 
-    @Nested
-    @DisplayName("RESP_2_test_3: Q Cards")
-    class RESP_2_test_3 {
-      @Test
-      @DisplayName("RESP_2_test_3_1: has 12 cards")
-      void RESP_2_test_3_1() {
-        assertEquals(12, eventDeck.getNumQCards());
-      }
-
-      @Test
-      @DisplayName("RESP_2_test_3_2: has 3 Q2 cards")
-      void RESP_2_test_3_2() {
-        assertEquals(3, eventDeck.getQCards().get(QType.Q2));
-      }
-
-      @Test
-      @DisplayName("RESP_2_test_3_3: has 4 Q3 cards")
-      void RESP_2_test_3_3() {
-        assertEquals(4, eventDeck.getQCards().get(QType.Q3));
-      }
-
-      @Test
-      @DisplayName("RESP_2_test_3_4: has 3 Q4 cards")
-      void RESP_2_test_3_4() {
-        assertEquals(3, eventDeck.getQCards().get(QType.Q4));
-      }
-
-      @Test
-      @DisplayName("RESP_2_test_3_5: has 2 Q5 cards")
-      void RESP_2_test_3_5() {
-        assertEquals(2, eventDeck.getQCards().get(QType.Q5));
-      }
+    @Test
+    @DisplayName("RESP_2_test_3: has 12 Q cards")
+    void RESP_2_test_3() {
+      assertEquals(12, eventDeck.getNumQCards());
     }
 
-    @Nested
-    @DisplayName("RESP_2_test_4: E Cards")
-    class RESP_2_test_4 {
-      @Test
-      @DisplayName("RESP_2_test_4_1: has 5 cards")
-      void RESP_2_test_4_1() {
-        assertEquals(5, eventDeck.getNumECards());
-      }
+    @Test
+    @DisplayName("RESP_2_test_4: has 5 E cards")
+    void RESP_2_test_4() {
+      assertEquals(5, eventDeck.getNumECards());
+    }
 
-      @Test
-      @DisplayName("RESP_2_test_4_2: has 1 Plague card")
-      void RESP_2_test_4_2() {
-        assertEquals(1, eventDeck.getECards().get(EType.PLAGUE));
-      }
+    @ParameterizedTest(name = "RESP_2_test_5_{index}: has correct number of {0} cards")
+    @EnumSource(QType.class)
+    void RESP_2_test_5(QType qType) {
+      String testName = String.format("has %d %s cards", qType.getDefaultCount(), qType.name());
+      assertEquals(qType.getDefaultCount(), eventDeck.getQCards().get(qType), testName);
+    }
 
-      @Test
-      @DisplayName("RESP_2_test_4_3: has 2 Queen's Favor card")
-      void RESP_2_test_4_3() {
-        assertEquals(2, eventDeck.getECards().get(EType.QUEENS_FAVOR));
-      }
-
-      @Test
-      @DisplayName("RESP_2_test_4_4: has 2 Prosperity card")
-      void RESP_2_test_4_4() {
-        assertEquals(2, eventDeck.getECards().get(EType.PROSPERITY));
-      }
+    @ParameterizedTest(name = "RESP_2_test_6_{index}: has correct number of {0} cards")
+    @EnumSource(EType.class)
+    void RESP_2_test_6(EType eType) {
+      String testName = String.format("has %d %s cards", eType.getDefaultCount(), eType.name());
+      assertEquals(eType.getDefaultCount(), eventDeck.getECards().get(eType), testName);
     }
   }
 
