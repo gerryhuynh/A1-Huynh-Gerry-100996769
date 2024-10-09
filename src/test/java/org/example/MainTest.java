@@ -131,4 +131,49 @@ class MainTest {
       assertNotEquals(originalDeck, eventDeck.getCards(), "Event Deck has been shuffled");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_4: Set Up Players")
+  class RESP_4 {
+    private final Game game = new Game();
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+    }
+
+    @Test
+    @DisplayName("RESP_4_test_1: adds 4 players")
+    void RESP_4_test_1() {
+      assertEquals(4, game.getNumPlayers(), "Number of players is 4");
+    }
+
+    @Test
+    @DisplayName("RESP_4_test_2: sets up players' names")
+    void RESP_4_test_2() {
+      for (int i = 0; i < Game.MAX_PLAYERS; i++) {
+        String expectedName = "P" + (i + 1);
+        assertEquals(expectedName, game.getPlayers().get(i).getName(), 
+                     expectedName + " name is '" + expectedName + "'");
+      }
+    }
+
+    @Test
+    @DisplayName("RESP_4_test_3: players start with empty hand of Adventure cards")
+    void RESP_4_test_3() {
+      for (int i = 0; i < Game.MAX_PLAYERS; i++) {
+        assertEquals(0, game.getPlayers().get(i).getHand().size(), 
+                     "P" + (i + 1) + "'s hand has 0 Adventure cards");
+      }
+    }
+
+    @Test
+    @DisplayName("RESP_4_test_4: players start with 0 shields")
+    void RESP_4_test_4() {
+      for (int i = 0; i < Game.MAX_PLAYERS; i++) {
+        assertEquals(0, game.getPlayers().get(i).getShields(), 
+                     "P" + (i + 1) + " has 0 shields");
+      }
+    }
+  }
 }
