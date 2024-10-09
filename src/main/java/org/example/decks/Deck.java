@@ -21,6 +21,10 @@ public abstract class Deck<T extends Card<S>, S extends CardType> {
 
 	protected abstract void addCards(S type);
 
+	public T draw() {
+		return cards.remove(0);
+	}
+
 	public int size() {
 		return cards.size();
 	}
