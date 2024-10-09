@@ -176,4 +176,46 @@ class MainTest {
       }
     }
   }
+
+  @Nested
+  @DisplayName("RESP_5: Distributes " + Player.MAX_HAND_SIZE + " adventure cards to each player")
+  class RESP_5 {
+    private final Game game = new Game();
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.dealAdventureCards();
+    }
+
+    @Test
+    @DisplayName("RESP_5_test_1: shuffles Adventure Deck before dealing cards")
+    void RESP_5_test_1() {
+      AdventureDeck adventureDeck = game.getAdventureDeck();
+      List<AdventureCard> originalDeck = new ArrayList<>(adventureDeck.getCards());
+      game.dealAdventureCards();
+      assertNotEquals(originalDeck, adventureDeck.getCards(), "Adventure Deck has been shuffled");
+    }
+
+    @Test
+    @DisplayName("RESP_5_test_2: each player has " + Player.MAX_HAND_SIZE + " adventure cards")
+    void RESP_5_test_2() {
+      for (int i = 0; i < Game.MAX_PLAYERS; i++) {
+        assertEquals(Player.MAX_HAND_SIZE, game.getPlayers().get(i).getHand().size(), 
+                     "P" + (i + 1) + " has " + Player.MAX_HAND_SIZE + " adventure cards");
+      }
+    }
+
+    @Test
+    @DisplayName("RESP_5_test_3: updates Adventure Deck")
+    void RESP_5_test_3() {
+      AdventureDeck adventureDeck = game.getAdventureDeck();
+      int expectedSize = 100 - Game.MAX_PLAYERS * Player.MAX_HAND_SIZE;
+
+      assertEquals(expectedSize, adventureDeck.size(), 
+                   "Adventure Deck has " + expectedSize + 
+                   " cards after distributing " + Player.MAX_HAND_SIZE + 
+                   " cards to each player");
+    }
+  }
 }

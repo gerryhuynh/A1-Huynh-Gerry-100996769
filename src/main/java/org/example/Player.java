@@ -6,9 +6,11 @@ import java.util.List;
 import org.example.cards.AdventureCard;
 
 public class Player {
-    private final String name;
-    private final List<AdventureCard> hand;
-    private int shields;
+  protected static final int MAX_HAND_SIZE = 12;
+
+  private final String name;
+  private final List<AdventureCard> hand;
+  private int shields;
 
     public Player(String name) {
         this.name = name;
