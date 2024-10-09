@@ -6,15 +6,25 @@ import java.util.List;
 import org.example.cards.AdventureCard;
 
 public class Player {
+    private final String name;
+    private final List<AdventureCard> hand;
+    private int shields;
+
+    public Player(String name) {
+        this.name = name;
+        this.hand = new ArrayList<>();
+        this.shields = 0;
+    }
+
     public String getName() {
-        return "";
+        return name;
     }
 
     public List<AdventureCard> getHand() {
-        return new ArrayList<>();
+        return hand;
     }
 
     public int getShields() {
-        return -1;
+        return shields;
     }
 }

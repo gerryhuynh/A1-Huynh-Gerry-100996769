@@ -14,12 +14,12 @@ public class Game {
 
   public void setupPlayers() {
     for (int i = 1; i <= MAX_PLAYERS; i++) {
-      players.add(new Player());
+      players.add(new Player("P" + i));
     }
   }
 
   public int getNumPlayers() {
-    return 0;
+    return players.size();
   }
 
   public List<Player> getPlayers() {
