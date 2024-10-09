@@ -9,9 +9,11 @@ public class Game {
   protected static final int MAX_PLAYERS = 4;
 
   private final List<Player> players;
+  private final AdventureDeck adventureDeck;
 
   public Game() {
     this.players = new ArrayList<>();
+    this.adventureDeck = new AdventureDeck();
   }
 
   public void setupPlayers() {
@@ -21,11 +23,16 @@ public class Game {
   }
 
   public void dealAdventureCards() {
-    return;
+    adventureDeck.shuffle();
+    for (Player player : players) {
+      for (int i = 0; i < Player.MAX_HAND_SIZE; i++) {
+        player.getHand().add(adventureDeck.draw());
+      }
+    }
   }
 
   public AdventureDeck getAdventureDeck() {
-    return new AdventureDeck();
+    return adventureDeck;
   }
 
   public int getNumPlayers() {
