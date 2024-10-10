@@ -42,4 +42,12 @@ public class Game {
   public List<Player> getPlayers() {
     return players;
   }
+
+  public Player getCurrentTurn() {
+    return new Player("");
+  }
+
+  public void nextTurn() {
+    return;
+  }
 }

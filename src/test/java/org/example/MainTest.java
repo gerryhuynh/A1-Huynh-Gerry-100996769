@@ -10,12 +10,16 @@ import org.example.enums.event.EType;
 import org.example.enums.event.QType;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 class MainTest {
   @Nested
@@ -216,6 +220,38 @@ class MainTest {
                    "Adventure Deck has " + expectedSize + 
                    " cards after distributing " + Player.MAX_HAND_SIZE + 
                    " cards to each player");
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_6: Cycles Players When No Winner")
+  class RESP_6 {
+    private static Game game;
+
+    @BeforeAll
+    static void setUpAll() {
+      game = new Game();
+      game.setupPlayers();
+    }
+
+    @Test
+    @DisplayName("RESP_6_test_1: starts with P1")
+    void RESP_6_test_1() {
+      Player expected = game.getPlayers().get(0);
+      assertEquals(expected, game.getCurrentTurn(), "Current player is P1");
+    }
+
+    @ParameterizedTest(name = "RESP_6_test_2_{index}: when P{0} turn ends, next player is P{1}")
+    @MethodSource("playerTurns")
+    void RESP_6_test_2(int currentPlayer, int nextPlayer) {
+      game.nextTurn();
+      Player expected = game.getPlayers().get(nextPlayer - 1);
+      assertEquals(expected, game.getCurrentTurn(), "Next player is P" + nextPlayer);
+    }
+
+    static Stream<Arguments> playerTurns() {
+      return IntStream.range(1, Game.MAX_PLAYERS + 1)
+          .mapToObj(i -> Arguments.of(i, i % Game.MAX_PLAYERS + 1));
     }
   }
 }
