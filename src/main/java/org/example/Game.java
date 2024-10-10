@@ -10,6 +10,7 @@ public class Game {
 
   private final List<Player> players;
   private final AdventureDeck adventureDeck;
+  private Player currentTurn;
 
   public Game() {
     this.players = new ArrayList<>();
@@ -20,6 +21,7 @@ public class Game {
     for (int i = 1; i <= MAX_PLAYERS; i++) {
       players.add(new Player("P" + i));
     }
+    currentTurn = players.get(0);
   }
 
   public void dealAdventureCards() {
@@ -44,10 +46,12 @@ public class Game {
   }
 
   public Player getCurrentTurn() {
-    return new Player("");
+    return currentTurn;
   }
 
   public void nextTurn() {
-    return;
+    int currentIndex = players.indexOf(currentTurn);
+    int nextIndex = (currentIndex + 1) % players.size();
+    currentTurn = players.get(nextIndex);
   }
 }
