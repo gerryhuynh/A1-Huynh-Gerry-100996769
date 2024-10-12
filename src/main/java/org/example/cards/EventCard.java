@@ -10,4 +10,9 @@ public class EventCard extends Card<EventType> {
     
     this.effect = effect;
   }
+
+  @Override
+  public String toString() {
+    return getType().toString();
+  }
 }
