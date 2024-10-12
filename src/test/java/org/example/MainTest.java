@@ -239,7 +239,7 @@ class MainTest {
     @DisplayName("RESP_6_test_1: starts with P1")
     void RESP_6_test_1() {
       Player expected = game.getPlayers().get(0);
-      assertEquals(expected, game.getCurrentTurn(), "Current player is P1");
+      assertEquals(expected, game.getCurrentPlayer(), "Current player is P1");
     }
 
     @ParameterizedTest(name = "RESP_6_test_2_{index}: when P{0} turn ends, next player is P{1}")
@@ -247,7 +247,7 @@ class MainTest {
     void RESP_6_test_2(int currentPlayer, int nextPlayer) {
       game.nextTurn();
       Player expected = game.getPlayers().get(nextPlayer - 1);
-      assertEquals(expected, game.getCurrentTurn(), "Next player is P" + nextPlayer);
+      assertEquals(expected, game.getCurrentPlayer(), "Next player is P" + nextPlayer);
     }
 
     static Stream<Arguments> playerTurns() {

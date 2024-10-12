@@ -13,25 +13,26 @@ public class Game {
   private final List<Player> players;
   private final AdventureDeck adventureDeck;
   private final EventDeck eventDeck;
-  private Player currentTurn;
-  private EventCard currentEventCard;
+  private Turn currentTurn;
 
   public Game() {
     this.players = new ArrayList<>();
     this.adventureDeck = new AdventureDeck();
     this.eventDeck = new EventDeck();
-    this.currentEventCard = null;
+    this.currentTurn = null;
+
+    adventureDeck.shuffle();
+    eventDeck.shuffle();
   }
 
   public void setupPlayers() {
     for (int i = 1; i <= MAX_PLAYERS; i++) {
       players.add(new Player("P" + i));
     }
-    currentTurn = players.get(0);
+    currentTurn = new Turn(players.get(0));
   }
 
   public void dealAdventureCards() {
-    adventureDeck.shuffle();
     for (Player player : players) {
       for (int i = 0; i < Player.MAX_HAND_SIZE; i++) {
         player.getHand().add(adventureDeck.draw());
@@ -40,8 +41,16 @@ public class Game {
   }
 
   public void startTurn() {
-    currentEventCard = eventDeck.draw();
+    currentTurn.setEventCard(eventDeck.draw());
   }
+
+  public void nextTurn() {
+    int currentIndex = players.indexOf(currentTurn.getPlayer());
+    int nextIndex = (currentIndex + 1) % players.size();
+    currentTurn.setPlayer(players.get(nextIndex));
+  }
+
+  // Getters
 
   public AdventureDeck getAdventureDeck() {
     return adventureDeck;
@@ -52,7 +61,7 @@ public class Game {
   }
 
   public EventCard getCurrentEventCard() {
-    return currentEventCard;
+    return currentTurn.getEventCard();
   }
 
   public int getNumPlayers() {
@@ -63,13 +72,7 @@ public class Game {
     return players;
   }
 
-  public Player getCurrentTurn() {
-    return currentTurn;
-  }
-
-  public void nextTurn() {
-    int currentIndex = players.indexOf(currentTurn);
-    int nextIndex = (currentIndex + 1) % players.size();
-    currentTurn = players.get(nextIndex);
+  public Player getCurrentPlayer() {
+    return currentTurn.getPlayer();
   }
 }
