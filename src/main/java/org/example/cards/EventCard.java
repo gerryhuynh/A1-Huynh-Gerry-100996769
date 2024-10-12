@@ -6,12 +6,8 @@ import org.example.Player;
 import org.example.enums.event.EType;
 
 public class EventCard extends Card<EventType> {
-  private final Runnable effect;
-
-  public EventCard(EventType type, Runnable effect) {
+  public EventCard(EventType type) {
     super(type);
-    
-    this.effect = effect;
   }
 
   public String play(Game game) {

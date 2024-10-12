@@ -23,7 +23,7 @@ public class EventDeck extends Deck<EventCard, EventType> {
 	@Override
 	protected void addCards(EventType type) {
 		for (int i = 0; i < type.getDefaultCount(); i++) {
-			cards.add(new EventCard(type, () -> {}));
+			cards.add(new EventCard(type));
 		}
 	}
 

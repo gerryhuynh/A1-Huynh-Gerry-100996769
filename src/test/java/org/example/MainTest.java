@@ -309,7 +309,7 @@ class MainTest {
     void setUp() {
       game.setupPlayers();
       game.startTurn();
-      game.getCurrentTurn().setEventCard(new EventCard(EType.PLAGUE, () -> {}));
+      game.getCurrentTurn().setEventCard(new EventCard(EType.PLAGUE));
 
       player = game.getCurrentPlayer();
       player.setShields(2);
