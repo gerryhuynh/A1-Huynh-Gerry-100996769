@@ -23,7 +23,7 @@ public class EventCard extends Card<EventType> {
 
   private String plagueEffect(Player player) {
     int originalShields = player.getShields();
-    player.setShields(player.getShields() - 2);
+    player.setShields(Math.max(player.getShields() - 2, 0));
     return String.format("%s's shields: %d -> %d", player.getName(), originalShields, player.getShields());
   }
 
