@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
+import java.io.PrintWriter;
+import java.io.StringWriter;
 class MainTest {
   @Nested
   @DisplayName("RESP_1: Adventure Deck Setup")
@@ -252,6 +253,52 @@ class MainTest {
     static Stream<Arguments> playerTurns() {
       return IntStream.range(1, Game.MAX_PLAYERS + 1)
           .mapToObj(i -> Arguments.of(i, i % Game.MAX_PLAYERS + 1));
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_7: Start Current Turn")
+  class RESP_7 {
+    private final Game game = new Game();
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+    }
+
+    @Test
+    @DisplayName("RESP_7_test_1: starts with no current event card")
+    void RESP_7_test_1() {
+      assertNull(game.getCurrentEventCard(), "No current event card");
+    }
+
+    @Test
+    @DisplayName("RESP_7_test_2: draw Event card and decrease Event Deck size by 1")
+    void RESP_7_test_2() {
+      EventDeck eventDeck = game.getEventDeck();
+      int originalSize = eventDeck.size();  
+      game.startTurn();
+      assertEquals(originalSize - 1, eventDeck.size(), "Event Deck size decreases by 1");
+    }
+
+    @Test
+    @DisplayName("RESP_7_test_3: first card drawn from Event Deck becomes current event card")
+    void RESP_7_test_3() {
+      EventCard expected = game.getEventDeck().getCards().get(0);
+      game.startTurn();
+      assertEquals(expected, game.getCurrentEventCard(), "First card in Event Deck is current event card");
+    }
+
+    @Test
+    @DisplayName("RESP_7_test_4: drawn EventCard is displayed")
+    void RESP_7_test_4() {
+      StringWriter output = new StringWriter();
+      Display display = new Display(new PrintWriter(output));
+      game.startTurn();
+
+      EventCard currentCard = game.getCurrentEventCard();
+      display.showEventCard(currentCard);
+      assertTrue(output.toString().contains(currentCard.toString()), "Drawn event card is displayed");
     }
   }
 }

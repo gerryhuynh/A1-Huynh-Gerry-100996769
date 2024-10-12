@@ -3,7 +3,10 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.example.cards.EventCard;
 import org.example.decks.AdventureDeck;
+import org.example.decks.EventDeck;
+import org.example.enums.event.EType;
 
 public class Game {
   protected static final int MAX_PLAYERS = 4;
@@ -33,8 +36,20 @@ public class Game {
     }
   }
 
+  public void startTurn() {
+    return;
+  }
+
   public AdventureDeck getAdventureDeck() {
     return adventureDeck;
+  }
+
+  public EventDeck getEventDeck() {
+    return new EventDeck();
+  }
+
+  public EventCard getCurrentEventCard() {
+    return new EventCard(EType.PLAGUE, () -> {});
   }
 
   public int getNumPlayers() {
