@@ -310,7 +310,7 @@ class MainTest {
       game.setupPlayers();
       game.startTurn();
       game.getCurrentTurn().setEventCard(new EventCard(EType.PLAGUE, () -> {}));
-      
+
       player = game.getCurrentPlayer();
       player.setShields(2);
       originalShields = player.getShields();
@@ -331,6 +331,26 @@ class MainTest {
       String expectedOutput = String.format("%s's shields: %d -> %d%n", 
                                              player.getName(), originalShields, originalShields - 2);
       assertEquals(expectedOutput, output.toString(), "Updated shield count is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_08_test_3: current player shields cannot go below 0")
+    void RESP_08_test_3() {
+      player.setShields(1);
+
+      game.playEventCard();
+      assertEquals(0, player.getShields(), "Player shields cannot go below 0");
+    }
+
+    @Test
+    @DisplayName("RESP_08_test_4: other players are unaffected by the plague card")
+    void RESP_08_test_4() {
+      Player otherPlayer = game.getPlayers().get(1);
+      otherPlayer.setShields(2);
+      originalShields = otherPlayer.getShields();
+
+      game.playEventCard();
+      assertEquals(originalShields, otherPlayer.getShields(), "Other players are unaffected");
     }
   }
 }
