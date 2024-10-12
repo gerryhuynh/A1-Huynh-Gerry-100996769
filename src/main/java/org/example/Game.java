@@ -6,18 +6,21 @@ import java.util.List;
 import org.example.cards.EventCard;
 import org.example.decks.AdventureDeck;
 import org.example.decks.EventDeck;
-import org.example.enums.event.EType;
 
 public class Game {
   protected static final int MAX_PLAYERS = 4;
 
   private final List<Player> players;
   private final AdventureDeck adventureDeck;
+  private final EventDeck eventDeck;
   private Player currentTurn;
+  private EventCard currentEventCard;
 
   public Game() {
     this.players = new ArrayList<>();
     this.adventureDeck = new AdventureDeck();
+    this.eventDeck = new EventDeck();
+    this.currentEventCard = null;
   }
 
   public void setupPlayers() {
@@ -37,7 +40,7 @@ public class Game {
   }
 
   public void startTurn() {
-    return;
+    currentEventCard = eventDeck.draw();
   }
 
   public AdventureDeck getAdventureDeck() {
@@ -45,11 +48,11 @@ public class Game {
   }
 
   public EventDeck getEventDeck() {
-    return new EventDeck();
+    return eventDeck;
   }
 
   public EventCard getCurrentEventCard() {
-    return new EventCard(EType.PLAGUE, () -> {});
+    return currentEventCard;
   }
 
   public int getNumPlayers() {

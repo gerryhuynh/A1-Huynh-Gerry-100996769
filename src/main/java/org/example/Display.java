@@ -5,9 +5,14 @@ import org.example.cards.EventCard;
 import java.io.PrintWriter;
 
 public class Display {
-  public Display(PrintWriter output) {}
+  private PrintWriter output;
+
+  public Display(PrintWriter output) {
+    this.output = output;
+  }
 
   public void printEventCard(EventCard eventCard) {
-    return;
+    output.println(eventCard);
+    output.flush();
   }
 }
