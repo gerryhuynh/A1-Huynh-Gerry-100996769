@@ -11,6 +11,10 @@ public class Turn {
     this.eventCard = null;
   }
 
+  public String playEventCard(Game game) {
+    return eventCard.play(game);
+  }
+
   public Player getPlayer() {
     return player;
   }

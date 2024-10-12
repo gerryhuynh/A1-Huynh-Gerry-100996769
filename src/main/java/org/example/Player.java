@@ -31,6 +31,6 @@ public class Player {
     }
 
     public void setShields(int shields) {
-        return;
+        this.shields = shields;
     }
 }

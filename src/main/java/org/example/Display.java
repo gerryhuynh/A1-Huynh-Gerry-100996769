@@ -17,6 +17,7 @@ public class Display {
   }
 
   public void printEventResult(String message) {
-    return;
+    output.println(message);
+    output.flush();
   }
 }

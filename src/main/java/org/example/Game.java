@@ -51,7 +51,7 @@ public class Game {
   }
 
   public String playEventCard() {
-    return "";
+    return currentTurn.playEventCard(this);
   }
 
   // Getters
@@ -81,6 +81,6 @@ public class Game {
   }
 
   public Turn getCurrentTurn() {
-    return new Turn(new Player(""));
+    return currentTurn;
   }
 }
