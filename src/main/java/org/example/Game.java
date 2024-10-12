@@ -50,6 +50,10 @@ public class Game {
     currentTurn.setPlayer(players.get(nextIndex));
   }
 
+  public String playEventCard() {
+    return "";
+  }
+
   // Getters
 
   public AdventureDeck getAdventureDeck() {
@@ -74,5 +78,9 @@ public class Game {
 
   public Player getCurrentPlayer() {
     return currentTurn.getPlayer();
+  }
+
+  public Turn getCurrentTurn() {
+    return new Turn(new Player(""));
   }
 }

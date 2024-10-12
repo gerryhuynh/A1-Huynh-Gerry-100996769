@@ -15,4 +15,8 @@ public class Display {
     output.println(eventCard);
     output.flush();
   }
+
+  public void printEventResult(String message) {
+    return;
+  }
 }

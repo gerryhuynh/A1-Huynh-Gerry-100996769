@@ -295,4 +295,42 @@ class MainTest {
       assertTrue(output.toString().contains(currentCard.toString()), "Drawn event card is displayed");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_08: Player Draws an E Card: Plague Card")
+  class RESP_08 {
+    private final Game game = new Game();
+    private StringWriter output = new StringWriter();
+    private Display display = new Display(new PrintWriter(output));
+    private int originalShields;
+    private Player player;
+    
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.startTurn();
+      game.getCurrentTurn().setEventCard(new EventCard(EType.PLAGUE, () -> {}));
+      
+      player = game.getCurrentPlayer();
+      player.setShields(2);
+      originalShields = player.getShields();
+    }
+
+    @Test
+    @DisplayName("RESP_08_test_1: current player loses 2 shields if they have at least 2 shields")
+    void RESP_08_test_1() {
+      game.playEventCard();
+      assertEquals(originalShields - 2, player.getShields(), "Player loses 2 shields");
+    }
+
+    @Test
+    @DisplayName("RESP_08_test_2: prints updated shield count for current player")
+    void RESP_08_test_2() {
+      String eventResult = game.playEventCard();
+      display.printEventResult(eventResult);
+      String expectedOutput = String.format("%s's shields: %d -> %d%n", 
+                                             player.getName(), originalShields, originalShields - 2);
+      assertEquals(expectedOutput, output.toString(), "Updated shield count is printed");
+    }
+  }
 }

@@ -29,4 +29,8 @@ public class Player {
     public int getShields() {
         return shields;
     }
+
+    public void setShields(int shields) {
+        return;
+    }
 }
