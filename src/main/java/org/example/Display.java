@@ -19,10 +19,29 @@ public class Display {
   }
 
   public void printHand(List<AdventureCard> hand) {
-    return;
+    print("Your hand:");
+    print(hand.toString());
   }
 
   public int promptForCardIndex(Scanner input, int maxIndex) {
-    return 0;
+    while (true) {
+      print("Choose a card position:");
+      try {
+        String line = input.nextLine().trim();
+        if (line.isEmpty()) {
+          print("Empty input. Please enter a number between 1 and " + maxIndex);
+          continue;
+        }
+        int index = Integer.parseInt(line);
+        if (index >= 1 && index <= maxIndex) {
+          return index - 1;
+        }
+        print("Out of range. Please enter a number between 1 and " + maxIndex);
+      } catch (NumberFormatException e) {
+        print("Not a valid number. Please enter a number between 1 and " + maxIndex);
+      } catch (Exception e) {
+        print("An error occurred. Please try again.");
+      }
+    }
   }
 }
