@@ -18,6 +18,10 @@ public class Display {
     output.flush();
   }
 
+  public int promptForCardToDiscard(Scanner input, List<AdventureCard> hand) {
+    return 0;
+  }
+
   public void printHand(List<AdventureCard> hand) {
     print("Your hand:");
     print(hand.toString());

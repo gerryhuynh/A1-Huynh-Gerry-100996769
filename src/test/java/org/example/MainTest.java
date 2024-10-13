@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Scanner;
+import java.util.NoSuchElementException;
 
 class MainTest {
   @Nested
@@ -498,6 +499,47 @@ class MainTest {
     void RESP_11_test_7() {
       input = "2";
       int removeCardIndex = display.promptForCardIndex(new Scanner(input), hand.size());
+      assertEquals(1, removeCardIndex, "Returns index of card to discard");
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_12: Prompt Player to Choose a Card to Discard")
+  class RESP_12 {
+    private final Game game = new Game();
+    private List<AdventureCard> hand;
+    private StringWriter output;
+    private Display display;
+    private String input;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.dealAdventureCards();
+      hand = game.getCurrentPlayer().getHand();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      input = "2";
+    }
+
+    @Test
+    @DisplayName("RESP_12_test_1: prompts player to choose a card to discard")
+    void RESP_12_test_1() {
+      display.promptForCardToDiscard(new Scanner(input), hand);
+      assertTrue(output.toString().contains("You must discard a card."), "Player is prompted to choose a card to discard");
+    }
+
+    @Test
+    @DisplayName("RESP_12_test_2: prints hand")
+    void RESP_12_test_2() {
+      display.promptForCardToDiscard(new Scanner(input), hand);
+      assertTrue(output.toString().contains(hand.toString()), "Hand is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_12_test_3: returns index of card to discard once valid input is entered")
+    void RESP_12_test_3() {
+      int removeCardIndex = display.promptForCardToDiscard(new Scanner(input), hand);
       assertEquals(1, removeCardIndex, "Returns index of card to discard");
     }
   }
