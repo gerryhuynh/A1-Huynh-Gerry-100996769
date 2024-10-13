@@ -19,7 +19,9 @@ public class Display {
   }
 
   public int promptForCardToDiscard(Scanner input, List<AdventureCard> hand) {
-    return 0;
+    print("You must discard a card.");
+    printHand(hand);
+    return promptForCardIndex(input, hand.size());
   }
 
   public void printHand(List<AdventureCard> hand) {
