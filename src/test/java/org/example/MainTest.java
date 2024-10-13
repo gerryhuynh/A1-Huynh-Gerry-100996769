@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Scanner;
 
 class MainTest {
   @Nested
@@ -424,6 +425,80 @@ class MainTest {
     void RESP_10_test_3() {
       game.dealAdventureCards();
       assertEquals(2, player.computeNumCardsToTrim(2), "Hand size exceeds " + Player.MAX_HAND_SIZE);
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_11: Prompt Player to Choose a Card Position from Hand")
+  class RESP_11 {
+    private final Game game = new Game();
+    private List<AdventureCard> hand;
+    private StringWriter output;
+    private String input;
+    private Display display;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.dealAdventureCards();
+      hand = game.getCurrentPlayer().getHand();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+    }
+
+    @Test
+    @DisplayName("RESP_11_test_1: prints hand")
+    void RESP_11_test_1() {
+      display.printHand(hand);
+      assertTrue(output.toString().contains(hand.toString()), "Hand is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_11_test_2: prompts player to choose a card number")
+    void RESP_11_test_2() {
+      input = "1";
+      display.promptForCardIndex(new Scanner(input), hand.size());
+      assertTrue(output.toString().contains("Choose a card position:"), "Player is prompted to choose a card position");
+    }
+
+    @Test
+    @DisplayName("RESP_11_test_3: prints not a valid number message if player enters invalid input")
+    void RESP_11_test_3() {
+      input = "invalid\n1";
+      display.promptForCardIndex(new Scanner(input), hand.size());
+      assertTrue(output.toString().contains("Not a valid number"), "Not a valid number message is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_11_test_4: prints out of range message if player enters number greater than max index")
+    void RESP_11_test_4() {
+      input = String.valueOf(hand.size() + 2) + "\n1";
+      display.promptForCardIndex(new Scanner(input), hand.size());
+      assertTrue(output.toString().contains("Out of range"), "Out of range message is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_11_test_5: prints out of range message if player enters number less than 1")
+    void RESP_11_test_5() {
+      input = "0\n1";
+      display.promptForCardIndex(new Scanner(input), hand.size());
+      assertTrue(output.toString().contains("Out of range"), "Out of range message is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_11_test_6: prints empty input message if player enters empty input")
+    void RESP_11_test_6() {
+      input = "\n1";
+      display.promptForCardIndex(new Scanner(input), hand.size());
+      assertTrue(output.toString().contains("Empty input"), "Empty input message is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_11_test_7: returns index of card if player enters valid input")
+    void RESP_11_test_7() {
+      input = "2";
+      int removeCardIndex = display.promptForCardIndex(new Scanner(input), hand.size());
+      assertEquals(1, removeCardIndex, "Returns index of card to discard");
     }
   }
 }

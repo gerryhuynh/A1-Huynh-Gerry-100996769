@@ -1,8 +1,10 @@
 package org.example;
 
-import org.example.cards.EventCard;
+import org.example.cards.AdventureCard;
 
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Scanner;
 
 public class Display {
   private PrintWriter output;
@@ -14,5 +16,13 @@ public class Display {
   public void print(String message) {
     output.println(message);
     output.flush();
+  }
+
+  public void printHand(List<AdventureCard> hand) {
+    return;
+  }
+
+  public int promptForCardIndex(Scanner input, int maxIndex) {
+    return 0;
   }
 }
