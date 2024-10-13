@@ -19,7 +19,8 @@ public class Player {
     }
 
     public int computeNumCardsToTrim(int numCardsToAdd) {
-      return 0;
+      int numCardsToTrim = hand.size() + numCardsToAdd - MAX_HAND_SIZE;
+      return numCardsToTrim > 0 ? numCardsToTrim : 0;
     }
 
     public String getName() {
