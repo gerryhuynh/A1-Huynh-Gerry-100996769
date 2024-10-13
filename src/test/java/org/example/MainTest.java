@@ -543,4 +543,81 @@ class MainTest {
       assertEquals(1, removeCardIndex, "Returns index of card to discard");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_13: Trims Hand")
+  class RESP_13 {
+    private final Game game = new Game();
+    private Player player;
+    private StringWriter output;
+    private Scanner mockScanner;
+    private Display mockDisplay;
+    private int numCardsToTrim;
+
+    private Display createMockDisplay(String input) {
+      mockScanner = new Scanner(input);
+      return new Display(new PrintWriter(output)) {
+        @Override
+        public int promptForCardToDiscard(Scanner input, List<AdventureCard> hand) { 
+          return promptForCardIndex(mockScanner, hand.size()); 
+        }
+      };
+    }
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.dealAdventureCards();
+      player = game.getCurrentPlayer();
+      output = new StringWriter();
+      mockDisplay = createMockDisplay("1\n2\n");
+      numCardsToTrim = 2;
+    }
+
+    @Test
+    @DisplayName("RESP_13_test_1: removes the number of cards to trim from the player's hand")
+    void RESP_13_test_1() {
+      int originalSize = player.getHand().size();
+      
+      player.trimHand(numCardsToTrim, mockDisplay);
+      assertEquals(originalSize - numCardsToTrim, player.getHand().size(), 
+                   "Removes the number of cards to trim from the player's hand");
+    }
+
+    @Test
+    @DisplayName("RESP_13_test_2: doesn't remove any cards if number of cards to trim is 0")
+    void RESP_13_test_2() {
+      numCardsToTrim = 0;
+      int originalSize = player.getHand().size();
+
+      mockDisplay = createMockDisplay("");
+
+      player.trimHand(numCardsToTrim, mockDisplay);
+      assertEquals(originalSize, player.getHand().size(), "Doesn't remove any cards if number of cards to trim is 0");
+    }
+
+    @Test
+    @DisplayName("RESP_13_test_3: returns a list of adventure cards the same size as the number of cards to trim")
+    void RESP_13_test_3() {
+      List<AdventureCard> trimmedCards = player.trimHand(numCardsToTrim, mockDisplay);
+      assertEquals(numCardsToTrim, trimmedCards.size(), "Returns a list of adventure cards the same size as the number of cards to trim");
+    }
+
+    @Test
+    @DisplayName("RESP_13_test_4: returns empty list if number of cards to trim is 0")
+    void RESP_13_test_4() {
+      numCardsToTrim = 0;
+      Display mockDisplay = createMockDisplay("");
+
+      List<AdventureCard> trimmedCards = player.trimHand(numCardsToTrim, mockDisplay);
+      assertTrue(trimmedCards.isEmpty(), "Returns empty list if number of cards to trim is 0");
+    }
+
+    @Test
+    @DisplayName("RESP_13_test_5: prints trimmed hand")
+    void RESP_13_test_5() {
+      player.trimHand(numCardsToTrim, mockDisplay);
+      assertTrue(output.toString().contains(player.getHand().toString()), "Prints trimmed hand");
+    }
+  }
 }

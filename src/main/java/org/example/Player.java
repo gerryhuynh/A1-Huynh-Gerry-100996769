@@ -23,6 +23,10 @@ public class Player {
       return numCardsToTrim > 0 ? numCardsToTrim : 0;
     }
 
+    public List<AdventureCard> trimHand(int numCards, Display display) {
+      return new ArrayList<>();
+    }
+
     public String getName() {
         return name;
     }
