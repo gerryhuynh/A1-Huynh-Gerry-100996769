@@ -11,12 +11,7 @@ public class Display {
     this.output = output;
   }
 
-  public void printEventCard(EventCard eventCard) {
-    output.println(eventCard);
-    output.flush();
-  }
-
-  public void printEventResult(String message) {
+  public void print(String message) {
     output.println(message);
     output.flush();
   }

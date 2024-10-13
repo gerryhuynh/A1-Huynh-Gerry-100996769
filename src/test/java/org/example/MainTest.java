@@ -291,7 +291,7 @@ class MainTest {
       game.startTurn();
 
       EventCard currentCard = game.getCurrentEventCard();
-      display.printEventCard(currentCard);
+      display.print(currentCard.toString());
       assertTrue(output.toString().contains(currentCard.toString()), "Drawn event card is displayed");
     }
   }
@@ -327,7 +327,7 @@ class MainTest {
     @DisplayName("RESP_08_test_2: prints updated shield count for current player")
     void RESP_08_test_2() {
       String eventResult = game.playEventCard();
-      display.printEventResult(eventResult);
+      display.print(eventResult);
       String expectedOutput = String.format("%s's shields: %d -> %d%n", 
                                              player.getName(), originalShields, originalShields - 2);
       assertEquals(expectedOutput, output.toString(), "Updated shield count is printed");
