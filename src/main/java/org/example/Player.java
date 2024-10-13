@@ -18,6 +18,10 @@ public class Player {
         this.shields = 0;
     }
 
+    public int computeNumCardsToTrim(int numCardsToAdd) {
+      return 0;
+    }
+
     public String getName() {
         return name;
     }

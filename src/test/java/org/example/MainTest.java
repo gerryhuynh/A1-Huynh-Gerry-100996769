@@ -389,4 +389,41 @@ class MainTest {
 
     // TODO: test when hand needs to be trimmed
   }
+
+  @Nested
+  @DisplayName("RESP_10: Computes Number of Cards to Trim")
+  class RESP_10 {
+    private final Game game = new Game();
+    private Player player;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      player = game.getCurrentPlayer();
+    }
+
+    @Test
+    @DisplayName("RESP_10_test_1: returns 0 if resulting hand size is less than " + Player.MAX_HAND_SIZE)
+    void RESP_10_test_1() {
+      assertEquals(0, player.computeNumCardsToTrim(2), "Hand size is less than " + Player.MAX_HAND_SIZE);
+    }
+
+    @Test
+    @DisplayName("RESP_10_test_2: returns 0 if resulting hand size is equal to " + Player.MAX_HAND_SIZE)
+    void RESP_10_test_2() {
+      int diff = 2;
+      for (int i = 0; i < Player.MAX_HAND_SIZE - diff; i++) {
+        player.getHand().add(new AdventureCard(FoeType.F5));
+      }
+
+      assertEquals(0, player.computeNumCardsToTrim(diff), "Hand size is equal to " + Player.MAX_HAND_SIZE);
+    }
+
+    @Test
+    @DisplayName("RESP_10_test_3: returns number of cards to trim if resulting hand size exceeds " + Player.MAX_HAND_SIZE)
+    void RESP_10_test_3() {
+      game.dealAdventureCards();
+      assertEquals(2, player.computeNumCardsToTrim(2), "Hand size exceeds " + Player.MAX_HAND_SIZE);
+    }
+  }
 }
