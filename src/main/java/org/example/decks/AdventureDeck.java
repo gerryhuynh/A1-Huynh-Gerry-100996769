@@ -6,6 +6,9 @@ import org.example.enums.adventure.AdventureType;
 import org.example.enums.adventure.FoeType;
 import org.example.enums.adventure.WeaponType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AdventureDeck extends Deck<AdventureCard, AdventureType> {
 
     @Override
@@ -19,6 +22,13 @@ public class AdventureDeck extends Deck<AdventureCard, AdventureType> {
         for (WeaponType weaponType : WeaponType.values()) {
             addCards(weaponType);
         }
+    }
+
+    public List<AdventureCard> draw(int numCards) {
+        numCards = Math.min(numCards, cards.size());
+        List<AdventureCard> drawnCards = new ArrayList<>(cards.subList(0, numCards));
+        cards.subList(0, numCards).clear();
+        return drawnCards;
     }
 
     @Override
