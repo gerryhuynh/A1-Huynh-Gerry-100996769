@@ -6,7 +6,7 @@ import java.util.List;
 import org.example.cards.AdventureCard;
 
 public class Player {
-  protected static final int MAX_HAND_SIZE = 12;
+  public static final int MAX_HAND_SIZE = 12;
 
   private final String name;
   private final List<AdventureCard> hand;

@@ -353,4 +353,40 @@ class MainTest {
       assertEquals(originalShields, otherPlayer.getShields(), "Other players are unaffected");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_09: Player Draws an E Card: Queen's Favor Card")
+  class RESP_09 {
+    private final Game game = new Game();
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.startTurn();
+      game.getCurrentTurn().setEventCard(new EventCard(EType.QUEENS_FAVOR));
+    }
+
+    @Test
+    @DisplayName("RESP_09_test_1: player draws 2 adventure cards when hand doesn't need to be trimmed")
+    void RESP_09_test_1() {
+      Player player = game.getCurrentPlayer();
+
+      game.playEventCard();
+      assertEquals(2, player.getHand().size(), "Player draws 2 adventure cards");
+    }
+
+    @Test
+    @DisplayName("RESP_09_test_2: prints player's updated hand")
+    void RESP_09_test_2() {
+      StringWriter output = new StringWriter();
+      Display display = new Display(new PrintWriter(output));
+      Player player = game.getCurrentPlayer();
+
+      display.print(game.playEventCard());
+      String expectedOutput = String.format("%s drew 2 adventure cards%n", player.getName());
+      assertEquals(expectedOutput, output.toString(), "Prints player drew 2 adventure cards");
+    }
+
+    // TODO: test when hand needs to be trimmed
+  }
 }
