@@ -359,36 +359,42 @@ class MainTest {
   @DisplayName("RESP_09: Player Draws an E Card: Queen's Favor Card")
   class RESP_09 {
     private final Game game = new Game();
+    private Player player;
+    private StringWriter output = new StringWriter();
+    private Display display = new Display(new PrintWriter(output));
 
     @BeforeEach
     void setUp() {
       game.setupPlayers();
       game.startTurn();
       game.getCurrentTurn().setEventCard(new EventCard(EType.QUEENS_FAVOR));
+      player = game.getCurrentPlayer();
+      game.setDisplay(display);
     }
 
     @Test
     @DisplayName("RESP_09_test_1: player draws 2 adventure cards when hand doesn't need to be trimmed")
     void RESP_09_test_1() {
-      Player player = game.getCurrentPlayer();
-
       game.playEventCard();
       assertEquals(2, player.getHand().size(), "Player draws 2 adventure cards");
     }
 
     @Test
-    @DisplayName("RESP_09_test_2: prints player's updated hand")
+    @DisplayName("RESP_09_test_2: prints Queen's Favor effect message")
     void RESP_09_test_2() {
-      StringWriter output = new StringWriter();
-      Display display = new Display(new PrintWriter(output));
-      Player player = game.getCurrentPlayer();
-
       display.print(game.playEventCard());
       String expectedOutput = String.format("%s drew 2 adventure cards%n", player.getName());
-      assertEquals(expectedOutput, output.toString(), "Prints player drew 2 adventure cards");
+      assertTrue(output.toString().contains(expectedOutput), "Prints player drew 2 adventure cards");
     }
 
-    // TODO: test when hand needs to be trimmed
+    @Test
+    @DisplayName("RESP_09_test_3: trims hand if adding cards to hand exceeds " + Player.MAX_HAND_SIZE)
+    void RESP_09_test_3() {
+      game.dealAdventureCards();
+      display.setScanner(new Scanner("1\n2\n"));
+      game.playEventCard();
+      assertEquals(Player.MAX_HAND_SIZE, player.getHand().size(), "Hand size is " + Player.MAX_HAND_SIZE);
+    }
   }
 
   @Nested
