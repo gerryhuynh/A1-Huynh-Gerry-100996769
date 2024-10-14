@@ -298,8 +298,13 @@ class MainTest {
     @DisplayName("RESP_07_test_3: prints current player's hand")
     void RESP_07_test_3() {
       Player currentPlayer = game.getCurrentPlayer();
+
       game.startTurn();
-      assertTrue(output.toString().contains(currentPlayer.getHand().toString()), "Current player's hand is printed");
+      String outputString = output.toString();
+      for (int i = 0; i < currentPlayer.getHand().size(); i++) {
+          String expectedCardString = String.format("%d. %s", i + 1, currentPlayer.getHand().get(i));
+          assertTrue(outputString.contains(expectedCardString), "Card " + (i + 1) + " is printed correctly");
+      }
     }
 
     @Test
@@ -494,7 +499,11 @@ class MainTest {
     @DisplayName("RESP_11_test_1: prints hand")
     void RESP_11_test_1() {
       display.printHand(hand);
-      assertTrue(output.toString().contains(hand.toString()), "Hand is printed");
+      String outputString = output.toString();
+      for (int i = 0; i < hand.size(); i++) {
+          String expectedCardString = String.format("%d. %s", i + 1, hand.get(i));
+          assertTrue(outputString.contains(expectedCardString), "Card " + (i + 1) + " is printed correctly");
+      }
     }
 
     @Test
@@ -576,7 +585,11 @@ class MainTest {
     @DisplayName("RESP_12_test_2: prints hand")
     void RESP_12_test_2() {
       display.promptForCardToDiscard(hand);
-      assertTrue(output.toString().contains(hand.toString()), "Hand is printed");
+      String outputString = output.toString();
+      for (int i = 0; i < hand.size(); i++) {
+          String expectedCardString = String.format("%d. %s", i + 1, hand.get(i));
+          assertTrue(outputString.contains(expectedCardString), "Card " + (i + 1) + " is printed correctly");
+      }
     }
 
     @Test
@@ -650,7 +663,11 @@ class MainTest {
     @DisplayName("RESP_13_test_5: prints trimmed hand")
     void RESP_13_test_5() {
       player.trimHand(numCardsToTrim, display);
-      assertTrue(output.toString().contains(player.getHand().toString()), "Prints trimmed hand");
+      String outputString = output.toString();
+      for (int i = 0; i < player.getHand().size(); i++) {
+          String expectedCardString = String.format("%d. %s", i + 1, player.getHand().get(i));
+          assertTrue(outputString.contains(expectedCardString), "Card " + (i + 1) + " is printed correctly");
+      }
     }
   }
 

@@ -49,7 +49,9 @@ public class Display {
 
   public void printHand(List<AdventureCard> hand) {
     print("\nYOUR HAND:");
-    print(hand.toString());
+    for (int i = 0; i < hand.size(); i++) {
+      print(String.format("%d. %s", i + 1, hand.get(i)));
+    }
   }
 
   public int promptForCardIndex(int maxIndex) {
