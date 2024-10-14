@@ -63,7 +63,13 @@ public class Game {
   }
 
   public List<Player> checkWinners() {
-    return new ArrayList<>();
+    List<Player> winners = new ArrayList<>();
+    for (Player player : players) {
+      if (player.getShields() >= SHIELDS_TO_WIN) {
+        winners.add(player);
+      }
+    }
+    return winners;
   }
 
   // Getters
