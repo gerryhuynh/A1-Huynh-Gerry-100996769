@@ -16,7 +16,9 @@ public class Turn {
   }
 
   public void endTurn(Display display) {
-    return;
+    display.promptEndTurn(player.getName());
+    eventCard = null;
+    display.clear();
   }
 
   public Player getPlayer() {

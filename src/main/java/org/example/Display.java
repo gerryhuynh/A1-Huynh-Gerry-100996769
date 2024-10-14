@@ -60,11 +60,14 @@ public class Display {
   }
 
   public void promptEndTurn(String playerName) {
-    return;
+    print(String.format("%s's turn ended", playerName));
+    print("Press the return key to end your turn and clear the display");
+    input.nextLine();
   }
 
   public void clear() {
-    return;
+    output.print(CLEAR_SCREEN_COMMAND);
+    output.flush();
   }
 
   public void setScanner(Scanner input) {

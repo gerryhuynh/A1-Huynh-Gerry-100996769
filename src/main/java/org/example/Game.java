@@ -58,7 +58,7 @@ public class Game {
   }
 
   public void endTurn() {
-    return;
+    currentTurn.endTurn(display);
   }
 
   // Getters
