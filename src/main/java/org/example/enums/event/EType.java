@@ -16,4 +16,9 @@ public enum EType implements EventType {
   public int getDefaultCount() {
     return defaultCount;
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s", name);
+  }
 }

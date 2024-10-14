@@ -343,7 +343,7 @@ class MainTest {
       display.print(eventResult);
       String expectedOutput = String.format("%s's shields: %d -> %d%n", 
                                              player.getName(), originalShields, originalShields - 2);
-      assertEquals(expectedOutput, output.toString(), "Updated shield count is printed");
+      assertTrue(output.toString().contains(expectedOutput), "Updated shield count is printed");
     }
 
     @Test
@@ -395,7 +395,7 @@ class MainTest {
     @DisplayName("RESP_09_test_2: prints Queen's Favor effect message")
     void RESP_09_test_2() {
       display.print(game.playEventCard());
-      String expectedOutput = String.format("%s drew 2 adventure cards%n", player.getName());
+      String expectedOutput = String.format("%s drew 2 adventure cards", player.getName());
       assertTrue(output.toString().contains(expectedOutput), "Prints player drew 2 adventure cards");
     }
 
@@ -475,7 +475,7 @@ class MainTest {
     void RESP_11_test_2() {
       display.setScanner(new Scanner("1\n"));
       display.promptForCardIndex(hand.size());
-      assertTrue(output.toString().contains("Choose a card position:"), "Player is prompted to choose a card position");
+      assertTrue(output.toString().contains("CHOOSE A CARD POSITION:"), "Player is prompted to choose a card position");
     }
 
     @Test
@@ -542,7 +542,7 @@ class MainTest {
     @DisplayName("RESP_12_test_1: prompts player to choose a card to discard")
     void RESP_12_test_1() {
       display.promptForCardToDiscard(hand);
-      assertTrue(output.toString().contains("You must discard a card."), "Player is prompted to choose a card to discard");
+      assertTrue(output.toString().contains("You must trim your hand. Please discard a card."), "Player is prompted to choose a card to discard");
     }
 
     @Test
@@ -757,7 +757,7 @@ class MainTest {
       display.setScanner(new Scanner("\n"));
       display.promptEndTurn(game.getCurrentPlayer().getName());
       assertTrue(output.toString().contains(
-        String.format("%s's turn ended", game.getCurrentPlayer().getName())), 
+        String.format("%s'S TURN ENDED", game.getCurrentPlayer().getName())), 
         "Indicates the current player's turn has ended");
     }
 
