@@ -20,7 +20,17 @@ public class Player {
     }
 
     public List<AdventureCard> addToHand(List<AdventureCard> cards, Display display) {
-      return new ArrayList<>();
+      List<AdventureCard> trimmedCards = new ArrayList<>();
+      display.printCardsToAdd(cards);
+
+      int numCardsToTrim = computeNumCardsToTrim(cards.size());
+      if (numCardsToTrim > 0) {
+        trimmedCards = trimHand(numCardsToTrim, display);
+      }
+      hand.addAll(cards);
+
+      display.printHand(hand);
+      return trimmedCards;
     }
 
     public int computeNumCardsToTrim(int numCardsToAdd) {

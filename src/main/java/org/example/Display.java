@@ -24,6 +24,11 @@ public class Display {
     return promptForCardIndex(input, hand.size());
   }
 
+  public void printCardsToAdd(List<AdventureCard> cards) {
+    print("Cards to add to hand:");
+    print(cards.toString());
+  }
+
   public void printHand(List<AdventureCard> hand) {
     print("Your hand:");
     print(hand.toString());
