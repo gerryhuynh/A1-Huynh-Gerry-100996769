@@ -19,6 +19,10 @@ public class Player {
         this.shields = 0;
     }
 
+    public List<AdventureCard> addToHand(List<AdventureCard> cards, Display display) {
+      return new ArrayList<>();
+    }
+
     public int computeNumCardsToTrim(int numCardsToAdd) {
       int numCardsToTrim = hand.size() + numCardsToAdd - MAX_HAND_SIZE;
       return numCardsToTrim > 0 ? numCardsToTrim : 0;

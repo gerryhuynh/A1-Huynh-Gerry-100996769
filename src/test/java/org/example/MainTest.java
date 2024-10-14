@@ -620,4 +620,76 @@ class MainTest {
       assertTrue(output.toString().contains(player.getHand().toString()), "Prints trimmed hand");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_14: Add Adventure Cards to Hand")
+  class RESP_14 {
+    private final Game game = new Game();
+    private Player player;
+    private StringWriter output;
+    private Scanner mockScanner;
+    private Display mockDisplay;
+    private List<AdventureCard> cardsToAdd;
+
+    private Display createMockDisplay(String input) {
+      mockScanner = new Scanner(input);
+      return new Display(new PrintWriter(output)) {
+        @Override
+        public int promptForCardToDiscard(Scanner input, List<AdventureCard> hand) { 
+          return promptForCardIndex(mockScanner, hand.size()); 
+        }
+      };
+    }
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      player = game.getCurrentPlayer();
+      output = new StringWriter();
+      mockDisplay = createMockDisplay("1\n2\n");
+
+      cardsToAdd = new ArrayList<>();
+      cardsToAdd.add(new AdventureCard(FoeType.F5));
+      cardsToAdd.add(new AdventureCard(FoeType.F10));
+    }
+
+    @Test
+    @DisplayName("RESP_14_test_1: prints cards to add to hand")
+    void RESP_14_test_1() {
+      player.addToHand(cardsToAdd, mockDisplay);
+      assertTrue(output.toString().contains(cardsToAdd.toString()), "Prints cards to add to hand");
+    }
+
+    @Test
+    @DisplayName("RESP_14_test_2: adds cards to hand")
+    void RESP_14_test_2() {
+      player.addToHand(cardsToAdd, mockDisplay);
+      assertTrue(player.getHand().containsAll(cardsToAdd), "Adds cards to hand");
+    }
+
+    @Test
+    @DisplayName("RESP_14_test_3: returns same number of cards as cards to trim if hand was trimmed")
+    void RESP_14_test_3() {
+      game.dealAdventureCards();
+      int originalSize = player.getHand().size();
+      List<AdventureCard> trimmedCards = player.addToHand(cardsToAdd, mockDisplay);
+
+      assertEquals(Player.MAX_HAND_SIZE, originalSize, "Original hand size is equal to " + Player.MAX_HAND_SIZE);
+      assertEquals(cardsToAdd.size(), trimmedCards.size(), "Returns same number of cards as cards to trim if hand was trimmed");
+    }
+
+    @Test
+    @DisplayName("RESP_14_test_4: returns empty list if number of cards to trim is 0")
+    void RESP_14_test_4() {
+      List<AdventureCard> trimmedCards = player.addToHand(cardsToAdd, mockDisplay);
+      assertTrue(trimmedCards.isEmpty(), "Returns empty list if number of cards to trim is 0");
+    }
+
+    @Test
+    @DisplayName("RESP_14_test_5: prints updated hand")
+    void RESP_14_test_5() {
+      player.addToHand(cardsToAdd, mockDisplay);
+      assertTrue(output.toString().contains(player.getHand().toString()), "Prints updated hand");
+    }
+  }
 }
