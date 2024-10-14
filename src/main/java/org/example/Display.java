@@ -65,6 +65,11 @@ public class Display {
     input.nextLine();
   }
 
+  public void printGameOver(List<Player> winners) {
+    print("\nGame Over! Winners:");
+    winners.forEach(winner -> print(String.format("- %s", winner.getName())));
+  }
+
   public void clear() {
     output.print(CLEAR_SCREEN_COMMAND);
     output.flush();
