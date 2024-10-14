@@ -1,16 +1,18 @@
 package org.example.enums.event;
 
 public enum EType implements EventType {
-  PLAGUE("Plague", 1), 
-  QUEENS_FAVOR("Queen's Favor", 2), 
-  PROSPERITY("Prosperity", 2);
+  PLAGUE("Plague", 1, "Current player loses 2 shields"), 
+  QUEENS_FAVOR("Queen's Favor", 2, "Current player draws 2 adventure cards"), 
+  PROSPERITY("Prosperity", 2, "All players draw 2 adventure cards");
 
   private final String name;
   private final int defaultCount;
+  private final String effectDesc;
 
-  EType(String name, int defaultCount) {
+  EType(String name, int defaultCount, String effectDesc) {
     this.name = name;
     this.defaultCount = defaultCount;
+    this.effectDesc = effectDesc;
   }
 
   public int getDefaultCount() {
@@ -18,7 +20,7 @@ public enum EType implements EventType {
   }
 
   public String getEffectDesc() {
-    return "";
+    return effectDesc;
   }
 
   @Override

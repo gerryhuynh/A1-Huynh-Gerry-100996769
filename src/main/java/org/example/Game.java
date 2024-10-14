@@ -47,7 +47,11 @@ public class Game {
   }
 
   public void startTurn() {
+    display.printCurrentPlayer(currentTurn.getPlayer());
+    display.printHand(currentTurn.getPlayer().getHand());
     currentTurn.setEventCard(eventDeck.draw());
+    display.printDrawnEventCard(currentTurn.getEventCard());
+    display.printEventCardEffect(currentTurn.getEventCard());
   }
 
   public String playEventCard() {

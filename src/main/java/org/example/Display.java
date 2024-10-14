@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.cards.AdventureCard;
+import org.example.cards.EventCard;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -19,6 +20,20 @@ public class Display {
   public void print(String message) {
     output.println(message);
     output.flush();
+  }
+
+  public void printCurrentPlayer(Player player) {
+    print(String.format("\nCURRENT PLAYER: %s", player.getName()));
+  }
+
+  public void printDrawnEventCard(EventCard card) {
+    print("\nDRAWN EVENT CARD:");
+    print(card.toString());
+  }
+
+  public void printEventCardEffect(EventCard card) {
+    print(String.format("\n%s CARD EFFECT:", card.toString().toUpperCase()));
+    print(card.getType().getEffectDesc());
   }
 
   public int promptForCardToDiscard(List<AdventureCard> hand) {
