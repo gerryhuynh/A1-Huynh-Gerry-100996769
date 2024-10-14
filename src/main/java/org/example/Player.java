@@ -2,7 +2,6 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import org.example.cards.AdventureCard;
 
@@ -41,7 +40,7 @@ public class Player {
     public List<AdventureCard> trimHand(int numCards, Display display) {
       List<AdventureCard> trimmedCards = new ArrayList<>();
       while (hand.size() + numCards > MAX_HAND_SIZE) {
-        int removeCardIndex = display.promptForCardToDiscard(new Scanner(System.in), hand);
+        int removeCardIndex = display.promptForCardToDiscard(hand);
         trimmedCards.add(hand.remove(removeCardIndex));
         display.printHand(hand);
       }

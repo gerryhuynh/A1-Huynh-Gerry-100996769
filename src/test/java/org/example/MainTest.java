@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Scanner;
-import java.util.NoSuchElementException;
 
 class MainTest {
   @Nested
@@ -435,7 +434,6 @@ class MainTest {
     private final Game game = new Game();
     private List<AdventureCard> hand;
     private StringWriter output;
-    private String input;
     private Display display;
 
     @BeforeEach
@@ -457,48 +455,49 @@ class MainTest {
     @Test
     @DisplayName("RESP_11_test_2: prompts player to choose a card number")
     void RESP_11_test_2() {
-      input = "1";
-      display.promptForCardIndex(new Scanner(input), hand.size());
+      display.setScanner(new Scanner("1\n"));
+      display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Choose a card position:"), "Player is prompted to choose a card position");
     }
 
     @Test
     @DisplayName("RESP_11_test_3: prints not a valid number message if player enters invalid input")
     void RESP_11_test_3() {
-      input = "invalid\n1";
-      display.promptForCardIndex(new Scanner(input), hand.size());
+      display.setScanner(new Scanner("invalid\n1"));
+      display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Not a valid number"), "Not a valid number message is printed");
     }
 
     @Test
     @DisplayName("RESP_11_test_4: prints out of range message if player enters number greater than max index")
     void RESP_11_test_4() {
-      input = String.valueOf(hand.size() + 2) + "\n1";
-      display.promptForCardIndex(new Scanner(input), hand.size());
+      String input = String.valueOf(hand.size() + 2) + "\n1";
+      display.setScanner(new Scanner(input));
+      display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Out of range"), "Out of range message is printed");
     }
 
     @Test
     @DisplayName("RESP_11_test_5: prints out of range message if player enters number less than 1")
     void RESP_11_test_5() {
-      input = "0\n1";
-      display.promptForCardIndex(new Scanner(input), hand.size());
+      display.setScanner(new Scanner("0\n1"));
+      display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Out of range"), "Out of range message is printed");
     }
 
     @Test
     @DisplayName("RESP_11_test_6: prints empty input message if player enters empty input")
     void RESP_11_test_6() {
-      input = "\n1";
-      display.promptForCardIndex(new Scanner(input), hand.size());
+      display.setScanner(new Scanner("\n1"));
+      display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Empty input"), "Empty input message is printed");
     }
 
     @Test
     @DisplayName("RESP_11_test_7: returns index of card if player enters valid input")
     void RESP_11_test_7() {
-      input = "2";
-      int removeCardIndex = display.promptForCardIndex(new Scanner(input), hand.size());
+      display.setScanner(new Scanner("2"));
+      int removeCardIndex = display.promptForCardIndex(hand.size());
       assertEquals(1, removeCardIndex, "Returns index of card to discard");
     }
   }
@@ -510,7 +509,6 @@ class MainTest {
     private List<AdventureCard> hand;
     private StringWriter output;
     private Display display;
-    private String input;
 
     @BeforeEach
     void setUp() {
@@ -519,27 +517,27 @@ class MainTest {
       hand = game.getCurrentPlayer().getHand();
       output = new StringWriter();
       display = new Display(new PrintWriter(output));
-      input = "2";
+      display.setScanner(new Scanner("2"));
     }
 
     @Test
     @DisplayName("RESP_12_test_1: prompts player to choose a card to discard")
     void RESP_12_test_1() {
-      display.promptForCardToDiscard(new Scanner(input), hand);
+      display.promptForCardToDiscard(hand);
       assertTrue(output.toString().contains("You must discard a card."), "Player is prompted to choose a card to discard");
     }
 
     @Test
     @DisplayName("RESP_12_test_2: prints hand")
     void RESP_12_test_2() {
-      display.promptForCardToDiscard(new Scanner(input), hand);
+      display.promptForCardToDiscard(hand);
       assertTrue(output.toString().contains(hand.toString()), "Hand is printed");
     }
 
     @Test
     @DisplayName("RESP_12_test_3: returns index of card to discard once valid input is entered")
     void RESP_12_test_3() {
-      int removeCardIndex = display.promptForCardToDiscard(new Scanner(input), hand);
+      int removeCardIndex = display.promptForCardToDiscard(hand);
       assertEquals(1, removeCardIndex, "Returns index of card to discard");
     }
   }
@@ -550,19 +548,8 @@ class MainTest {
     private final Game game = new Game();
     private Player player;
     private StringWriter output;
-    private Scanner mockScanner;
-    private Display mockDisplay;
+    private Display display;
     private int numCardsToTrim;
-
-    private Display createMockDisplay(String input) {
-      mockScanner = new Scanner(input);
-      return new Display(new PrintWriter(output)) {
-        @Override
-        public int promptForCardToDiscard(Scanner input, List<AdventureCard> hand) { 
-          return promptForCardIndex(mockScanner, hand.size()); 
-        }
-      };
-    }
 
     @BeforeEach
     void setUp() {
@@ -570,7 +557,8 @@ class MainTest {
       game.dealAdventureCards();
       player = game.getCurrentPlayer();
       output = new StringWriter();
-      mockDisplay = createMockDisplay("1\n2\n");
+      display = new Display(new PrintWriter(output));
+      display.setScanner(new Scanner("1\n2\n"));
       numCardsToTrim = 2;
     }
 
@@ -579,7 +567,7 @@ class MainTest {
     void RESP_13_test_1() {
       int originalSize = player.getHand().size();
       
-      player.trimHand(numCardsToTrim, mockDisplay);
+      player.trimHand(numCardsToTrim, display);
       assertEquals(originalSize - numCardsToTrim, player.getHand().size(), 
                    "Removes the number of cards to trim from the player's hand");
     }
@@ -590,16 +578,16 @@ class MainTest {
       numCardsToTrim = 0;
       int originalSize = player.getHand().size();
 
-      mockDisplay = createMockDisplay("");
+      display.setScanner(new Scanner(""));
 
-      player.trimHand(numCardsToTrim, mockDisplay);
+      player.trimHand(numCardsToTrim, display);
       assertEquals(originalSize, player.getHand().size(), "Doesn't remove any cards if number of cards to trim is 0");
     }
 
     @Test
     @DisplayName("RESP_13_test_3: returns a list of adventure cards the same size as the number of cards to trim")
     void RESP_13_test_3() {
-      List<AdventureCard> trimmedCards = player.trimHand(numCardsToTrim, mockDisplay);
+      List<AdventureCard> trimmedCards = player.trimHand(numCardsToTrim, display);
       assertEquals(numCardsToTrim, trimmedCards.size(), "Returns a list of adventure cards the same size as the number of cards to trim");
     }
 
@@ -607,16 +595,16 @@ class MainTest {
     @DisplayName("RESP_13_test_4: returns empty list if number of cards to trim is 0")
     void RESP_13_test_4() {
       numCardsToTrim = 0;
-      Display mockDisplay = createMockDisplay("");
+      display.setScanner(new Scanner(""));
 
-      List<AdventureCard> trimmedCards = player.trimHand(numCardsToTrim, mockDisplay);
+      List<AdventureCard> trimmedCards = player.trimHand(numCardsToTrim, display);
       assertTrue(trimmedCards.isEmpty(), "Returns empty list if number of cards to trim is 0");
     }
 
     @Test
     @DisplayName("RESP_13_test_5: prints trimmed hand")
     void RESP_13_test_5() {
-      player.trimHand(numCardsToTrim, mockDisplay);
+      player.trimHand(numCardsToTrim, display);
       assertTrue(output.toString().contains(player.getHand().toString()), "Prints trimmed hand");
     }
   }
@@ -627,26 +615,16 @@ class MainTest {
     private final Game game = new Game();
     private Player player;
     private StringWriter output;
-    private Scanner mockScanner;
-    private Display mockDisplay;
+    private Display display;
     private List<AdventureCard> cardsToAdd;
-
-    private Display createMockDisplay(String input) {
-      mockScanner = new Scanner(input);
-      return new Display(new PrintWriter(output)) {
-        @Override
-        public int promptForCardToDiscard(Scanner input, List<AdventureCard> hand) { 
-          return promptForCardIndex(mockScanner, hand.size()); 
-        }
-      };
-    }
 
     @BeforeEach
     void setUp() {
       game.setupPlayers();
       player = game.getCurrentPlayer();
       output = new StringWriter();
-      mockDisplay = createMockDisplay("1\n2\n");
+      display = new Display(new PrintWriter(output));
+      display.setScanner(new Scanner("1\n2\n"));
 
       cardsToAdd = new ArrayList<>();
       cardsToAdd.add(new AdventureCard(FoeType.F5));
@@ -656,14 +634,14 @@ class MainTest {
     @Test
     @DisplayName("RESP_14_test_1: prints cards to add to hand")
     void RESP_14_test_1() {
-      player.addToHand(cardsToAdd, mockDisplay);
+      player.addToHand(cardsToAdd, display);
       assertTrue(output.toString().contains(cardsToAdd.toString()), "Prints cards to add to hand");
     }
 
     @Test
     @DisplayName("RESP_14_test_2: adds cards to hand")
     void RESP_14_test_2() {
-      player.addToHand(cardsToAdd, mockDisplay);
+      player.addToHand(cardsToAdd, display);
       assertTrue(player.getHand().containsAll(cardsToAdd), "Adds cards to hand");
     }
 
@@ -672,7 +650,7 @@ class MainTest {
     void RESP_14_test_3() {
       game.dealAdventureCards();
       int originalSize = player.getHand().size();
-      List<AdventureCard> trimmedCards = player.addToHand(cardsToAdd, mockDisplay);
+      List<AdventureCard> trimmedCards = player.addToHand(cardsToAdd, display);
 
       assertEquals(Player.MAX_HAND_SIZE, originalSize, "Original hand size is equal to " + Player.MAX_HAND_SIZE);
       assertEquals(cardsToAdd.size(), trimmedCards.size(), "Returns same number of cards as cards to trim if hand was trimmed");
@@ -681,14 +659,14 @@ class MainTest {
     @Test
     @DisplayName("RESP_14_test_4: returns empty list if number of cards to trim is 0")
     void RESP_14_test_4() {
-      List<AdventureCard> trimmedCards = player.addToHand(cardsToAdd, mockDisplay);
+      List<AdventureCard> trimmedCards = player.addToHand(cardsToAdd, display);
       assertTrue(trimmedCards.isEmpty(), "Returns empty list if number of cards to trim is 0");
     }
 
     @Test
     @DisplayName("RESP_14_test_5: prints updated hand")
     void RESP_14_test_5() {
-      player.addToHand(cardsToAdd, mockDisplay);
+      player.addToHand(cardsToAdd, display);
       assertTrue(output.toString().contains(player.getHand().toString()), "Prints updated hand");
     }
   }

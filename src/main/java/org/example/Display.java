@@ -8,9 +8,11 @@ import java.util.Scanner;
 
 public class Display {
   private PrintWriter output;
+  private Scanner input;
 
   public Display(PrintWriter output) {
     this.output = output;
+    this.input = new Scanner(System.in);
   }
 
   public void print(String message) {
@@ -18,10 +20,10 @@ public class Display {
     output.flush();
   }
 
-  public int promptForCardToDiscard(Scanner input, List<AdventureCard> hand) {
+  public int promptForCardToDiscard(List<AdventureCard> hand) {
     print("You must discard a card.");
     printHand(hand);
-    return promptForCardIndex(input, hand.size());
+    return promptForCardIndex(hand.size());
   }
 
   public void printCardsToAdd(List<AdventureCard> cards) {
@@ -34,7 +36,7 @@ public class Display {
     print(hand.toString());
   }
 
-  public int promptForCardIndex(Scanner input, int maxIndex) {
+  public int promptForCardIndex(int maxIndex) {
     while (true) {
       print("Choose a card position:");
       try {
@@ -54,5 +56,9 @@ public class Display {
         print("An error occurred. Please try again.");
       }
     }
+  }
+
+  public void setScanner(Scanner input) {
+    this.input = input;
   }
 }
