@@ -223,11 +223,16 @@ class MainTest {
   @DisplayName("RESP_06: Cycles Players When No Winner")
   class RESP_06 {
     private static Game game;
+    private static StringWriter output;
+    private static Display display;
 
     @BeforeAll
     static void setUpAll() {
       game = new Game();
       game.setupPlayers();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
     }
 
     @Test
@@ -240,7 +245,8 @@ class MainTest {
     @ParameterizedTest(name = "RESP_06_test_2_{index}: when P{0} turn ends, next player is P{1}")
     @MethodSource("playerTurns")
     void RESP_06_test_2(int currentPlayer, int nextPlayer) {
-      game.nextTurn();
+      display.setScanner(new Scanner("\n"));
+      game.endTurn();
       Player expected = game.getPlayers().get(nextPlayer - 1);
       assertEquals(expected, game.getCurrentPlayer(), "Next player is P" + nextPlayer);
     }
@@ -248,6 +254,12 @@ class MainTest {
     static Stream<Arguments> playerTurns() {
       return IntStream.range(1, Game.MAX_PLAYERS + 1)
           .mapToObj(i -> Arguments.of(i, i % Game.MAX_PLAYERS + 1));
+    }
+
+    @Test
+    @DisplayName("RESP_06_test_3: game over remains false when no player has won")
+    void RESP_06_test_3() {
+      assertFalse(game.isGameOver(), "Game is not over");
     }
   }
 
