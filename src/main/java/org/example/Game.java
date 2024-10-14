@@ -25,6 +25,7 @@ public class Game {
     this.eventDeck = new EventDeck();
     this.currentTurn = null;
     this.display = new Display(new PrintWriter(System.out));
+    this.gameOver = false;
 
     adventureDeck.shuffle();
     eventDeck.shuffle();
@@ -65,6 +66,7 @@ public class Game {
     if (winners.size() > 0) {
       endGame(winners);
     }
+    nextTurn();
   }
 
   public List<Player> checkWinners() {
