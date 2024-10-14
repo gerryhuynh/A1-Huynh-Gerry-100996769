@@ -15,12 +15,14 @@ public class Game {
   private final AdventureDeck adventureDeck;
   private final EventDeck eventDeck;
   private Turn currentTurn;
+  private Display display;
 
   public Game() {
     this.players = new ArrayList<>();
     this.adventureDeck = new AdventureDeck();
     this.eventDeck = new EventDeck();
     this.currentTurn = null;
+    this.display = new Display(new PrintWriter(System.out));
 
     adventureDeck.shuffle();
     eventDeck.shuffle();
@@ -86,10 +88,10 @@ public class Game {
   }
 
   public Display getDisplay() {
-    return new Display(new PrintWriter(System.out));
+    return display;
   }
 
   public void setDisplay(Display display) {
-    return;
+    this.display = display;
   }
 }

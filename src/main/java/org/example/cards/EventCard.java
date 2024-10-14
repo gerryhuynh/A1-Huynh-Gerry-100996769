@@ -1,6 +1,7 @@
 package org.example.cards;
 
 import org.example.enums.event.EventType;
+import org.example.Display;
 import org.example.Game;
 import org.example.Player;
 import org.example.decks.AdventureDeck;
@@ -14,7 +15,7 @@ public class EventCard extends Card<EventType> {
   public String play(Game game) {
     switch (getType()) {
       case EType.PLAGUE: return plagueEffect(game.getCurrentPlayer());
-      case EType.QUEENS_FAVOR: return queensFavorEffect(game.getCurrentPlayer(), game.getAdventureDeck());
+      case EType.QUEENS_FAVOR: return queensFavorEffect(game.getCurrentPlayer(), game.getAdventureDeck(), game.getDisplay());
       default: return "";
     }
   }
@@ -25,12 +26,12 @@ public class EventCard extends Card<EventType> {
     return String.format("%s's shields: %d -> %d", player.getName(), originalShields, player.getShields());
   }
 
-  private String queensFavorEffect(Player player, AdventureDeck adventureDeck) {
-    return drawTwoAdventureCards(player, adventureDeck);
+  private String queensFavorEffect(Player player, AdventureDeck adventureDeck, Display display) {
+    return drawTwoAdventureCards(player, adventureDeck, display);
   }
 
-  private String drawTwoAdventureCards(Player player, AdventureDeck adventureDeck) {
-    player.getHand().addAll(adventureDeck.draw(2));
+  private String drawTwoAdventureCards(Player player, AdventureDeck adventureDeck, Display display) {
+    player.addToHand(adventureDeck.draw(2), display);
     return String.format("%s drew 2 adventure cards", player.getName());
   }
 
