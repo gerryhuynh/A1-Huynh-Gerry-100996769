@@ -16,6 +16,7 @@ public class EventCard extends Card<EventType> {
     switch (getType()) {
       case EType.PLAGUE: return plagueEffect(game.getCurrentPlayer());
       case EType.QUEENS_FAVOR: return queensFavorEffect(game.getCurrentPlayer(), game.getAdventureDeck(), game.getDisplay());
+      case EType.PROSPERITY: return prosperityEffect(game);
       default: return "";
     }
   }
@@ -28,6 +29,13 @@ public class EventCard extends Card<EventType> {
 
   private String queensFavorEffect(Player player, AdventureDeck adventureDeck, Display display) {
     return drawTwoAdventureCards(player, adventureDeck, display);
+  }
+
+  private String prosperityEffect(Game game) {
+    for (Player player : game.getPlayers()) {
+      drawTwoAdventureCards(player, game.getAdventureDeck(), game.getDisplay());
+    }
+    return "All players drew 2 adventure cards";
   }
 
   private String drawTwoAdventureCards(Player player, AdventureDeck adventureDeck, Display display) {
