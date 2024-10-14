@@ -15,4 +15,8 @@ public enum QType implements EventType {
   public int getDefaultCount() {
     return defaultCount;
   }
+
+  public String getEffectDesc() {
+    return "";
+  }
 }
