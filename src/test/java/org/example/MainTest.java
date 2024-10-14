@@ -242,6 +242,7 @@ class MainTest {
       assertEquals(expected, game.getCurrentPlayer(), "Current player is P1");
     }
 
+    // 4 tests; 1 for each player
     @ParameterizedTest(name = "RESP_06_test_2_{index}: when P{0} turn ends, next player is P{1}")
     @MethodSource("playerTurns")
     void RESP_06_test_2(int currentPlayer, int nextPlayer) {
@@ -267,10 +268,16 @@ class MainTest {
   @DisplayName("RESP_07: Start Current Turn")
   class RESP_07 {
     private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+
 
     @BeforeEach
     void setUp() {
       game.setupPlayers();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
     }
 
     @Test
@@ -280,8 +287,24 @@ class MainTest {
     }
 
     @Test
-    @DisplayName("RESP_07_test_2: draw Event card and decrease Event Deck size by 1")
+    @DisplayName("RESP_07_test_2: prints current player")
     void RESP_07_test_2() {
+      Player currentPlayer = game.getCurrentPlayer();
+      game.startTurn();
+      assertTrue(output.toString().contains(currentPlayer.getName()), "Current player is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_07_test_3: prints current player's hand")
+    void RESP_07_test_3() {
+      Player currentPlayer = game.getCurrentPlayer();
+      game.startTurn();
+      assertTrue(output.toString().contains(currentPlayer.getHand().toString()), "Current player's hand is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_07_test_4: draw Event card and decrease Event Deck size by 1")
+    void RESP_07_test_4() {
       EventDeck eventDeck = game.getEventDeck();
       int originalSize = eventDeck.size();  
       game.startTurn();
@@ -289,23 +312,27 @@ class MainTest {
     }
 
     @Test
-    @DisplayName("RESP_07_test_3: first card drawn from Event Deck becomes current event card")
-    void RESP_07_test_3() {
+    @DisplayName("RESP_07_test_5: first card drawn from Event Deck becomes current event card")
+    void RESP_07_test_5() {
       EventCard expected = game.getEventDeck().getCards().get(0);
       game.startTurn();
       assertEquals(expected, game.getCurrentEventCard(), "First card in Event Deck is current event card");
     }
 
     @Test
-    @DisplayName("RESP_07_test_4: drawn EventCard is displayed")
-    void RESP_07_test_4() {
-      StringWriter output = new StringWriter();
-      Display display = new Display(new PrintWriter(output));
+    @DisplayName("RESP_07_test_6: prints drawn EventCard")
+    void RESP_07_test_6() {
       game.startTurn();
-
       EventCard currentCard = game.getCurrentEventCard();
-      display.print(currentCard.toString());
-      assertTrue(output.toString().contains(currentCard.toString()), "Drawn event card is displayed");
+      assertTrue(output.toString().contains(currentCard.toString()), "Drawn event card is printed");
+    }
+
+    @Test
+    @DisplayName("RESP_07_test_7: prints event card effect")
+    void RESP_07_test_7() {
+      game.startTurn();
+      EventCard currentCard = game.getCurrentEventCard();
+      assertTrue(output.toString().contains(currentCard.getType().getEffectDesc()), "Event card effect is printed");
     }
   }
 
