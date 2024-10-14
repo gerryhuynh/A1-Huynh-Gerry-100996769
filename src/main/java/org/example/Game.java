@@ -10,6 +10,7 @@ import org.example.decks.EventDeck;
 
 public class Game {
   protected static final int MAX_PLAYERS = 4;
+  protected static final int SHIELDS_TO_WIN = 7;
 
   private final List<Player> players;
   private final AdventureDeck adventureDeck;
@@ -59,6 +60,10 @@ public class Game {
 
   public void endTurn() {
     currentTurn.endTurn(display);
+  }
+
+  public List<Player> checkWinners() {
+    return new ArrayList<>();
   }
 
   // Getters

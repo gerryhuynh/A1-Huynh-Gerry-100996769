@@ -775,4 +775,47 @@ class MainTest {
     }
 
   }
+
+  @Nested
+  @DisplayName("RESP_17: Checks Winners")
+  class RESP_17 {
+    private final Game game = new Game();
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+    }
+
+    @Test
+    @DisplayName("RESP_17_test_1: returns winner if a player has won")
+    void RESP_17_test_1() {
+      Player player = game.getPlayers().get(0);
+      player.setShields(Game.SHIELDS_TO_WIN);
+
+      List<Player> winners = game.checkWinners();
+      assertEquals(1, winners.size(), "Returns a list of winners");
+      assertEquals(player, winners.get(0), "Returns the player who has won");
+    }
+
+    @Test
+    @DisplayName("RESP_17_test_2: returns empty list if no player has won")
+    void RESP_17_test_2() {
+      Player player = game.getPlayers().get(0);
+      player.setShields(Game.SHIELDS_TO_WIN - 1);
+
+      List<Player> winners = game.checkWinners();
+      assertTrue(winners.isEmpty(), "Returns an empty list if no player has won");
+    }
+
+    @Test
+    @DisplayName("RESP_17_test_3: returns all winners if all players won")
+    void RESP_17_test_3() {
+      for (Player player : game.getPlayers()) {
+        player.setShields(Game.SHIELDS_TO_WIN);
+      }
+
+      List<Player> winners = game.checkWinners();
+      assertEquals(game.getPlayers(), winners, "Returns all winners");
+    }
+  }
 }
