@@ -72,6 +72,10 @@ public class Game {
     return winners;
   }
 
+  public void endGame(List<Player> winners) {
+    return;
+  }
+
   // Getters
 
   public AdventureDeck getAdventureDeck() {
@@ -104,6 +108,10 @@ public class Game {
 
   public Display getDisplay() {
     return display;
+  }
+
+  public boolean isGameOver() {
+    return false;
   }
 
   public void setDisplay(Display display) {

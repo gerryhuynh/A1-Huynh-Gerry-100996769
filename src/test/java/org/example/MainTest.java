@@ -818,4 +818,62 @@ class MainTest {
       assertEquals(game.getPlayers(), winners, "Returns all winners");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_18: Game Over")
+  class RESP_18 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+    }
+
+    @Test
+    @DisplayName("RESP_18_test_1: sets game over to true if a player has won")
+    void RESP_18_test_1() {
+      game.getPlayers().get(0).setShields(Game.SHIELDS_TO_WIN);
+      display.setScanner(new Scanner("\n"));
+
+      game.endTurn();
+      assertTrue(game.isGameOver(), "Sets game over to true if a player has won");
+    }
+
+    @Test
+    @DisplayName("RESP_18_test_2: prints game over message")
+    void RESP_18_test_2() {
+      game.getPlayers().get(0).setShields(Game.SHIELDS_TO_WIN);
+      display.setScanner(new Scanner("\n"));
+
+      game.endTurn();
+      assertTrue(output.toString().contains("Game Over! Winners:"), "Prints game over message");
+    }
+
+    @Test
+    @DisplayName("RESP_18_test_3: prints winners")
+    void RESP_18_test_3() {
+      game.getPlayers().get(1).setShields(Game.SHIELDS_TO_WIN);
+      display.setScanner(new Scanner("\n"));
+
+      game.endTurn();
+      assertTrue(output.toString().contains(game.getPlayers().get(1).getName()), "Prints winners");
+    }
+
+    @Test
+    @DisplayName("RESP_18_test_4: prints multiple winners")
+    void RESP_18_test_4() {
+      game.getPlayers().get(0).setShields(Game.SHIELDS_TO_WIN);
+      game.getPlayers().get(1).setShields(Game.SHIELDS_TO_WIN);
+      display.setScanner(new Scanner("\n"));
+
+      game.endTurn();
+      assertTrue(output.toString().contains(game.getPlayers().get(0).getName()), "Prints winners");
+      assertTrue(output.toString().contains(game.getPlayers().get(1).getName()), "Prints winners");
+    }
+  }
 }
