@@ -17,6 +17,7 @@ public class Game {
   private final EventDeck eventDeck;
   private Turn currentTurn;
   private Display display;
+  private boolean gameOver;
 
   public Game() {
     this.players = new ArrayList<>();
@@ -60,6 +61,10 @@ public class Game {
 
   public void endTurn() {
     currentTurn.endTurn(display);
+    List<Player> winners = checkWinners();
+    if (winners.size() > 0) {
+      endGame(winners);
+    }
   }
 
   public List<Player> checkWinners() {
@@ -73,7 +78,8 @@ public class Game {
   }
 
   public void endGame(List<Player> winners) {
-    return;
+    display.printGameOver(winners);
+    gameOver = true;
   }
 
   // Getters
@@ -111,7 +117,7 @@ public class Game {
   }
 
   public boolean isGameOver() {
-    return false;
+    return gameOver;
   }
 
   public void setDisplay(Display display) {
