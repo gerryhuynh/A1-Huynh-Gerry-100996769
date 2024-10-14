@@ -676,4 +676,51 @@ class MainTest {
       assertTrue(output.toString().contains(player.getHand().toString()), "Prints updated hand");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_15: Player Draws an E Card: Prosperity Card")
+  class RESP_15 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.startTurn();
+      game.getCurrentTurn().setEventCard(new EventCard(EType.PROSPERITY));  
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+    }
+
+    @Test
+    @DisplayName("RESP_15_test_1: prints prosperity card effect message")
+    void RESP_15_test_1() {
+      display.print(game.playEventCard());
+      assertTrue(output.toString().contains("All players drew 2 adventure cards"), "Prints prosperity card effect message");
+    }
+
+    @Test
+    @DisplayName("RESP_15_test_2: all players draw 2 adventure cards")
+    void RESP_15_test_2() {
+      game.playEventCard();
+      for (Player player : game.getPlayers()) {
+        assertEquals(2, player.getHand().size(), String.format("%s drew 2 adventure cards", player.getName()));
+      }
+    }
+
+    @Test
+    @DisplayName("RESP_15_test_3: trims hands if adding cards to hand exceeds " + Player.MAX_HAND_SIZE)
+    void RESP_15_test_3() {
+      game.dealAdventureCards();
+      String input = "1\n2\n".repeat(game.getPlayers().size());
+      display.setScanner(new Scanner(input));
+
+      game.playEventCard();
+      for (Player player : game.getPlayers()) {
+        assertEquals(Player.MAX_HAND_SIZE, player.getHand().size(), String.format("%s's hand size is equal to %d", player.getName(), Player.MAX_HAND_SIZE));
+      }
+    }
+  }
 }
