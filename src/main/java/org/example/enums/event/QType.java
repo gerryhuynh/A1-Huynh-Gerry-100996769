@@ -17,6 +17,6 @@ public enum QType implements EventType {
   }
 
   public String getEffectDesc() {
-    return "";
+    return String.format("Play a %s quest.", this);
   }
 }
