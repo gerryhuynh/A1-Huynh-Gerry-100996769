@@ -24,7 +24,7 @@ public class EventCard extends Card<EventType> {
   private String plagueEffect(Player player) {
     int originalShields = player.getShields();
     player.setShields(Math.max(player.getShields() - 2, 0));
-    return String.format("%s's shields: %d -> %d", player.getName(), originalShields, player.getShields());
+    return String.format("\n%s's shields: %d -> %d", player.getName(), originalShields, player.getShields());
   }
 
   private String queensFavorEffect(Player player, AdventureDeck adventureDeck, Display display) {
@@ -35,12 +35,12 @@ public class EventCard extends Card<EventType> {
     for (Player player : game.getPlayers()) {
       drawTwoAdventureCards(player, game.getAdventureDeck(), game.getDisplay());
     }
-    return "All players drew 2 adventure cards";
+    return "\nAll players drew 2 adventure cards.";
   }
 
   private String drawTwoAdventureCards(Player player, AdventureDeck adventureDeck, Display display) {
     player.addToHand(adventureDeck.draw(2), display);
-    return String.format("%s drew 2 adventure cards", player.getName());
+    return String.format("\n%s drew 2 adventure cards.", player.getName());
   }
 
   @Override

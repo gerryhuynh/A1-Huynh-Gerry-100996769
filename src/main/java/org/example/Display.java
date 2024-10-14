@@ -22,37 +22,37 @@ public class Display {
   }
 
   public int promptForCardToDiscard(List<AdventureCard> hand) {
-    print("You must discard a card.");
+    print("\nYou must trim your hand. Please discard a card.");
     printHand(hand);
     return promptForCardIndex(hand.size());
   }
 
   public void printCardsToAdd(List<AdventureCard> cards) {
-    print("Cards to add to hand:");
+    print("\nADVENTURE CARDS TO ADD TO HAND:");
     print(cards.toString());
   }
 
   public void printHand(List<AdventureCard> hand) {
-    print("Your hand:");
+    print("\nYOUR HAND:");
     print(hand.toString());
   }
 
   public int promptForCardIndex(int maxIndex) {
     while (true) {
-      print("Choose a card position:");
+      print("\nCHOOSE A CARD POSITION:");
       try {
         String line = input.nextLine().trim();
         if (line.isEmpty()) {
-          print("Empty input. Please enter a number between 1 and " + maxIndex);
+          print(String.format("Empty input. Please enter a number between 1 and %d.", maxIndex));
           continue;
         }
         int index = Integer.parseInt(line);
         if (index >= 1 && index <= maxIndex) {
           return index - 1;
         }
-        print("Out of range. Please enter a number between 1 and " + maxIndex);
+        print(String.format("Out of range. Please enter a number between 1 and %d.", maxIndex));
       } catch (NumberFormatException e) {
-        print("Not a valid number. Please enter a number between 1 and " + maxIndex);
+        print(String.format("Not a valid number. Please enter a number between 1 and %d.", maxIndex));
       } catch (Exception e) {
         print("An error occurred. Please try again.");
       }
@@ -60,8 +60,8 @@ public class Display {
   }
 
   public void promptEndTurn(String playerName) {
-    print(String.format("%s's turn ended", playerName));
-    print("Press the return key to end your turn and clear the display");
+    print(String.format("\n%s'S TURN ENDED.", playerName));
+    print("\nPress the return key to end your turn and clear the display.");
     input.nextLine();
   }
 

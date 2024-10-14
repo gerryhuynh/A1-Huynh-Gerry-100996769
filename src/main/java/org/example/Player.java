@@ -62,4 +62,9 @@ public class Player {
     public void setShields(int shields) {
         this.shields = shields;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s {Shields: %d}", name, shields);
+    }
 }

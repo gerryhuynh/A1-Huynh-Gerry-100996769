@@ -50,14 +50,14 @@ public class Game {
     currentTurn.setEventCard(eventDeck.draw());
   }
 
+  public String playEventCard() {
+    return currentTurn.playEventCard(this);
+  }
+
   public void nextTurn() {
     int currentIndex = players.indexOf(currentTurn.getPlayer());
     int nextIndex = (currentIndex + 1) % players.size();
     currentTurn.setPlayer(players.get(nextIndex));
-  }
-
-  public String playEventCard() {
-    return currentTurn.playEventCard(this);
   }
 
   public void endTurn() {
