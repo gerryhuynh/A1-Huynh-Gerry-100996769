@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,5 +83,13 @@ public class Game {
 
   public Turn getCurrentTurn() {
     return currentTurn;
+  }
+
+  public Display getDisplay() {
+    return new Display(new PrintWriter(System.out));
+  }
+
+  public void setDisplay(Display display) {
+    return;
   }
 }
