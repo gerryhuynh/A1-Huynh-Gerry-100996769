@@ -57,6 +57,10 @@ public class Game {
     return currentTurn.playEventCard(this);
   }
 
+  public void endTurn() {
+    return;
+  }
+
   // Getters
 
   public AdventureDeck getAdventureDeck() {

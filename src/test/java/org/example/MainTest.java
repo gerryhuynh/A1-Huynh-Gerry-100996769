@@ -723,4 +723,56 @@ class MainTest {
       }
     }
   }
+
+  @Nested
+  @DisplayName("RESP_16: Ends Current Player's Turn and Clears Display")
+  class RESP_16 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+    }
+
+    @Test
+    @DisplayName("RESP_16_test_1: indicates the current player's turn has ended")
+    void RESP_16_test_1() {
+      display.setScanner(new Scanner("\n"));
+      display.promptEndTurn(game.getCurrentPlayer().getName());
+      assertTrue(output.toString().contains(
+        String.format("%s's turn ended", game.getCurrentPlayer().getName())), 
+        "Indicates the current player's turn has ended");
+    }
+
+    @Test
+    @DisplayName("RESP_16_test_2: prompts player to press the return key to end their turn")
+    void RESP_16_test_2() {
+      display.setScanner(new Scanner("\n"));
+      display.promptEndTurn(game.getCurrentPlayer().getName());
+      assertTrue(output.toString().contains("Press the return key to end your turn and clear the display"), "Prompts player to press the return key to end their turn");
+    }
+
+    @Test
+    @DisplayName("RESP_16_test_3: clears display")
+    void RESP_16_test_3() {
+      display.setScanner(new Scanner("\n"));
+      display.clear();
+      assertEquals(Display.CLEAR_SCREEN_COMMAND, output.toString(), "Clears display");
+    }
+
+    @Test
+    @DisplayName("RESP_16_test_4: clears current turn's event card")
+    void RESP_16_test_4() {
+      game.startTurn();
+      display.setScanner(new Scanner("\n"));
+      game.endTurn();
+      assertNull(game.getCurrentTurn().getEventCard(), "Clears current turn's event card");
+    }
+
+  }
 }

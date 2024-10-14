@@ -15,6 +15,10 @@ public class Turn {
     return eventCard.play(game);
   }
 
+  public void endTurn(Display display) {
+    return;
+  }
+
   public Player getPlayer() {
     return player;
   }
