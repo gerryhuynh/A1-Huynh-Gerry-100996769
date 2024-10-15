@@ -32,6 +32,7 @@ public class Game {
   }
 
   public void setupPlayers() {
+    display.print("\nSetting up 4 players...");
     for (int i = 1; i <= MAX_PLAYERS; i++) {
       players.add(new Player("P" + i));
     }
@@ -39,6 +40,7 @@ public class Game {
   }
 
   public void dealAdventureCards() {
+    display.print("\nDealing " + Player.MAX_HAND_SIZE + " adventure cards to each player...");
     for (Player player : players) {
       for (int i = 0; i < Player.MAX_HAND_SIZE; i++) {
         player.getHand().add(adventureDeck.draw());
@@ -54,8 +56,8 @@ public class Game {
     display.printEventCardEffect(currentTurn.getEventCard());
   }
 
-  public String playEventCard() {
-    return currentTurn.playEventCard(this);
+  public void playEventCard() {
+    display.print(currentTurn.playEventCard(this));
   }
 
   public void nextTurn() {
