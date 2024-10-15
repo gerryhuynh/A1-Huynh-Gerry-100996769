@@ -124,7 +124,8 @@ public class Display {
   }
 
   public void printAttackSetup(int stageNum, Participant participant) {
-    print(String.format("\n%s IS SETTING UP AN ATTACK ON STAGE %d...", participant.getPlayer().getName(), stageNum));
+    print(String.format("\nCURRENT PARTICIPANT: %s", participant.getPlayer().getName()));
+    print(String.format("ATTACK ON STAGE: %d", stageNum));
     printHand(participant.getPlayer().getHand());
     printAttackSetupRules();
   }
@@ -193,8 +194,9 @@ public class Display {
   public void promptNextStageSetup(int stageNumber, Stage stage) {
     print(String.format("\nSTAGE %d SETUP COMPLETE.", stageNumber));
     printCardAddedToStage(stage.getCards());
-    print("\nPress the return key to continue setting up the next stage.");
+    print("\nPress the return key to clear the display and continue setting up the next stage.");
     input.nextLine();
+    clear();
   }
 
   public void promptEndTurn(String playerName) {

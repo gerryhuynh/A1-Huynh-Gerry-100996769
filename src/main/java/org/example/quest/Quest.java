@@ -63,16 +63,18 @@ public class Quest {
   }
 
   public void startAttack(Display display, List<Player> players, AdventureDeck adventureDeck) {
-    display.print("\nStarting attack...");
+    display.print("\nATTACK PHASE...");
     addAllPlayersExceptSponsorToParticipants(players);
     for (int i = 0; i < numStages; i++) {
       if (participants.size() == 0) break;
-      display.print(String.format("ATTACKING STAGE %d...", i + 1));
+      display.print(String.format("STAGE: %d", i + 1));
       display.printParticipants(participants);
       participants = display.promptForParticipants(participants);
       for (Participant participant : participants) {
         participant.drawCard(adventureDeck, display);
         setupAttack(i + 1, participant, display);
+        display.promptNextPlayer();
+        display.clear();
       }
     }
   }
@@ -126,7 +128,7 @@ public class Quest {
     }
     if (stages.indexOf(stage) > 0) {
       Stage previousStage = stages.get(stages.indexOf(stage) - 1);
-      if (previousStage.getValue() > stage.getValue()) {
+      if (previousStage.getValue() >= stage.getValue()) {
         display.print("Insufficient value for this stage.");
         return false;
       }

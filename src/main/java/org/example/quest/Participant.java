@@ -18,8 +18,6 @@ public class Participant {
   public void drawCard(AdventureDeck adventureDeck, Display display) {
     display.print(String.format("%s draws an adventure card...", player.getName()));
     player.addToHand(adventureDeck.draw(1), display);
-    display.promptNextPlayer();
-    display.clear();
   }
 
   @Override

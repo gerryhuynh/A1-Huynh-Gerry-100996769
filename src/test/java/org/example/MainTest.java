@@ -1443,16 +1443,8 @@ class MainTest {
     }
 
     @Test
-    @DisplayName("RESP_25_test_3: prompts next player after drawing card")
+    @DisplayName("RESP_25_test_3: adds drawn card to player's hand")
     void RESP_25_test_3() {
-      Participant participant = new Participant(game.getPlayers().get(1));
-      participant.drawCard(game.getAdventureDeck(), display);
-      assertTrue(output.toString().contains("Press the return key to clear the display for the next player"), "Prompts next player");
-    }
-
-    @Test
-    @DisplayName("RESP_25_test_4: adds drawn card to player's hand")
-    void RESP_25_test_4() {
       Participant participant = new Participant(game.getPlayers().get(1));
       AdventureCard card = game.getAdventureDeck().getCards().get(0);
       participant.drawCard(game.getAdventureDeck(), display);
@@ -1460,8 +1452,8 @@ class MainTest {
     }
 
     @Test
-    @DisplayName("RESP_25_test_5: trims hand - player's hand size does not exceed " + Player.MAX_HAND_SIZE)
-    void RESP_25_test_5() {
+    @DisplayName("RESP_25_test_4: trims hand - player's hand size does not exceed " + Player.MAX_HAND_SIZE)
+    void RESP_25_test_4() {
       display.setScanner(new Scanner("1\n\n"));
       game.dealAdventureCards();
       Participant participant = new Participant(game.getPlayers().get(1));
