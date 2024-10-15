@@ -80,6 +80,10 @@ public class Quest {
     }
   }
 
+  public boolean validateStageSetupQuit(Stage stage, Display display) {
+    return false;
+  }
+
   public boolean validateStageSetupCard(Stage stage, AdventureCard card, Display display) {
     if (card.getType() instanceof FoeType && stage.hasFoe()) {
       display.print("Only one Foe card is allowed per stage.");

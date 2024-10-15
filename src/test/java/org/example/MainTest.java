@@ -1263,4 +1263,88 @@ class MainTest {
       assertTrue(output.toString().contains(card.toString()), "Prints cards added to stage");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_23: Quest Setup - Handle QUIT")
+  class RESP_23 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+    private Quest quest;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.dealAdventureCards();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+      game.startTurn();
+      game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+      game.createQuest(2);
+      quest = game.getQuest();
+      quest.setSponsor(game.getCurrentPlayer());
+    }
+
+    @Test
+    @DisplayName("RESP_23_test_1: returns false if stage is empty")
+    void RESP_23_test_1() {
+      Stage stage = new Stage();
+      boolean validQuit = quest.validateStageSetupQuit(stage, display);
+      assertFalse(validQuit, "Returns false if stage is empty");
+    }
+
+    @Test
+    @DisplayName("RESP_23_test_2: prints cannot be empty message if stage is empty")
+    void RESP_23_test_2() {
+      Stage stage = new Stage();
+      quest.validateStageSetupQuit(stage, display);
+      assertTrue(output.toString().contains("A stage cannot be empty."), "Prints cannot be empty message");
+    }
+
+    @Test
+    @DisplayName("RESP_23_test_3: returns false if previous stage has higher value")
+    void RESP_23_test_3() {
+      display.setScanner(new Scanner("\n"));
+      quest.getStages().get(0).addCard(new AdventureCard(FoeType.F15));
+      quest.getStages().get(1).addCard(new AdventureCard(FoeType.F5));
+      Stage currentStage = quest.getStages().get(1);
+      boolean validQuit = quest.validateStageSetupQuit(currentStage, display);
+      assertFalse(validQuit, "Returns false if previous stage has higher value");
+    }
+
+    @Test
+    @DisplayName("RESP_23_test_4: prints insufficient value message if previous stage has higher value")
+    void RESP_23_test_4() {
+      display.setScanner(new Scanner("\n"));
+      quest.getStages().get(0).addCard(new AdventureCard(FoeType.F15));
+      quest.getStages().get(1).addCard(new AdventureCard(FoeType.F5));
+      Stage currentStage = quest.getStages().get(1);
+      quest.validateStageSetupQuit(currentStage, display);
+      assertTrue(output.toString().contains("Insufficient value for this stage."), "Prints insufficient value message");
+    }
+
+    @Test
+    @DisplayName("RESP_23_test_5: returns true if all conditions are met")
+    void RESP_23_test_5() {
+      display.setScanner(new Scanner("\n"));
+      quest.getStages().get(0).addCard(new AdventureCard(FoeType.F5));
+      quest.getStages().get(1).addCard(new AdventureCard(FoeType.F15));
+      Stage currentStage = quest.getStages().get(1);
+      boolean validQuit = quest.validateStageSetupQuit(currentStage, display);
+      assertTrue(validQuit, "Returns true if all conditions are met");
+    }
+
+    @Test
+    @DisplayName("RESP_23_test_6: prints cards used for stage")
+    void RESP_23_test_6() {
+      display.setScanner(new Scanner("\n"));
+      quest.getStages().get(0).addCard(new AdventureCard(FoeType.F5));
+      quest.getStages().get(1).addCard(new AdventureCard(FoeType.F15));
+      Stage currentStage = quest.getStages().get(1);
+      List<AdventureCard> cards = currentStage.getCards();
+      quest.validateStageSetupQuit(currentStage, display);
+      assertTrue(output.toString().contains(cards.toString()), "Prints cards used for stage");
+    }
+  }
 }
