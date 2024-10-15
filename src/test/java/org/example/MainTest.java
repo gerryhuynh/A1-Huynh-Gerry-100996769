@@ -747,6 +747,7 @@ class MainTest {
       game.getCurrentTurn().setEventCard(new EventCard(EType.PROSPERITY));  
       output = new StringWriter();
       display = new Display(new PrintWriter(output));
+      display.setScanner(new Scanner("\n".repeat(game.getPlayers().size())));
       game.setDisplay(display);
     }
 
@@ -770,13 +771,27 @@ class MainTest {
     @DisplayName("RESP_15_test_3: trims hands if adding cards to hand exceeds " + Player.MAX_HAND_SIZE)
     void RESP_15_test_3() {
       game.dealAdventureCards();
-      String input = "1\n2\n".repeat(game.getPlayers().size());
+      String input = "1\n2\n\n".repeat(game.getPlayers().size());
       display.setScanner(new Scanner(input));
 
       game.playEventCard();
       for (Player player : game.getPlayers()) {
         assertEquals(Player.MAX_HAND_SIZE, player.getHand().size(), String.format("%s's hand size is equal to %d", player.getName(), Player.MAX_HAND_SIZE));
       }
+    }
+
+    @Test
+    @DisplayName("RESP_15_test_4: prompts player to press the return key to clear the display for the next player")
+    void RESP_15_test_4() {
+      game.playEventCard();
+      assertTrue(output.toString().contains("Press the return key to clear the display for the next player"), "Prompts player to press the return key to clear the display for the next player");
+    }
+
+    @Test
+    @DisplayName("RESP_15_test_5: clears display after each player has drawn cards")
+    void RESP_15_test_5() {
+      game.playEventCard();
+      assertTrue(output.toString().contains(Display.CLEAR_SCREEN_COMMAND), "Clears display after each player has drawn cards");
     }
   }
 
