@@ -6,6 +6,7 @@ import org.example.Game;
 import org.example.Player;
 import org.example.decks.AdventureDeck;
 import org.example.enums.event.EType;
+import java.util.List;
 
 public class EventCard extends Card<EventType> {
   public EventCard(EventType type) {
@@ -32,8 +33,21 @@ public class EventCard extends Card<EventType> {
   }
 
   private String prosperityEffect(Game game) {
-    for (Player player : game.getPlayers()) {
-      drawTwoAdventureCards(player, game.getAdventureDeck(), game.getDisplay());
+    List<Player> players = game.getPlayers();
+    for (int i = 0; i < players.size(); i++) {
+        Player player = players.get(i);
+        if (i != game.getPlayers().indexOf(game.getCurrentPlayer())) {
+          game.getDisplay().printEventCardEffect(this);
+          game.getDisplay().printCurrentPlayer(player);
+        }
+        drawTwoAdventureCards(player, game.getAdventureDeck(), game.getDisplay());
+
+        if (i < players.size() - 1) {
+            game.getDisplay().promptNextPlayer();
+        } else {
+            game.getDisplay().promptReturnToOriginalPlayer();
+        }
+        game.getDisplay().clear();
     }
     return "\nAll players drew 2 adventure cards.";
   }

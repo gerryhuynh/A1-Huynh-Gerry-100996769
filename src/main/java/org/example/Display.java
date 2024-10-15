@@ -82,6 +82,16 @@ public class Display {
     input.nextLine();
   }
 
+  public void promptNextPlayer() {
+    print("\nPress the return key to clear the display for the next player.");
+    input.nextLine();
+  }
+
+  public void promptReturnToOriginalPlayer() {
+    print("\nPress the return key to clear the display and return to the original player.");
+    input.nextLine();
+  }
+
   public void printGameOver(List<Player> winners) {
     print("\nGame Over! Winners:");
     winners.forEach(winner -> print(String.format("- %s", winner.getName())));
