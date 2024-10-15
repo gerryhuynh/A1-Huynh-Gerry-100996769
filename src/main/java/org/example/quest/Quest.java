@@ -120,6 +120,9 @@ public class Quest {
       }
     }
   }
+  public boolean validateAttackCard(List<AdventureCard> attackCards, AdventureCard card, Display display) {
+    return true;
+  }
 
   public boolean validateStageSetupQuit(Stage stage, Display display) {
     if (stage.getCards().size() == 0) {

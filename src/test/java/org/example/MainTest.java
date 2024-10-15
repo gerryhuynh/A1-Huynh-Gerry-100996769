@@ -1507,4 +1507,80 @@ class MainTest {
       assertTrue(output.toString().contains("Enter QUIT once you are satisfied with your attack setup"), "Prints QUIT prompt");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_27: Quest Attack - Validate Input and Add Attack Cards")
+  class RESP_27 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+    private Quest quest;
+    private Participant participant;
+
+    @BeforeEach
+    void setUp() {
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+      game.setupPlayers();
+      game.createQuest(2);
+      quest = game.getQuest();
+      quest.setSponsor(game.getCurrentPlayer());
+      quest.addAllPlayersExceptSponsorToParticipants(game.getPlayers());
+      participant = quest.getParticipants().get(0);
+    }
+
+    @Test
+    @DisplayName("RESP_27_test_1: returns false if card is a repeat Weapon card")
+    void RESP_27_test_1() {
+      List<AdventureCard> participantAttackCards = participant.getAttackCards();
+      participantAttackCards.add(new AdventureCard(WeaponType.D5));
+      AdventureCard cardToAdd = new AdventureCard(WeaponType.D5);
+      boolean validCard = quest.validateAttackCard(participantAttackCards, cardToAdd, display);
+      assertFalse(validCard, "Returns false if card is a repeat Weapon card");
+    }
+
+    @Test
+    @DisplayName("RESP_27_test_2: returns false if card is a Foe card")
+    void RESP_27_test_2() {
+      List<AdventureCard> participantAttackCards = participant.getAttackCards();
+      AdventureCard cardToAdd = new AdventureCard(FoeType.F5);
+      boolean validCard = quest.validateAttackCard(participantAttackCards, cardToAdd, display);
+      assertFalse(validCard, "Returns false if card is a Foe card");
+    }
+
+    @Test
+    @DisplayName("RESP_27_test_3: returns true if card is a valid Weapon card")
+    void RESP_27_test_3() {
+      List<AdventureCard> participantAttackCards = participant.getAttackCards();
+      AdventureCard cardToAdd = new AdventureCard(WeaponType.D5);
+      boolean validCard = quest.validateAttackCard(participantAttackCards, cardToAdd, display);
+      assertTrue(validCard, "Returns true if card is a valid Weapon card");
+    }
+
+    @Test
+    @DisplayName("RESP_27_test_4: adds valid card to participant's attack cards")
+    void RESP_27_test_4() {
+      AdventureCard cardToAdd = new AdventureCard(WeaponType.D5);
+      participant.addCardToAttack(cardToAdd, display);
+      assertTrue(participant.getAttackCards().contains(cardToAdd), "Adds valid card to participant's attack cards");
+    }
+
+    @Test
+    @DisplayName("RESP_27_test_5: removes attack card from participant's hand")
+    void RESP_27_test_5() {
+      AdventureCard cardToAdd = new AdventureCard(WeaponType.D5);
+      participant.getPlayer().getHand().add(cardToAdd);
+      participant.addCardToAttack(cardToAdd, display);
+      assertFalse(participant.getPlayer().getHand().contains(cardToAdd), "Player removes attack card from hand");
+    }
+
+    @Test
+    @DisplayName("RESP_27_test_6: prints card added to attack")
+    void RESP_27_test_6() {
+      AdventureCard cardToAdd = new AdventureCard(WeaponType.D5);
+      participant.addCardToAttack(cardToAdd, display);
+      assertTrue(output.toString().contains(cardToAdd.toString()), "Prints card added to attack");
+    }
+  }
 }
