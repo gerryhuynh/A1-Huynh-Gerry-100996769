@@ -80,7 +80,39 @@ public class Quest {
   }
 
   public void setupAttack(int stageNum, Participant participant, Display display) {
+    boolean validCard = false;
     display.printAttackSetup(stageNum, participant);
+    while (true) {
+      if (participant.getPlayer().getHand().size() != 0) {
+        display.printHand(participant.getPlayer().getHand());
+      }
+      int cardIndex = display.promptForCardIndexWithQuit(participant.getPlayer().getHand().size(), true);
+      AdventureCard card = participant.getPlayer().getHand().get(cardIndex);
+      validCard = validateAttackCard(participant.getAttackCards(), card, display);
+      if (validCard) {
+        participant.addCardToAttack(card, display);
+      }
+    }
+  }
+
+  public boolean validateAttackCard(List<AdventureCard> attackCards, AdventureCard card, Display display) {
+    if (card.getType() instanceof WeaponType) {
+      boolean hasDuplicateWeapon = attackCards.stream()
+        .filter(c -> c.getType() instanceof WeaponType)
+        .anyMatch(c -> c.getType().equals(card.getType()));
+
+      if (hasDuplicateWeapon) {
+        display.print("Duplicate Weapon cards are not allowed in a stage.");
+        display.printAttackSetupRules();
+        return false;
+      }
+    }
+    if (card.getType() instanceof FoeType) {
+      display.print("Foe cards are not allowed in an attack.");
+      display.printAttackSetupRules();
+      return false;
+    }
+    return true;
   }
 
   public void addAllPlayersExceptSponsorToParticipants(List<Player> players) {
@@ -119,9 +151,6 @@ public class Quest {
         display.printQuestSetupComplete(this);
       }
     }
-  }
-  public boolean validateAttackCard(List<AdventureCard> attackCards, AdventureCard card, Display display) {
-    return true;
   }
 
   public boolean validateStageSetupQuit(Stage stage, Display display) {

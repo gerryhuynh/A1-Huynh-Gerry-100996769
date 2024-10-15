@@ -10,9 +10,11 @@ import org.example.decks.AdventureDeck;
 
 public class Participant {
   private Player player;
+  private List<AdventureCard> attackCards;
 
   public Participant(Player player) {
     this.player = player;
+    this.attackCards = new ArrayList<>();
   }
 
   public Player getPlayer() {
@@ -25,11 +27,13 @@ public class Participant {
   }
 
   public void addCardToAttack(AdventureCard card, Display display) {
-    return;
+    attackCards.add(card);
+    player.getHand().remove(card);
+    display.printCardAddedToAttack(attackCards);
   }
 
   public List<AdventureCard> getAttackCards() {
-    return new ArrayList<>();
+    return attackCards;
   }
 
   @Override

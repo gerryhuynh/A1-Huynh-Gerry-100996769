@@ -147,6 +147,11 @@ public class Display {
     print(cards.toString());
   }
 
+  public void printCardAddedToAttack(List<AdventureCard> cards) {
+    print("\nCARD ADDED TO ATTACK:");
+    print(cards.toString());
+  }
+
   public void printQuestSetupComplete(Quest quest) {
     print("\nQUEST SETUP COMPLETE.");
     print("Cards used for the quest:");
