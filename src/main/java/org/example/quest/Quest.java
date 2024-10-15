@@ -61,6 +61,9 @@ public class Quest {
     if (sponsor == null) display.printSponsorNotFound();
   }
 
+  public void addAllPlayersExceptSponsorToParticipants(Stage stage, List<Player> players) {
+    return;
+  }
 
   public void setup(Display display) {
     for (int i = 0; i < numStages; i++) {
