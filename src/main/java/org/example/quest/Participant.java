@@ -1,3 +1,7 @@
 package org.example.quest;
 
-public class Participant {}
+import org.example.Player;
+
+public class Participant {
+  public Participant(Player player) {}
+}

@@ -9,6 +9,7 @@ import org.example.enums.adventure.FoeType;
 import org.example.enums.adventure.WeaponType;
 import org.example.enums.event.EType;
 import org.example.enums.event.QType;
+import org.example.quest.Participant;
 import org.example.quest.Quest;
 import org.example.quest.Stage;
 import org.junit.jupiter.api.*;
@@ -1347,4 +1348,57 @@ class MainTest {
       assertTrue(output.toString().contains(cards.toString()), "Prints cards used for stage");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_24: Quest Setup - Quest Attack - Display and Prompt Eligible Participants")
+  class RESP_24 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+    private Quest quest;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.dealAdventureCards();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+      game.createQuest(2);
+      quest = game.getQuest();
+
+    }
+
+    @Test
+    @DisplayName("RESP_24_test_1: prints eligible participants")
+    void RESP_24_test_1() {
+      display.setScanner(new Scanner("Y\n\n".repeat(quest.getParticipants().size())));
+      List<Participant> participants = quest.getParticipants();
+      display.printParticipants(participants);
+      assertTrue(output.toString().contains(participants.toString()), "Prints eligible participants");
+    }
+
+    @Test
+    @DisplayName("RESP_24_test_2: prompts for eligible participants")
+    void RESP_24_test_2() {
+      quest.setSponsor(game.getPlayers().get(0));
+      for (Player player : game.getPlayers()) {
+        if (player != quest.getSponsor()) {
+          quest.getParticipants().add(new Participant(player));
+        }
+      }
+      display.setScanner(new Scanner("N\n\nY\n\nY\n\n"));
+      List<Participant> participants = display.promptForParticipants(quest.getParticipants());
+      assertEquals(2, participants.size(), "Prompts for participants and withdraws player");
+    }
+
+    @Test
+    @DisplayName("RESP_24_test_3: sponsor not in participants")
+    void RESP_24_test_3() {
+      quest.setSponsor(game.getPlayers().get(0));
+      quest.addAllPlayersExceptSponsorToParticipants(quest.getStages().get(0), game.getPlayers());
+      assertEquals(game.getPlayers().size() - 1, quest.getParticipants().size(), "Sponsor not in participants");
+    }
+  }
+
 }

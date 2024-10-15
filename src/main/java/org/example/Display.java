@@ -2,13 +2,14 @@ package org.example;
 
 import org.example.cards.AdventureCard;
 import org.example.cards.EventCard;
+import org.example.quest.Participant;
 import org.example.quest.Quest;
 import org.example.quest.Stage;
 
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
-
+import java.util.ArrayList;
 public class Display {
   public static final String CLEAR_SCREEN_COMMAND = "\033[H\033[2J";
   private PrintWriter output;
@@ -142,6 +143,14 @@ public class Display {
     print("\nPress the return key to clear the display for participants.");
     input.nextLine();
     clear();
+  }
+
+  public void printParticipants(List<Participant> participants) {
+    return;
+  }
+
+  public List<Participant> promptForParticipants(List<Participant> participants) {
+    return new ArrayList<>();
   }
 
   public void promptNextStageSetup(int stageNumber, Stage stage) {
