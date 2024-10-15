@@ -8,6 +8,7 @@ import org.example.cards.AdventureCard;
 import org.example.cards.EventCard;
 import org.example.decks.AdventureDeck;
 import org.example.decks.EventDeck;
+import org.example.quest.Quest;
 
 public class Game {
   protected static final int MAX_PLAYERS = 4;
@@ -134,5 +135,9 @@ public class Game {
 
   public void setDisplay(Display display) {
     this.display = display;
+  }
+
+  public Quest getQuest() {
+    return new Quest(0);
   }
 }

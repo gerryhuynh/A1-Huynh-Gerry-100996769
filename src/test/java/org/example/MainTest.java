@@ -9,6 +9,7 @@ import org.example.enums.adventure.FoeType;
 import org.example.enums.adventure.WeaponType;
 import org.example.enums.event.EType;
 import org.example.enums.event.QType;
+import org.example.quest.Stage;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -961,6 +962,62 @@ class MainTest {
       game.endTurn();
       assertTrue(output.toString().contains(game.getPlayers().get(0).getName()), "Prints winners");
       assertTrue(output.toString().contains(game.getPlayers().get(1).getName()), "Prints winners");
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_19: Player Draws Q Card - Create Quest")
+  class RESP_19 {
+    private final Game game = new Game();
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.startTurn();
+      game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+    }
+
+    @Test
+    @DisplayName("RESP_19_test_1: creates a quest with the correct number of stages")
+    void RESP_19_test_1() {
+      game.playEventCard();
+      assertEquals(QType.Q2.getNumStages(), game.getQuest().getNumStages(), "Creates a quest with the correct number of stages");
+    }
+
+    @Test
+    @DisplayName("RESP_19_test_2: quest is set to active")
+    void RESP_19_test_2() {
+      game.playEventCard();
+      assertTrue(game.getQuest().isActive(), "Quest is set to active");
+    }
+
+    @Test
+    @DisplayName("RESP_19_test_3: current stage is set to first stage")
+    void RESP_19_test_3() {
+      game.playEventCard();
+      Stage firstStage = game.getQuest().getStages().get(0);
+      assertEquals(firstStage, game.getQuest().getCurrentStage(), "Current stage is set to first stage");
+    }
+
+    @Test
+    @DisplayName("RESP_19_test_4: quest starts with no sponsor")
+    void RESP_19_test_4() {
+      game.playEventCard();
+      assertNull(game.getQuest().getSponsor(), "Quest starts with no sponsor");
+    }
+
+    @Test
+    @DisplayName("RESP_19_test_5: participants list is empty")
+    void RESP_19_test_5() {
+      game.playEventCard();
+      assertTrue(game.getQuest().getParticipants().isEmpty(), "Participants list is empty");
+    }
+
+    @Test
+    @DisplayName("RESP_19_test_6: current participant is null")
+    void RESP_19_test_6() {
+      game.playEventCard();
+      assertNull(game.getQuest().getCurrentParticipant(), "Current participant is null");
     }
   }
 }

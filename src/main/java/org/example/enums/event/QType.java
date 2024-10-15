@@ -16,6 +16,10 @@ public enum QType implements EventType {
     return defaultCount;
   }
 
+  public int getNumStages() {
+    return 0;
+  }
+
   public String getEffectDesc() {
     return String.format("Play a %s quest.", this);
   }
