@@ -2,6 +2,8 @@ package org.example.quest;
 
 import java.util.List;
 import java.util.ArrayList;
+
+import org.example.Display;
 import org.example.Player;
 
 public class Quest {
@@ -24,6 +26,33 @@ public class Quest {
     this.participants = new ArrayList<>();
     this.currentParticipant = null;
     this.sponsor = null;
+  }
+
+  public void findSponsor(List<Player> players, Player currentPlayer, Display display) {
+    int startIndex = players.indexOf(currentPlayer);
+    int playerCount = players.size();
+
+    display.print("\nFinding sponsor for quest...");
+
+    for (int i = 0; i < playerCount; i++) {
+      int index = (startIndex + i) % playerCount;
+      Player player = players.get(index);
+
+      boolean sponsorFound = display.promptForSponsor(player, currentPlayer, this.numStages);
+      if (sponsorFound) {
+        this.sponsor = player;
+        display.printSponsorFound(player);
+        break;
+      } else {
+        display.printSponsorDeclined(player);
+      }
+      if (i < playerCount - 1) display.promptNextPlayer();
+      else display.promptReturnToOriginalPlayer();
+
+      display.clear();
+    }
+
+    if (sponsor == null) display.printSponsorNotFound();
   }
 
   public int getNumStages() {

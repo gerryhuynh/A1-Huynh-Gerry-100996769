@@ -76,6 +76,37 @@ public class Display {
     }
   }
 
+  public boolean promptForSponsor(Player player, Player currentPlayer, int numStages) {
+    print(String.format("\n%s, do you want to be the sponsor for this %d-stage quest?", player.getName(), numStages));
+    if (!player.equals(currentPlayer)) printHand(player.getHand());
+    while (true) {
+      print("\nEnter Y or N:");
+      String line = input.nextLine().trim().toLowerCase();
+      if (line.equals("y")) {
+        return true;
+      } else if (line.equals("n")) {
+        return false;
+      } else {
+        print("Invalid input. Please enter Y or N.");
+      }
+    }
+  }
+
+  public void printSponsorFound(Player player) {
+    print(String.format("\n%s will be the sponsor for this quest.", player.getName()));
+    print("\nPress the return key to clear the display and begin setting up the quest.");
+    input.nextLine();
+    clear();
+  }
+
+  public void printSponsorDeclined(Player player) {
+    print(String.format("\n%s declined to be the sponsor.", player.getName()));
+  }
+
+  public void printSponsorNotFound() {
+    print("\nNo sponsor found. Quest will not continue.");
+  }
+
   public void promptEndTurn(String playerName) {
     print(String.format("\n%s'S TURN ENDED.", playerName));
     print("\nPress the return key to end your turn and clear the display.");

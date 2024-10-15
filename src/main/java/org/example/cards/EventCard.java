@@ -29,6 +29,7 @@ public class EventCard extends Card<EventType> {
 
   private String startQuest(Game game) {
     game.createQuest(((QType) getType()).getNumStages());
+    game.startQuest();
     return "";
   }
 

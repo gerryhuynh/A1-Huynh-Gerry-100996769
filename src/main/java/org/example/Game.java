@@ -71,6 +71,10 @@ public class Game {
     quest = new Quest(numStages);
   }
 
+  public void startQuest() {
+    quest.findSponsor(players, currentTurn.getPlayer(), display);
+  }
+
   public void nextTurn() {
     int currentIndex = players.indexOf(currentTurn.getPlayer());
     int nextIndex = (currentIndex + 1) % players.size();
