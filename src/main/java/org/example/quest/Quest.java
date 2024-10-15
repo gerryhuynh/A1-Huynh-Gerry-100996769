@@ -57,6 +57,14 @@ public class Quest {
     if (sponsor == null) display.printSponsorNotFound();
   }
 
+
+  public void setup(Display display) {
+    for (int i = 0; i < numStages; i++) {
+      display.printStageSetup(i + 1, sponsor.getHand());
+      int cardIndex = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
+    }
+  }
+
   public int getNumStages() {
     return numStages;
   }
