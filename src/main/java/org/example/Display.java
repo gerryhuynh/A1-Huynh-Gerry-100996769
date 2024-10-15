@@ -55,29 +55,32 @@ public class Display {
   }
 
   public int promptForCardIndex(int maxIndex) {
+    return promptForCardIndexWithQuit(maxIndex, false);
+  }
+
+  public int promptForCardIndexWithQuit(int maxIndex, boolean allowQuit) {
     while (true) {
       print("\nCHOOSE A CARD POSITION:");
       try {
         String line = input.nextLine().trim();
         if (line.isEmpty()) {
-          print(String.format("Empty input. Please enter a number between 1 and %d.", maxIndex));
+          print(String.format("Empty input. Please enter a number between 1 and %d%s.", maxIndex, allowQuit ? " or QUIT" : ""));
           continue;
+        }
+        if (allowQuit && line.equalsIgnoreCase("QUIT")) {
+          return -1;
         }
         int index = Integer.parseInt(line);
         if (index >= 1 && index <= maxIndex) {
           return index - 1;
         }
-        print(String.format("Out of range. Please enter a number between 1 and %d.", maxIndex));
+        print(String.format("Out of range. Please enter a number between 1 and %d%s.", maxIndex, allowQuit ? " or QUIT" : ""));
       } catch (NumberFormatException e) {
-        print(String.format("Not a valid number. Please enter a number between 1 and %d.", maxIndex));
+        print(String.format("Not a valid number. Please enter a number between 1 and %d%s.", maxIndex, allowQuit ? " or QUIT" : ""));
       } catch (Exception e) {
         print("An error occurred. Please try again.");
       }
     }
-  }
-
-  public int promptForCardIndexWithQuit(int maxIndex, boolean allowQuit) {
-    return 0;
   }
 
   public boolean promptForSponsor(Player player, Player currentPlayer, int numStages) {
@@ -112,7 +115,15 @@ public class Display {
   }
 
   public void printStageSetup(int stageNum, List<AdventureCard> hand) {
-    return;
+    print(String.format("\nSETTING UP STAGE %d...", stageNum));
+    printHand(hand);
+    printStageSetupRules();
+  }
+
+  public void printStageSetupRules() {
+    print("\nSTAGE SETUP RULES: Each stage must consist of a single Foe card and 0/+ non-repeated Weapon cards.");
+    print("Choose the cards you want to add to this stage.");
+    print("Enter QUIT once you are ready to proceed to the next stage.");
   }
 
   public void promptEndTurn(String playerName) {

@@ -73,6 +73,9 @@ public class Game {
 
   public void startQuest() {
     quest.findSponsor(players, currentTurn.getPlayer(), display);
+    if (quest.getSponsor() != null) {
+      quest.setup(display);
+    }
   }
 
   public void nextTurn() {
