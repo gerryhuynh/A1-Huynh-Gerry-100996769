@@ -123,6 +123,18 @@ public class Display {
     printStageSetupRules();
   }
 
+  public void printAttackSetup(int stageNum, Participant participant) {
+    print(String.format("\n%s IS SETTING UP AN ATTACK ON STAGE %d...", participant.getPlayer().getName(), stageNum));
+    printHand(participant.getPlayer().getHand());
+    printAttackSetupRules();
+  }
+
+  public void printAttackSetupRules() {
+    print("\nATTACK SETUP RULES: Each stage attack must consist of only non-repeated Weapon cards.");
+    print("Choose the cards you want to use to attack this stage.");
+    print("Enter QUIT once you are satisfied with your attack setup.");
+  }
+
   public void printStageSetupRules() {
     print("\nSTAGE SETUP RULES: Each stage must consist of a single Foe card and 0/+ non-repeated Weapon cards.");
     print("Choose the cards you want to add to this stage.");
@@ -148,10 +160,6 @@ public class Display {
   public void printParticipants(List<Participant> participants) {
     print("\nELIGIBLE PARTICIPANTS:");
     print(participants.toString());
-  }
-
-  public void printAttackSetup(int stageNum, Participant participant) {
-    return;
   }
 
   public List<Participant> promptForParticipants(List<Participant> participants) {

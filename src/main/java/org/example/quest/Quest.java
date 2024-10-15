@@ -72,8 +72,13 @@ public class Quest {
       participants = display.promptForParticipants(participants);
       for (Participant participant : participants) {
         participant.drawCard(adventureDeck, display);
+        setupAttack(i + 1, participant, display);
       }
     }
+  }
+
+  public void setupAttack(int stageNum, Participant participant, Display display) {
+    display.printAttackSetup(stageNum, participant);
   }
 
   public void addAllPlayersExceptSponsorToParticipants(List<Player> players) {
