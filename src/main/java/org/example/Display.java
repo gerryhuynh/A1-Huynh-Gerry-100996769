@@ -2,6 +2,8 @@ package org.example;
 
 import org.example.cards.AdventureCard;
 import org.example.cards.EventCard;
+import org.example.quest.Quest;
+import org.example.quest.Stage;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -129,6 +131,24 @@ public class Display {
   public void printCardAddedToStage(List<AdventureCard> cards) {
     print("\nCARD ADDED TO STAGE:");
     print(cards.toString());
+  }
+
+  public void printQuestSetupComplete(Quest quest) {
+    print("\nQUEST SETUP COMPLETE.");
+    print("Cards used for the quest:");
+    for (Stage stage : quest.getStages()) {
+      print(String.format("Stage %d: %s", quest.getStages().indexOf(stage) + 1, stage.getCards().toString()));
+    }
+    print("\nPress the return key to clear the display for participants.");
+    input.nextLine();
+    clear();
+  }
+
+  public void promptNextStageSetup(int stageNumber, Stage stage) {
+    print(String.format("\nSTAGE %d SETUP COMPLETE.", stageNumber));
+    printCardAddedToStage(stage.getCards());
+    print("\nPress the return key to continue setting up the next stage.");
+    input.nextLine();
   }
 
   public void promptEndTurn(String playerName) {

@@ -64,6 +64,8 @@ public class Quest {
 
   public void setup(Display display) {
     for (int i = 0; i < numStages; i++) {
+      boolean validQuit = false;
+      boolean validCard = false;
       Stage stage = stages.get(i);
       display.printStageSetup(i + 1, sponsor.getHand());
       while (true) {
@@ -71,26 +73,50 @@ public class Quest {
           display.printHand(sponsor.getHand());
         }
         int cardIndex = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
-        boolean validCard = validateStageSetupCard(stage, sponsor.getHand().get(cardIndex), display);
-        if (validCard) {
-          addCardToStage(stage, sponsor.getHand().get(cardIndex), display);
+        if (cardIndex == QUIT) {
+          validQuit = validateStageSetupQuit(stage, display);
+          if (validQuit) {
+            break;
+          }
         }
-        display.printStageSetupRules();
+        if (cardIndex != QUIT) {
+          validCard = validateStageSetupCard(stage, sponsor.getHand().get(cardIndex), display);
+          if (validCard) {
+            addCardToStage(stage, sponsor.getHand().get(cardIndex), display);
+          }
+        }
+      }
+      if (i == numStages - 1) {
+        display.printQuestSetupComplete(this);
       }
     }
   }
 
   public boolean validateStageSetupQuit(Stage stage, Display display) {
-    return false;
+    if (stage.getCards().size() == 0) {
+      display.print("A stage cannot be empty.");
+      return false;
+    }
+    if (stages.indexOf(stage) > 0) {
+      Stage previousStage = stages.get(stages.indexOf(stage) - 1);
+      if (previousStage.getValue() > stage.getValue()) {
+        display.print("Insufficient value for this stage.");
+        return false;
+      }
+    }
+    display.promptNextStageSetup(stages.indexOf(stage) + 1, stage);
+    return true;
   }
 
   public boolean validateStageSetupCard(Stage stage, AdventureCard card, Display display) {
     if (card.getType() instanceof FoeType && stage.hasFoe()) {
       display.print("Only one Foe card is allowed per stage.");
+      display.printStageSetupRules();
       return false;
     }
     if (card.getType() instanceof WeaponType && stage.hasWeapon(card)) {
       display.print("Duplicate Weapon cards are not allowed in a stage.");
+      display.printStageSetupRules();
       return false;
     }
     return true;
