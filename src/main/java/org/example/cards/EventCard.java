@@ -1,6 +1,7 @@
 package org.example.cards;
 
 import org.example.enums.event.EventType;
+import org.example.enums.event.QType;
 import org.example.Display;
 import org.example.Game;
 import org.example.Player;
@@ -18,8 +19,17 @@ public class EventCard extends Card<EventType> {
       case EType.PLAGUE: return plagueEffect(game.getCurrentPlayer());
       case EType.QUEENS_FAVOR: return queensFavorEffect(game.getCurrentPlayer(), game.getAdventureDeck(), game.getDisplay());
       case EType.PROSPERITY: return prosperityEffect(game);
-      default: return "";
+      default:
+        if (getType() instanceof QType) {
+          return startQuest(game);
+        }
+        return "";
     }
+  }
+
+  private String startQuest(Game game) {
+    game.createQuest(((QType) getType()).getNumStages());
+    return "";
   }
 
   private String plagueEffect(Player player) {

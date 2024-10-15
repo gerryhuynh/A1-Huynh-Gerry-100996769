@@ -5,35 +5,52 @@ import java.util.ArrayList;
 import org.example.Player;
 
 public class Quest {
-  public Quest(int numStages) {}
+  private int numStages;
+  private List<Stage> stages;
+  private Stage currentStage;
+  private boolean isActive;
+  private List<Participant> participants;
+  private Participant currentParticipant;
+  private Player sponsor;
+
+  public Quest(int numStages) {
+    this.isActive = true;
+    this.numStages = numStages;
+    this.stages = new ArrayList<>();
+    for (int i = 0; i < numStages; i++) {
+      this.stages.add(new Stage());
+    }
+    this.currentStage = stages.get(0);
+    this.participants = new ArrayList<>();
+    this.currentParticipant = null;
+    this.sponsor = null;
+  }
 
   public int getNumStages() {
-    return 0;
+    return numStages;
   }
 
   public List<Stage> getStages() {
-    List<Stage> stages = new ArrayList<>();
-    stages.add(new Stage());
     return stages;
   }
 
   public Stage getCurrentStage() {
-    return new Stage();
+    return currentStage;
   }
 
   public boolean isActive() {
-    return false;
+    return isActive;
   }
 
   public List<Participant> getParticipants() {
-    return new ArrayList<>();
+    return participants;
   }
 
   public Participant getCurrentParticipant() {
-    return new Participant();
+    return currentParticipant;
   }
 
   public Player getSponsor() {
-    return new Player("");
+    return sponsor;
   }
 }
