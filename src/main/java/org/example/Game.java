@@ -20,6 +20,7 @@ public class Game {
   private Turn currentTurn;
   private Display display;
   private boolean gameOver;
+  private Quest quest;
 
   public Game() {
     this.players = new ArrayList<>();
@@ -63,6 +64,11 @@ public class Game {
 
   public void playEventCard() {
     display.print(currentTurn.playEventCard(this));
+  }
+
+  public void createQuest(int numStages) {
+    display.print("\nCreating quest with " + numStages + " stages...");
+    quest = new Quest(numStages);
   }
 
   public void nextTurn() {
@@ -138,6 +144,6 @@ public class Game {
   }
 
   public Quest getQuest() {
-    return new Quest(0);
+    return quest;
   }
 }

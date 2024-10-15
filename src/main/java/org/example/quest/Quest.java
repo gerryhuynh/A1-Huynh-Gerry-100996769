@@ -1,39 +1,79 @@
 package org.example.quest;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.example.Player;
 
 public class Quest {
-  public Quest(int numStages) {}
+  private boolean isActive;
+  private int numStages;
+  private List<Stage> stages;
+  private Stage currentStage;
+  private Player sponsor;
+  private List<Participant> participants;
+  private Participant currentParticipant;
+
+  public Quest(int numStages) {
+    this.isActive = true;
+    this.numStages = numStages;
+    this.stages = new ArrayList<>();
+    for (int i = 0; i < numStages; i++) {
+      stages.add(new Stage());
+    }
+    this.currentStage = stages.get(0);
+    this.sponsor = null;
+    this.participants = new ArrayList<>();
+    this.currentParticipant = null;
+  }
 
   public int getNumStages() {
-    return 0;
+    return numStages;
   }
 
   public List<Stage> getStages() {
-    List<Stage> stages = new ArrayList<>();
-    stages.add(new Stage());
     return stages;
   }
 
   public Stage getCurrentStage() {
-    return new Stage();
+    return currentStage;
   }
 
   public boolean isActive() {
-    return false;
+    return isActive;
+  }
+
+  public void addParticipant(Participant participant) {
+    participants.add(participant);
   }
 
   public List<Participant> getParticipants() {
-    return new ArrayList<>();
+    return participants;
+  }
+
+  public void setCurrentParticipant(Participant participant) {
+    currentParticipant = participant;
   }
 
   public Participant getCurrentParticipant() {
-    return new Participant();
+    return currentParticipant;
+  }
+
+  public void nextParticipant() {
+    int currentIndex = participants.indexOf(currentParticipant);
+    currentParticipant = participants.get((currentIndex + 1) % participants.size());
+  }
+
+  public void nextStage() {
+    int currentIndex = stages.indexOf(currentStage);
+    currentStage = stages.get((currentIndex + 1) % stages.size());
   }
 
   public Player getSponsor() {
-    return new Player("");
+    return sponsor;
+  }
+
+  public void setSponsor(Player sponsor) {
+    this.sponsor = sponsor;
   }
 }

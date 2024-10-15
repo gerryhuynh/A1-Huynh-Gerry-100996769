@@ -1,14 +1,16 @@
 package org.example.enums.event;
 
 public enum QType implements EventType {
-  Q2(3), 
-  Q3(4), 
-  Q4(3), 
-  Q5(2);
+  Q2(2, 3), 
+  Q3(3, 4), 
+  Q4(4, 3), 
+  Q5(5, 2);
 
   private final int defaultCount;
+  private final int numStages;
 
-  QType(int defaultCount) {
+  QType(int numStages,int defaultCount) {
+    this.numStages = numStages;
     this.defaultCount = defaultCount;
   }
 
@@ -17,7 +19,7 @@ public enum QType implements EventType {
   }
 
   public int getNumStages() {
-    return 0;
+    return numStages;
   }
 
   public String getEffectDesc() {
