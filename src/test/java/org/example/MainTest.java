@@ -9,6 +9,7 @@ import org.example.enums.adventure.FoeType;
 import org.example.enums.adventure.WeaponType;
 import org.example.enums.event.EType;
 import org.example.enums.event.QType;
+import org.example.quest.Quest;
 import org.example.quest.Stage;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -1029,13 +1030,14 @@ class MainTest {
       game.setDisplay(display);
       game.startTurn();
       game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+      game.createQuest(2);
     }
 
     @Test
     @DisplayName("RESP_20_test_1: prompts current player to be the sponsor first")
     void RESP_20_test_1() {
       display.setScanner(new Scanner("Y\n\n"));
-      game.playEventCard();
+      game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       String expectedMessage = String.format("%s, do you want to be the sponsor for this %d-stage quest?", game.getCurrentPlayer().getName(), game.getQuest().getNumStages());
       assertTrue(output.toString().contains(expectedMessage), "Prompts player to be the sponsor");
     }
@@ -1044,7 +1046,7 @@ class MainTest {
     @DisplayName("RESP_20_test_2: prompts next player to be the sponsor if current player declines")
     void RESP_20_test_2() {
       display.setScanner(new Scanner("N\n\nY\n\n"));
-      game.playEventCard();
+      game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       int nextPlayerIndex = (game.getPlayers().indexOf(game.getCurrentPlayer()) + 1) % game.getPlayers().size();
       String nextPlayer = game.getPlayers().get(nextPlayerIndex).getName();
       String expectedMessage = String.format("%s, do you want to be the sponsor for this %d-stage quest?", nextPlayer, game.getQuest().getNumStages());
@@ -1055,7 +1057,7 @@ class MainTest {
     @DisplayName("RESP_20_test_3: sets sponsor if player accepts")
     void RESP_20_test_3() {
       display.setScanner(new Scanner("Y\n\n"));
-      game.playEventCard();
+      game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       assertEquals(game.getCurrentPlayer(), game.getQuest().getSponsor(), "Sets sponsor if player accepts");
     }
 
@@ -1063,7 +1065,7 @@ class MainTest {
     @DisplayName("RESP_20_test_4: does not set sponsor if no player accepts")
     void RESP_20_test_4() {
       display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
-      game.playEventCard();
+      game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       assertNull(game.getQuest().getSponsor(), "Does not set sponsor if no player accepts");
     }
 
@@ -1071,7 +1073,7 @@ class MainTest {
     @DisplayName("RESP_20_test_5: prints invalid input message if player enters invalid input")
     void RESP_20_test_5() {
       display.setScanner(new Scanner("invalid\n\nY\n\n"));
-      game.playEventCard();
+      game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       assertTrue(output.toString().contains("Invalid input"), "Prints invalid input message if player enters invalid input");
     }
 
@@ -1079,7 +1081,7 @@ class MainTest {
     @DisplayName("RESP_20_test_6: prints sponsor found message if player accepts")
     void RESP_20_test_6() {
       display.setScanner(new Scanner("Y\n\n"));
-      game.playEventCard();
+      game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       String expectedMessage = String.format("%s will be the sponsor for this quest", game.getCurrentPlayer().getName());
       assertTrue(output.toString().contains(expectedMessage), "Prints sponsor found message if player accepts");
     }
@@ -1088,7 +1090,7 @@ class MainTest {
     @DisplayName("RESP_20_test_7: prints sponsor declined message if player declines")
     void RESP_20_test_7() {
       display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
-      game.playEventCard();
+      game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       String expectedMessage = String.format("%s declined to be the sponsor", game.getCurrentPlayer().getName());
       assertTrue(output.toString().contains(expectedMessage), "Prints sponsor declined message if player declines");
     }
@@ -1097,9 +1099,85 @@ class MainTest {
     @DisplayName("RESP_20_test_8: prints no sponsor found message if no player accepts and ends quest and turn")
     void RESP_20_test_8() {
       display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
-      game.playEventCard();
+      game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       String expectedMessage = String.format("No sponsor found");
       assertTrue(output.toString().contains(expectedMessage), "Prints no sponsor found message if no player accepts");
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_21: Quest Setup - Prompt Input")
+  class RESP_21 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.dealAdventureCards();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+      game.startTurn();
+      game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+      game.createQuest(2);
+      game.getQuest().setSponsor(game.getCurrentPlayer());
+    }
+
+    @Test
+    @DisplayName("RESP_21_test_1: prints hand of sponsor")
+    void RESP_21_test_1() {
+      Player sponsor = game.getQuest().getSponsor();
+      display.printStageSetup(1, sponsor.getHand());
+      String outputString = output.toString();
+      for (int i = 0; i < sponsor.getHand().size(); i++) {
+        String expectedCardString = String.format("%d. %s", i + 1, sponsor.getHand().get(i));
+        assertTrue(outputString.contains(expectedCardString), "Card " + (i + 1) + " is printed correctly");
+      }
+    }
+
+    @Test
+    @DisplayName("RESP_21_test_2: prints stage setup rules")
+    void RESP_21_test_2() {
+      Player sponsor = game.getQuest().getSponsor();
+      display.printStageSetup(1, sponsor.getHand());
+      assertTrue(output.toString().contains("STAGE SETUP RULES: Each stage must consist of a single Foe card and 0/+ non-repeated Weapon cards."), "Prints stage setup rules");
+    }
+
+    @Test
+    @DisplayName("RESP_21_test_3: stage setup rules include QUIT option")
+    void RESP_21_test_3() {
+      Player sponsor = game.getQuest().getSponsor();
+      display.printStageSetup(1, sponsor.getHand());
+      assertTrue(output.toString().contains("Enter QUIT once you are ready to proceed to the next stage"), "Prints stage setup rules");
+    }
+
+    @Test
+    @DisplayName("RESP_21_test_4: prompts sponsor to choose a card number")
+    void RESP_21_test_4() {
+      Player sponsor = game.getQuest().getSponsor();
+      display.setScanner(new Scanner("1\n"));
+      display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
+      assertTrue(output.toString().contains("CHOOSE A CARD POSITION:"), "Prints stage setup rules");
+    }
+
+    @Test
+    @DisplayName("RESP_21_test_5: returns index of card if input is in valid range")
+    void RESP_21_test_5() {
+      Player sponsor = game.getQuest().getSponsor();
+      display.setScanner(new Scanner("2\n"));
+      int index = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
+      assertEquals(1, index, "Returns index of card if input is in valid range");
+    }
+
+    @Test
+    @DisplayName("RESP_21_test_6: returns QUIT if input is QUIT")
+    void RESP_21_test_6() {
+      Player sponsor = game.getQuest().getSponsor();
+      display.setScanner(new Scanner("QUIT\n"));
+      int index = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
+      assertEquals(Quest.QUIT, index, "Returns QUIT if input is QUIT");
     }
   }
 }
