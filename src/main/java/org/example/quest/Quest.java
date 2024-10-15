@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.example.Display;
 import org.example.Player;
 import org.example.cards.AdventureCard;
+import org.example.decks.AdventureDeck;
 import org.example.enums.adventure.FoeType;
 import org.example.enums.adventure.WeaponType;
 
@@ -61,7 +62,7 @@ public class Quest {
     if (sponsor == null) display.printSponsorNotFound();
   }
 
-  public void startAttack(Display display, List<Player> players) {
+  public void startAttack(Display display, List<Player> players, AdventureDeck adventureDeck) {
     display.print("\nStarting attack...");
     addAllPlayersExceptSponsorToParticipants(players);
     for (int i = 0; i < numStages; i++) {
@@ -69,6 +70,9 @@ public class Quest {
       display.print(String.format("ATTACKING STAGE %d...", i + 1));
       display.printParticipants(participants);
       participants = display.promptForParticipants(participants);
+      for (Participant participant : participants) {
+        participant.drawCard(adventureDeck, display);
+      }
     }
   }
 

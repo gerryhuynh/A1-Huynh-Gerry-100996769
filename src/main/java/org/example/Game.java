@@ -75,7 +75,7 @@ public class Game {
     quest.findSponsor(players, currentTurn.getPlayer(), display);
     if (quest.getSponsor() != null) {
       quest.setup(display);
-      quest.startAttack(display, players);
+      quest.startAttack(display, players, adventureDeck);
     }
   }
 
