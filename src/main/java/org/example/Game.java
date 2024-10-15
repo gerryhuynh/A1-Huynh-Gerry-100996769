@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.example.cards.AdventureCard;
 import org.example.cards.EventCard;
 import org.example.decks.AdventureDeck;
 import org.example.decks.EventDeck;
@@ -41,10 +42,13 @@ public class Game {
 
   public void dealAdventureCards() {
     display.print("\nDealing " + Player.MAX_HAND_SIZE + " adventure cards to each player...");
+    List<AdventureCard> cardsToDeal = new ArrayList<>();
     for (Player player : players) {
       for (int i = 0; i < Player.MAX_HAND_SIZE; i++) {
-        player.getHand().add(adventureDeck.draw());
+        cardsToDeal.add(adventureDeck.draw());
       }
+      player.addToHand(cardsToDeal, display, true);
+      cardsToDeal.clear();
     }
   }
 
