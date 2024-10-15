@@ -1408,4 +1408,65 @@ class MainTest {
       assertEquals(game.getPlayers().size() - 1, quest.getParticipants().size(), "Sponsor not in participants");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_25: Quest Attack - Participants Draw Adventure Card")
+  class RESP_25 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+
+    @BeforeEach
+    void setUp() {
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setupPlayers();
+      game.setDisplay(display);
+      display.setScanner(new Scanner("\n"));
+    }
+
+    @Test
+    @DisplayName("RESP_25_test_1: prints drawn adventure card")
+    void RESP_25_test_1() {
+      Participant participant = new Participant(game.getPlayers().get(1));
+      participant.drawCard(game.getAdventureDeck(), display);
+      assertTrue(output.toString().contains("ADVENTURE CARD"), "Prints drawn adventure card");
+    }
+
+    @Test
+    @DisplayName("RESP_25_test_2: increases player's hand size by 1")
+    void RESP_25_test_2() {
+      Integer originalHandSize = game.getPlayers().get(1).getHand().size();
+      Participant participant = new Participant(game.getPlayers().get(1));
+      participant.drawCard(game.getAdventureDeck(), display);
+      assertEquals(originalHandSize + 1, game.getPlayers().get(1).getHand().size(), "Adds drawn card to player's hand");
+    }
+
+    @Test
+    @DisplayName("RESP_25_test_3: prompts next player after drawing card")
+    void RESP_25_test_3() {
+      Participant participant = new Participant(game.getPlayers().get(1));
+      participant.drawCard(game.getAdventureDeck(), display);
+      assertTrue(output.toString().contains("Press the return key to clear the display for the next player"), "Prompts next player");
+    }
+
+    @Test
+    @DisplayName("RESP_25_test_4: adds drawn card to player's hand")
+    void RESP_25_test_4() {
+      Participant participant = new Participant(game.getPlayers().get(1));
+      AdventureCard card = game.getAdventureDeck().getCards().get(0);
+      participant.drawCard(game.getAdventureDeck(), display);
+      assertTrue(participant.getPlayer().getHand().contains(card), "Player's hand contains the drawn card");
+    }
+
+    @Test
+    @DisplayName("RESP_25_test_5: trims hand - player's hand size does not exceed " + Player.MAX_HAND_SIZE)
+    void RESP_25_test_5() {
+      display.setScanner(new Scanner("1\n\n"));
+      game.dealAdventureCards();
+      Participant participant = new Participant(game.getPlayers().get(1));
+      participant.drawCard(game.getAdventureDeck(), display);
+      assertEquals(Player.MAX_HAND_SIZE, participant.getPlayer().getHand().size(), "Player's hand size does not exceed " + Player.MAX_HAND_SIZE);
+    }
+  }
 }
