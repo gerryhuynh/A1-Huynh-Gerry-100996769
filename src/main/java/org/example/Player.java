@@ -38,6 +38,11 @@ public class Player {
       return trimmedCards;
     }
 
+    public void overWriteHand(List<AdventureCard> cards, Display display) {
+      hand.clear();
+      addToHand(cards, display, true);
+    }
+
     public int computeNumCardsToTrim(int numCardsToAdd) {
       int numCardsToTrim = hand.size() + numCardsToAdd - MAX_HAND_SIZE;
       return numCardsToTrim > 0 ? numCardsToTrim : 0;

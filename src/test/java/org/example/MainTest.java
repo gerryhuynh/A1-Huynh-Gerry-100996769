@@ -1,5 +1,21 @@
 package org.example;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 import org.example.cards.AdventureCard;
 import org.example.cards.EventCard;
 import org.example.decks.AdventureDeck;
@@ -12,23 +28,15 @@ import org.example.enums.event.QType;
 import org.example.quest.Participant;
 import org.example.quest.Quest;
 import org.example.quest.Stage;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Scanner;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 class MainTest {
   @Nested
@@ -1396,9 +1404,8 @@ class MainTest {
     @DisplayName("RESP_24_test_3: sponsor not in participants")
     void RESP_24_test_3() {
       quest.setSponsor(game.getPlayers().get(0));
-      quest.addAllPlayersExceptSponsorToParticipants(quest.getStages().get(0), game.getPlayers());
+      quest.addAllPlayersExceptSponsorToParticipants(game.getPlayers());
       assertEquals(game.getPlayers().size() - 1, quest.getParticipants().size(), "Sponsor not in participants");
     }
   }
-
 }
