@@ -4,6 +4,7 @@ import org.example.cards.AdventureCard;
 import org.example.cards.EventCard;
 import org.example.decks.AdventureDeck;
 import org.example.decks.EventDeck;
+import org.example.enums.adventure.AdventureType;
 import org.example.enums.adventure.FoeType;
 import org.example.enums.adventure.WeaponType;
 import org.example.enums.event.EType;
@@ -23,6 +24,8 @@ import java.util.stream.Stream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Scanner;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 class MainTest {
   @Nested
@@ -718,6 +721,31 @@ class MainTest {
     void RESP_14_test_5() {
       player.addToHand(cardsToAdd, display);
       assertTrue(output.toString().contains(player.getHand().toString()), "Prints updated hand");
+    }
+
+    @Test
+    @DisplayName("RESP_14_test_6: sorts hand correctly")
+    void RESP_14_test_6() {
+      player.addToHand(Arrays.asList(
+        new AdventureCard(WeaponType.H10),
+        new AdventureCard(FoeType.F15),
+        new AdventureCard(WeaponType.S10),
+        new AdventureCard(FoeType.F5),
+        new AdventureCard(WeaponType.D5),
+        new AdventureCard(FoeType.F30),
+        new AdventureCard(WeaponType.B15)
+      ), display);
+
+      List<AdventureType> sortedHand = player.getHand().stream()
+        .map(AdventureCard::getType)
+        .collect(Collectors.toList());
+
+      List<AdventureType> expectedOrder = Arrays.asList(
+        FoeType.F5, FoeType.F15, FoeType.F30,
+        WeaponType.D5, WeaponType.S10, WeaponType.H10, WeaponType.B15
+      );
+
+      assertEquals(expectedOrder, sortedHand, "Hand should be sorted in the correct order");
     }
   }
 
