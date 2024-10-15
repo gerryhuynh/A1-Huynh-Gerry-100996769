@@ -1180,4 +1180,87 @@ class MainTest {
       assertEquals(Quest.QUIT, index, "Returns QUIT if input is QUIT");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_22: Quest Setup - Validate Card")
+  class RESP_22 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+    private Quest quest;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      game.dealAdventureCards();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+      game.startTurn();
+      game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+      game.createQuest(2);
+      quest = game.getQuest();
+      quest.setSponsor(game.getCurrentPlayer());
+    }
+
+    @Test
+    @DisplayName("RESP_22_test_1: returns true if card is valid")
+    void RESP_22_test_1() {
+      Stage stage = new Stage();
+      boolean validCard = quest.validateStageSetupCard(stage, quest.getSponsor().getHand().get(0), display);
+      assertTrue(validCard, "Returns true if card is valid");
+    }
+
+    @Test
+    @DisplayName("RESP_22_test_2: returns false if stage already has a Foe card")
+    void RESP_22_test_2() {
+      Stage stage = new Stage();
+      stage.addCard(new AdventureCard(FoeType.F5));
+      boolean validCard = quest.validateStageSetupCard(stage, new AdventureCard(FoeType.F10), display);
+      assertFalse(validCard, "Returns false if stage already has a Foe card");
+    }
+
+    @Test
+    @DisplayName("RESP_22_test_3: returns false if stage for a duplicate Weapon card")
+    void RESP_22_test_3() {
+      Stage stage = new Stage();
+      stage.addCard(new AdventureCard(WeaponType.D5));
+      boolean validCard = quest.validateStageSetupCard(stage, new AdventureCard(WeaponType.D5), display);
+      assertFalse(validCard, "Returns false if stage already has a Weapon card");
+    }
+
+    @Test
+    @DisplayName("RESP_22_test_4: adds valid card to stage")
+    void RESP_22_test_4() {
+      Stage stage = new Stage();
+      quest.addCardToStage(stage, quest.getSponsor().getHand().get(0), display);
+      assertEquals(1, stage.getCards().size(), "Adds valid card to stage");
+    }
+
+    @Test
+    @DisplayName("RESP_22_test_5: removes card from sponsor's hand")
+    void RESP_22_test_5() {
+      int originalHandSize = quest.getSponsor().getHand().size();
+      Stage stage = new Stage();
+      quest.addCardToStage(stage, quest.getSponsor().getHand().get(0), display);
+      assertEquals(originalHandSize - 1, quest.getSponsor().getHand().size(), "Removes card from sponsor's hand");
+    }
+
+    @Test
+    @DisplayName("RESP_22_test_6: increments sponsorNumCardsUsed when adding valid card to stage")
+    void RESP_22_test_6() {
+      Stage stage = new Stage();
+      quest.addCardToStage(stage, quest.getSponsor().getHand().get(0), display);
+      assertEquals(1, quest.getSponsorNumCardsUsed(), "Increments sponsorNumCardsUsed");
+    }
+
+    @Test
+    @DisplayName("RESP_22_test_7: prints cards added to stage")
+    void RESP_22_test_7() {
+      Stage stage = new Stage();
+      AdventureCard card = quest.getSponsor().getHand().get(0);
+      quest.addCardToStage(stage, card, display);
+      assertTrue(output.toString().contains(card.toString()), "Prints cards added to stage");
+    }
+  }
 }

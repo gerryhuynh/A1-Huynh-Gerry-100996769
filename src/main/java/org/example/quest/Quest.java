@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.example.Display;
 import org.example.Player;
+import org.example.cards.AdventureCard;
 
 public class Quest {
   public static final int QUIT = -1;
@@ -65,6 +66,14 @@ public class Quest {
     }
   }
 
+  public boolean validateStageSetupCard(Stage stage, AdventureCard card, Display display) {
+    return false;
+  }
+
+  public void addCardToStage(Stage stage, AdventureCard card, Display display) {
+    return;
+  }
+
   public int getNumStages() {
     return numStages;
   }
@@ -95,5 +104,9 @@ public class Quest {
 
   public void setSponsor(Player sponsor) {
     this.sponsor = sponsor;
+  }
+
+  public int getSponsorNumCardsUsed() {
+    return 0;
   }
 }
