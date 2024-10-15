@@ -31,6 +31,10 @@ public class Stage {
     cards.add(card);
   }
 
+  public int getValue() {
+    return cards.stream().mapToInt(AdventureCard::getValue).sum();
+  }
+
   public List<AdventureCard> getCards() {
     return cards;
   }
