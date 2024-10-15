@@ -76,6 +76,10 @@ public class Display {
     }
   }
 
+  public int promptForCardIndexWithQuit(int maxIndex, boolean allowQuit) {
+    return 0;
+  }
+
   public boolean promptForSponsor(Player player, Player currentPlayer, int numStages) {
     print(String.format("\n%s, do you want to be the sponsor for this %d-stage quest?", player.getName(), numStages));
     if (!player.equals(currentPlayer)) printHand(player.getHand());
@@ -105,6 +109,10 @@ public class Display {
 
   public void printSponsorNotFound() {
     print("\nNo sponsor found. Quest will not continue.");
+  }
+
+  public void printStageSetup(int stageNum, List<AdventureCard> hand) {
+    return;
   }
 
   public void promptEndTurn(String playerName) {

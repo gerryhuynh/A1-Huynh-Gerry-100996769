@@ -7,6 +7,8 @@ import org.example.Display;
 import org.example.Player;
 
 public class Quest {
+  public static final int QUIT = -1;
+
   private int numStages;
   private List<Stage> stages;
   private Stage currentStage;
@@ -81,5 +83,9 @@ public class Quest {
 
   public Player getSponsor() {
     return sponsor;
+  }
+
+  public void setSponsor(Player sponsor) {
+    this.sponsor = sponsor;
   }
 }
