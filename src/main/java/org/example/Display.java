@@ -126,6 +126,11 @@ public class Display {
     print("Enter QUIT once you are ready to proceed to the next stage.");
   }
 
+  public void printCardAddedToStage(List<AdventureCard> cards) {
+    print("\nCARD ADDED TO STAGE:");
+    print(cards.toString());
+  }
+
   public void promptEndTurn(String playerName) {
     print(String.format("\n%s'S TURN ENDED.", playerName));
     print("\nPress the return key to end your turn and clear the display.");

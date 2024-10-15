@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import org.example.Display;
 import org.example.Player;
 import org.example.cards.AdventureCard;
+import org.example.enums.adventure.FoeType;
+import org.example.enums.adventure.WeaponType;
 
 public class Quest {
   public static final int QUIT = -1;
@@ -17,6 +19,7 @@ public class Quest {
   private List<Participant> participants;
   private Participant currentParticipant;
   private Player sponsor;
+  private int sponsorNumCardsUsed;
 
   public Quest(int numStages) {
     this.isActive = true;
@@ -61,17 +64,39 @@ public class Quest {
 
   public void setup(Display display) {
     for (int i = 0; i < numStages; i++) {
+      Stage stage = stages.get(i);
       display.printStageSetup(i + 1, sponsor.getHand());
-      int cardIndex = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
+      while (true) {
+        if (stage.getCards().size() != 0) {
+          display.printHand(sponsor.getHand());
+        }
+        int cardIndex = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
+        boolean validCard = validateStageSetupCard(stage, sponsor.getHand().get(cardIndex), display);
+        if (validCard) {
+          addCardToStage(stage, sponsor.getHand().get(cardIndex), display);
+        }
+        display.printStageSetupRules();
+      }
     }
   }
 
   public boolean validateStageSetupCard(Stage stage, AdventureCard card, Display display) {
-    return false;
+    if (card.getType() instanceof FoeType && stage.hasFoe()) {
+      display.print("Only one Foe card is allowed per stage.");
+      return false;
+    }
+    if (card.getType() instanceof WeaponType && stage.hasWeapon(card)) {
+      display.print("Duplicate Weapon cards are not allowed in a stage.");
+      return false;
+    }
+    return true;
   }
 
   public void addCardToStage(Stage stage, AdventureCard card, Display display) {
-    return;
+    stage.addCard(card);
+    sponsor.getHand().remove(card);
+    sponsorNumCardsUsed++;
+    display.printCardAddedToStage(stage.getCards());
   }
 
   public int getNumStages() {
@@ -107,6 +132,6 @@ public class Quest {
   }
 
   public int getSponsorNumCardsUsed() {
-    return 0;
+    return sponsorNumCardsUsed;
   }
 }
