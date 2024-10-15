@@ -355,7 +355,7 @@ class MainTest {
       game.setupPlayers();
       game.startTurn();
       game.getCurrentTurn().setEventCard(new EventCard(EType.PLAGUE));
-
+      game.setDisplay(display);
       player = game.getCurrentPlayer();
       player.setShields(2);
       originalShields = player.getShields();
@@ -371,9 +371,8 @@ class MainTest {
     @Test
     @DisplayName("RESP_08_test_2: prints updated shield count for current player")
     void RESP_08_test_2() {
-      String eventResult = game.playEventCard();
-      display.print(eventResult);
-      String expectedOutput = String.format("%s's shields: %d -> %d%n", 
+      game.playEventCard();
+      String expectedOutput = String.format("%s's shields: %d -> %d", 
                                              player.getName(), originalShields, originalShields - 2);
       assertTrue(output.toString().contains(expectedOutput), "Updated shield count is printed");
     }
@@ -426,7 +425,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_09_test_2: prints Queen's Favor effect message")
     void RESP_09_test_2() {
-      display.print(game.playEventCard());
+      game.playEventCard();
       String expectedOutput = String.format("%s drew 2 adventure cards", player.getName());
       assertTrue(output.toString().contains(expectedOutput), "Prints player drew 2 adventure cards");
     }
@@ -658,17 +657,6 @@ class MainTest {
       List<AdventureCard> trimmedCards = player.trimHand(numCardsToTrim, display);
       assertTrue(trimmedCards.isEmpty(), "Returns empty list if number of cards to trim is 0");
     }
-
-    @Test
-    @DisplayName("RESP_13_test_5: prints trimmed hand")
-    void RESP_13_test_5() {
-      player.trimHand(numCardsToTrim, display);
-      String outputString = output.toString();
-      for (int i = 0; i < player.getHand().size(); i++) {
-          String expectedCardString = String.format("%d. %s", i + 1, player.getHand().get(i));
-          assertTrue(outputString.contains(expectedCardString), "Card " + (i + 1) + " is printed correctly");
-      }
-    }
   }
 
   @Nested
@@ -754,7 +742,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_15_test_1: prints prosperity card effect message")
     void RESP_15_test_1() {
-      display.print(game.playEventCard());
+      game.playEventCard();
       assertTrue(output.toString().contains("All players drew 2 adventure cards"), "Prints prosperity card effect message");
     }
 

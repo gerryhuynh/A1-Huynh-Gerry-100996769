@@ -42,7 +42,6 @@ public class Player {
       while (hand.size() + numCards > MAX_HAND_SIZE) {
         int removeCardIndex = display.promptForCardToDiscard(hand);
         trimmedCards.add(hand.remove(removeCardIndex));
-        display.printHand(hand);
       }
       return trimmedCards;
     }

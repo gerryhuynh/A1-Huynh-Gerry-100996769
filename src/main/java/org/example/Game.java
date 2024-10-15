@@ -54,8 +54,8 @@ public class Game {
     display.printEventCardEffect(currentTurn.getEventCard());
   }
 
-  public String playEventCard() {
-    return currentTurn.playEventCard(this);
+  public void playEventCard() {
+    display.print(currentTurn.playEventCard(this));
   }
 
   public void nextTurn() {
