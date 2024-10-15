@@ -146,11 +146,36 @@ public class Display {
   }
 
   public void printParticipants(List<Participant> participants) {
-    return;
+    print("\nELIGIBLE PARTICIPANTS:");
+    print(participants.toString());
   }
 
   public List<Participant> promptForParticipants(List<Participant> participants) {
-    return new ArrayList<>();
+    List<Participant> activeParticipants = new ArrayList<>();
+    for (Participant participant : participants) {
+      print(String.format("\n%s, do you want to be a participant for this stage?", participant.getPlayer().getName()));
+      printHand(participant.getPlayer().getHand());
+
+      while (true) {
+        print("\nEnter Y or N:");
+        String line = input.nextLine().trim().toLowerCase();
+        if (line.equals("y")) {
+          activeParticipants.add(participant);
+          print(String.format("%s will be a participant for this stage.", participant.getPlayer().getName()));
+          break;
+        } else if (line.equals("n")) {
+          print(String.format("%s will not be a participant for this stage.", participant.getPlayer().getName()));
+          break;
+        } else {
+          print("Invalid input. Please enter Y or N.");
+        }
+      }
+
+      print("\nPress the return key to clear the display for the next participant.");
+      input.nextLine();
+      clear();
+    }
+    return activeParticipants;
   }
 
   public void promptNextStageSetup(int stageNumber, Stage stage) {

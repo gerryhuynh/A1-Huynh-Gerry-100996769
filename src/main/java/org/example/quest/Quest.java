@@ -61,8 +61,25 @@ public class Quest {
     if (sponsor == null) display.printSponsorNotFound();
   }
 
+  public void startAttack(Display display, List<Player> players) {
+    display.print("\nStarting attack...");
+    for (int i = 0; i < numStages; i++) {
+      Stage currentStage = stages.get(i);
+      display.print(String.format("ATTACKING STAGE %d...", i + 1));
+      if (participants.size() == 0) {
+        addAllPlayersExceptSponsorToParticipants(currentStage, players);
+      }
+      display.printParticipants(participants);
+      participants = display.promptForParticipants(participants);
+    }
+  }
+
   public void addAllPlayersExceptSponsorToParticipants(Stage stage, List<Player> players) {
-    return;
+    for (Player player : players) {
+      if (player != sponsor) {
+        participants.add(new Participant(player));
+      }
+    }
   }
 
   public void setup(Display display) {
@@ -162,6 +179,12 @@ public class Quest {
 
   public void setSponsor(Player sponsor) {
     this.sponsor = sponsor;
+  }
+
+  public void setParticipants(List<Player> players) {
+    for (Player player : players) {
+      participants.add(new Participant(player));
+    }
   }
 
   public int getSponsorNumCardsUsed() {
