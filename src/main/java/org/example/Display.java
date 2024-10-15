@@ -150,6 +150,10 @@ public class Display {
     print(participants.toString());
   }
 
+  public void printAttackSetup(int stageNum, Participant participant) {
+    return;
+  }
+
   public List<Participant> promptForParticipants(List<Participant> participants) {
     List<Participant> activeParticipants = new ArrayList<>();
     for (Participant participant : participants) {

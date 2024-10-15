@@ -1469,4 +1469,50 @@ class MainTest {
       assertEquals(Player.MAX_HAND_SIZE, participant.getPlayer().getHand().size(), "Player's hand size does not exceed " + Player.MAX_HAND_SIZE);
     }
   }
+
+  @Nested
+  @DisplayName("RESP_26: Quest Attack - Display hand of player and print attack rules")
+  class RESP_26 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+
+    @BeforeEach
+    void setUp() {
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+
+      game.setupPlayers();
+      game.createQuest(2);
+      Quest quest = game.getQuest();
+      quest.setSponsor(game.getPlayers().get(0));
+      quest.addAllPlayersExceptSponsorToParticipants(game.getPlayers());
+    }
+
+    @Test
+    @DisplayName("RESP_26_test_1: prints hand of player")
+    void RESP_26_test_1() {
+      Participant participant = new Participant(game.getPlayers().get(1));
+      display.printAttackSetup(1, participant);
+      for (int i = 0; i < participant.getPlayer().getHand().size(); i++) {
+        String expectedCardString = String.format("%d. %s", i + 1, participant.getPlayer().getHand().get(i));
+        assertTrue(output.toString().contains(expectedCardString), "Card " + (i + 1) + " is printed correctly");
+      }
+    }
+
+    @Test
+    @DisplayName("RESP_26_test_2: prints attack rules")
+    void RESP_26_test_2() {
+      display.printAttackSetup(1, new Participant(game.getPlayers().get(1)));
+      assertTrue(output.toString().contains("Each stage attack must consist of only non-repeated Weapon cards"), "Prints attack rules");
+    }
+
+    @Test
+    @DisplayName("RESP_26_test_3: prints QUIT message")
+    void RESP_26_test_3() {
+      display.printAttackSetup(1, new Participant(game.getPlayers().get(1)));
+      assertTrue(output.toString().contains("Enter QUIT once you are satisfied with your attack setup"), "Prints QUIT prompt");
+    }
+  }
 }
