@@ -163,7 +163,7 @@ class MainTest {
     void RESP_04_test_2() {
       for (int i = 0; i < Game.MAX_PLAYERS; i++) {
         String expectedName = "P" + (i + 1);
-        assertEquals(expectedName, game.getPlayers().get(i).getName(), 
+        assertEquals(expectedName, game.getPlayers().get(i).getName(),
                      expectedName + " name is '" + expectedName + "'");
       }
     }
@@ -172,7 +172,7 @@ class MainTest {
     @DisplayName("RESP_04_test_3: players start with empty hand of Adventure cards")
     void RESP_04_test_3() {
       for (int i = 0; i < Game.MAX_PLAYERS; i++) {
-        assertEquals(0, game.getPlayers().get(i).getHand().size(), 
+        assertEquals(0, game.getPlayers().get(i).getHand().size(),
                      "P" + (i + 1) + "'s hand has 0 Adventure cards");
       }
     }
@@ -181,7 +181,7 @@ class MainTest {
     @DisplayName("RESP_04_test_4: players start with 0 shields")
     void RESP_04_test_4() {
       for (int i = 0; i < Game.MAX_PLAYERS; i++) {
-        assertEquals(0, game.getPlayers().get(i).getShields(), 
+        assertEquals(0, game.getPlayers().get(i).getShields(),
                      "P" + (i + 1) + " has 0 shields");
       }
     }
@@ -202,7 +202,7 @@ class MainTest {
     @MethodSource("playerNumbers")
     void RESP_05_test_1(int playerNumber) {
         Player player = game.getPlayers().get(playerNumber - 1);
-        assertEquals(Player.MAX_HAND_SIZE, player.getHand().size(), 
+        assertEquals(Player.MAX_HAND_SIZE, player.getHand().size(),
                      "P" + (playerNumber) + " should have " + Player.MAX_HAND_SIZE + " adventure cards");
     }
 
@@ -216,9 +216,9 @@ class MainTest {
       AdventureDeck adventureDeck = game.getAdventureDeck();
       int expectedSize = 100 - Game.MAX_PLAYERS * Player.MAX_HAND_SIZE;
 
-      assertEquals(expectedSize, adventureDeck.size(), 
-                   "Adventure Deck has " + expectedSize + 
-                   " cards after distributing " + Player.MAX_HAND_SIZE + 
+      assertEquals(expectedSize, adventureDeck.size(),
+                   "Adventure Deck has " + expectedSize +
+                   " cards after distributing " + Player.MAX_HAND_SIZE +
                    " cards to each player");
     }
   }
@@ -315,7 +315,7 @@ class MainTest {
     @DisplayName("RESP_07_test_4: draw Event card and decrease Event Deck size by 1")
     void RESP_07_test_4() {
       EventDeck eventDeck = game.getEventDeck();
-      int originalSize = eventDeck.size();  
+      int originalSize = eventDeck.size();
       game.startTurn();
       assertEquals(originalSize - 1, eventDeck.size(), "Event Deck size decreases by 1");
     }
@@ -353,7 +353,7 @@ class MainTest {
     private Display display = new Display(new PrintWriter(output));
     private int originalShields;
     private Player player;
-    
+
     @BeforeEach
     void setUp() {
       game.setupPlayers();
@@ -376,7 +376,7 @@ class MainTest {
     @DisplayName("RESP_08_test_2: prints updated shield count for current player")
     void RESP_08_test_2() {
       game.playEventCard();
-      String expectedOutput = String.format("%s's shields: %d -> %d", 
+      String expectedOutput = String.format("%s's shields: %d -> %d",
                                              player.getName(), originalShields, originalShields - 2);
       assertTrue(output.toString().contains(expectedOutput), "Updated shield count is printed");
     }
@@ -627,9 +627,9 @@ class MainTest {
     @DisplayName("RESP_13_test_1: removes the number of cards to trim from the player's hand")
     void RESP_13_test_1() {
       int originalSize = player.getHand().size();
-      
+
       player.trimHand(numCardsToTrim, display);
-      assertEquals(originalSize - numCardsToTrim, player.getHand().size(), 
+      assertEquals(originalSize - numCardsToTrim, player.getHand().size(),
                    "Removes the number of cards to trim from the player's hand");
     }
 
@@ -761,7 +761,7 @@ class MainTest {
     void setUp() {
       game.setupPlayers();
       game.startTurn();
-      game.getCurrentTurn().setEventCard(new EventCard(EType.PROSPERITY));  
+      game.getCurrentTurn().setEventCard(new EventCard(EType.PROSPERITY));
       output = new StringWriter();
       display = new Display(new PrintWriter(output));
       display.setScanner(new Scanner("\n".repeat(game.getPlayers().size())));
@@ -833,7 +833,7 @@ class MainTest {
       display.setScanner(new Scanner("\n"));
       display.promptEndTurn(game.getCurrentPlayer().getName());
       assertTrue(output.toString().contains(
-        String.format("%s'S TURN ENDED", game.getCurrentPlayer().getName())), 
+        String.format("%s'S TURN ENDED", game.getCurrentPlayer().getName())),
         "Indicates the current player's turn has ended");
     }
 
@@ -973,28 +973,24 @@ class MainTest {
     @BeforeEach
     void setUp() {
       game.setupPlayers();
-      game.startTurn();
-      game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+      game.createQuest(2);
     }
 
     @Test
     @DisplayName("RESP_19_test_1: creates a quest with the correct number of stages")
     void RESP_19_test_1() {
-      game.playEventCard();
       assertEquals(QType.Q2.getNumStages(), game.getQuest().getNumStages(), "Creates a quest with the correct number of stages");
     }
 
     @Test
     @DisplayName("RESP_19_test_2: quest is set to active")
     void RESP_19_test_2() {
-      game.playEventCard();
       assertTrue(game.getQuest().isActive(), "Quest is set to active");
     }
 
     @Test
     @DisplayName("RESP_19_test_3: current stage is set to first stage")
     void RESP_19_test_3() {
-      game.playEventCard();
       Stage firstStage = game.getQuest().getStages().get(0);
       assertEquals(firstStage, game.getQuest().getCurrentStage(), "Current stage is set to first stage");
     }
@@ -1002,22 +998,108 @@ class MainTest {
     @Test
     @DisplayName("RESP_19_test_4: quest starts with no sponsor")
     void RESP_19_test_4() {
-      game.playEventCard();
       assertNull(game.getQuest().getSponsor(), "Quest starts with no sponsor");
     }
 
     @Test
     @DisplayName("RESP_19_test_5: participants list is empty")
     void RESP_19_test_5() {
-      game.playEventCard();
       assertTrue(game.getQuest().getParticipants().isEmpty(), "Participants list is empty");
     }
 
     @Test
     @DisplayName("RESP_19_test_6: current participant is null")
     void RESP_19_test_6() {
-      game.playEventCard();
       assertNull(game.getQuest().getCurrentParticipant(), "Current participant is null");
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_20: Find Quest Sponsor")
+  class RESP_20 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+
+    @BeforeEach
+    void setUp() {
+      game.setupPlayers();
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+      game.startTurn();
+      game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+    }
+
+    @Test
+    @DisplayName("RESP_20_test_1: prompts current player to be the sponsor first")
+    void RESP_20_test_1() {
+      display.setScanner(new Scanner("Y\n\n"));
+      game.playEventCard();
+      String expectedMessage = String.format("%s, do you want to be the sponsor for this %d-stage quest?", game.getCurrentPlayer().getName(), game.getQuest().getNumStages());
+      assertTrue(output.toString().contains(expectedMessage), "Prompts player to be the sponsor");
+    }
+
+    @Test
+    @DisplayName("RESP_20_test_2: prompts next player to be the sponsor if current player declines")
+    void RESP_20_test_2() {
+      display.setScanner(new Scanner("N\n\nY\n\n"));
+      game.playEventCard();
+      int nextPlayerIndex = (game.getPlayers().indexOf(game.getCurrentPlayer()) + 1) % game.getPlayers().size();
+      String nextPlayer = game.getPlayers().get(nextPlayerIndex).getName();
+      String expectedMessage = String.format("%s, do you want to be the sponsor for this %d-stage quest?", nextPlayer, game.getQuest().getNumStages());
+      assertTrue(output.toString().contains(expectedMessage), "Prompts next player to be the sponsor if current player declines");
+    }
+
+    @Test
+    @DisplayName("RESP_20_test_3: sets sponsor if player accepts")
+    void RESP_20_test_3() {
+      display.setScanner(new Scanner("Y\n\n"));
+      game.playEventCard();
+      assertEquals(game.getCurrentPlayer(), game.getQuest().getSponsor(), "Sets sponsor if player accepts");
+    }
+
+    @Test
+    @DisplayName("RESP_20_test_4: does not set sponsor if no player accepts")
+    void RESP_20_test_4() {
+      display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
+      game.playEventCard();
+      assertNull(game.getQuest().getSponsor(), "Does not set sponsor if no player accepts");
+    }
+
+    @Test
+    @DisplayName("RESP_20_test_5: prints invalid input message if player enters invalid input")
+    void RESP_20_test_5() {
+      display.setScanner(new Scanner("invalid\n\nY\n\n"));
+      game.playEventCard();
+      assertTrue(output.toString().contains("Invalid input"), "Prints invalid input message if player enters invalid input");
+    }
+
+    @Test
+    @DisplayName("RESP_20_test_6: prints sponsor found message if player accepts")
+    void RESP_20_test_6() {
+      display.setScanner(new Scanner("Y\n\n"));
+      game.playEventCard();
+      String expectedMessage = String.format("%s will be the sponsor for this quest", game.getCurrentPlayer().getName());
+      assertTrue(output.toString().contains(expectedMessage), "Prints sponsor found message if player accepts");
+    }
+
+    @Test
+    @DisplayName("RESP_20_test_7: prints sponsor declined message if player declines")
+    void RESP_20_test_7() {
+      display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
+      game.playEventCard();
+      String expectedMessage = String.format("%s declined to be the sponsor", game.getCurrentPlayer().getName());
+      assertTrue(output.toString().contains(expectedMessage), "Prints sponsor declined message if player declines");
+    }
+
+    @Test
+    @DisplayName("RESP_20_test_8: prints no sponsor found message if no player accepts and ends quest and turn")
+    void RESP_20_test_8() {
+      display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
+      game.playEventCard();
+      String expectedMessage = String.format("No sponsor found");
+      assertTrue(output.toString().contains(expectedMessage), "Prints no sponsor found message if no player accepts");
     }
   }
 }
