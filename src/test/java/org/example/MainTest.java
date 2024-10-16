@@ -1792,4 +1792,225 @@ class MainTest {
       assertEquals(quest.getSponsor().getHand().size(), Player.MAX_HAND_SIZE, "Trims sponsor hands to " + Player.MAX_HAND_SIZE + " cards");
     }
   }
+
+  @Test
+  @DisplayName("A-TEST-01: JP-Scenario")
+  void A_TEST_01() {
+    StringWriter output = new StringWriter();
+    Display display = new Display(new PrintWriter(output));
+
+    Game game = new Game();
+
+    game.setupPlayers();
+    game.setDisplay(display);
+
+    game.dealAdventureCards();
+    game.getAdventureDeck().addToTopOfDeck(riggedTopOfDeck());
+    game.getPlayers().get(0).overWriteHand(p1Hand(), display);
+    game.getPlayers().get(1).overWriteHand(p2Hand(), display);
+    game.getPlayers().get(2).overWriteHand(p3Hand(), display);
+    game.getPlayers().get(3).overWriteHand(p4Hand(), display);
+
+    game.startTurn();
+    game.getCurrentTurn().setEventCard(new EventCard(QType.Q4));
+
+    display.setScanner(new Scanner(input()));
+
+    game.playEventCard();
+
+    Player p1 = game.getPlayers().get(0);
+    Player p2 = game.getPlayers().get(1);
+    Player p3 = game.getPlayers().get(2);
+    Player p4 = game.getPlayers().get(3);
+
+    assertEquals(p1.getShields(), 0, "Player 1 has 0 shields");
+    assertEquals(convertPlayerHandToAdventureTypes(p1.getHand()), p1EndGameHand(), "Player 1 has correct end game hand");
+
+    assertEquals(p3.getShields(), 0, "Player 3 has 0 shields");
+    assertEquals(convertPlayerHandToAdventureTypes(p3.getHand()), p3EndGameHand(), "Player 3 has correct end game hand");
+
+    assertEquals(p4.getShields(), 4, "Player 4 has 4 shields");
+    assertEquals(convertPlayerHandToAdventureTypes(p4.getHand()), p4EndGameHand(), "Player 4 has correct end game hand");
+
+    assertEquals(p2.getHand().size(), 12, "Player 2 has 12 cards in hand");
+  }
+
+  private List<AdventureType> convertPlayerHandToAdventureTypes(List<AdventureCard> hand) {
+    return hand.stream()
+      .map(AdventureCard::getType)
+      .collect(Collectors.toList());
+  }
+
+  private List<AdventureType> p1EndGameHand() {
+    return Arrays.asList(
+      FoeType.F5,
+      FoeType.F10,
+      FoeType.F15,
+      FoeType.F15,
+      FoeType.F30,
+      WeaponType.H10,
+      WeaponType.B15,
+      WeaponType.B15,
+      WeaponType.L20
+    );
+  }
+
+  private List<AdventureType> p3EndGameHand() {
+    return Arrays.asList(
+      FoeType.F5,
+      FoeType.F5,
+      FoeType.F15,
+      FoeType.F30,
+      WeaponType.S10
+    );
+  }
+
+  private List<AdventureType> p4EndGameHand() {
+    return Arrays.asList(
+      FoeType.F15,
+      FoeType.F15,
+      FoeType.F40,
+      WeaponType.L20
+    );
+  }
+
+  private String input() {
+    String sponsor = "N\n\nY\n\n";
+    String p2Stage1Setup = "1\n7\nQUIT\n\n";
+    String p2Stage2Setup = "2\n5\nQUIT\n\n";
+    String p2Stage3Setup = "2\n3\n4\nQUIT\n\n";
+    String p2Stage4Setup = "2\n3\nQUIT\n\n\n";
+    String participationStage1 = "Y\n\n".repeat(3);
+    String p1stage1trimAndAttackSetup = "1\n\n5\n5\nQUIT\n\n";
+    String p3stage1trimAndAttackSetup = "1\n\n5\n4\nQUIT\n\n";
+    String p4stage1trimAndAttackSetup = "1\n\n4\n6\nQUIT\n\n";
+    String resolveStage1 = "\n\n\n";
+    String participationStage2 = "Y\n\n".repeat(3);
+    String p1stage2drawAndAttackSetup = "\n7\n6\nQUIT\n\n";
+    String p3stage2drawAndAttackSetup = "\n9\n4\nQUIT\n\n";
+    String p4stage2drawAndAttackSetup = "\n6\n6\nQUIT\n\n";
+    String resolveStage2 = "\n\n\n";
+    String participationStage3 = "Y\n\n".repeat(2);
+    String p3stage3drawAndAttackSetup = "\n9\n6\n4\nQUIT\n\n";
+    String p4stage3drawAndAttackSetup = "\n7\n5\n6\nQUIT\n\n";
+    String resolveStage3 = "\n\n";
+    String participationStage4 = "Y\n\n".repeat(2);
+    String p3stage4drawAndAttackSetup = "\n7\n6\n6\nQUIT\n\n";
+    String p4stage4drawAndAttackSetup = "\n4\n4\n4\n5\nQUIT\n\n";
+    String resolveStage4 = "\n\n\n";
+    String trimP2hand = "1\n1\n1\n";
+
+    return sponsor +
+       p2Stage1Setup +
+       p2Stage2Setup +
+       p2Stage3Setup +
+       p2Stage4Setup +
+       participationStage1 +
+       p1stage1trimAndAttackSetup +
+       p3stage1trimAndAttackSetup +
+       p4stage1trimAndAttackSetup +
+       resolveStage1 +
+       participationStage2 +
+       p1stage2drawAndAttackSetup +
+       p3stage2drawAndAttackSetup +
+       p4stage2drawAndAttackSetup +
+       resolveStage2 +
+       participationStage3 +
+       p3stage3drawAndAttackSetup +
+       p4stage3drawAndAttackSetup +
+       resolveStage3 +
+       participationStage4 +
+       p3stage4drawAndAttackSetup +
+       p4stage4drawAndAttackSetup +
+       resolveStage4 +
+       trimP2hand;
+  }
+
+  private List<AdventureCard> riggedTopOfDeck() {
+    List<AdventureCard> riggedDeck = new ArrayList<>();
+    riggedDeck.add(new AdventureCard(FoeType.F30));
+    riggedDeck.add(new AdventureCard(WeaponType.S10));
+    riggedDeck.add(new AdventureCard(WeaponType.B15));
+    riggedDeck.add(new AdventureCard(FoeType.F10));
+    riggedDeck.add(new AdventureCard(WeaponType.L20));
+    riggedDeck.add(new AdventureCard(WeaponType.L20));
+    riggedDeck.add(new AdventureCard(WeaponType.B15));
+    riggedDeck.add(new AdventureCard(WeaponType.S10));
+    riggedDeck.add(new AdventureCard(FoeType.F30));
+    riggedDeck.add(new AdventureCard(WeaponType.L20));
+
+    return riggedDeck;
+  }
+
+  private List<AdventureCard> p1Hand() {
+    List<AdventureCard> P1_hand = new ArrayList<>();
+    P1_hand.add(new AdventureCard(FoeType.F5));
+    P1_hand.add(new AdventureCard(FoeType.F5));
+    P1_hand.add(new AdventureCard(FoeType.F15));
+    P1_hand.add(new AdventureCard(FoeType.F15));
+    P1_hand.add(new AdventureCard(WeaponType.D5));
+    P1_hand.add(new AdventureCard(WeaponType.S10));
+    P1_hand.add(new AdventureCard(WeaponType.S10));
+    P1_hand.add(new AdventureCard(WeaponType.H10));
+    P1_hand.add(new AdventureCard(WeaponType.H10));
+    P1_hand.add(new AdventureCard(WeaponType.B15));
+    P1_hand.add(new AdventureCard(WeaponType.B15));
+    P1_hand.add(new AdventureCard(WeaponType.L20));
+
+    return P1_hand;
+  }
+
+  private List<AdventureCard> p2Hand() {
+    List<AdventureCard> P2_hand = new ArrayList<>();
+    P2_hand.add(new AdventureCard(FoeType.F5));
+    P2_hand.add(new AdventureCard(FoeType.F5));
+    P2_hand.add(new AdventureCard(FoeType.F15));
+    P2_hand.add(new AdventureCard(FoeType.F15));
+    P2_hand.add(new AdventureCard(FoeType.F40));
+    P2_hand.add(new AdventureCard(WeaponType.D5));
+    P2_hand.add(new AdventureCard(WeaponType.S10));
+    P2_hand.add(new AdventureCard(WeaponType.H10));
+    P2_hand.add(new AdventureCard(WeaponType.H10));
+    P2_hand.add(new AdventureCard(WeaponType.B15));
+    P2_hand.add(new AdventureCard(WeaponType.B15));
+    P2_hand.add(new AdventureCard(WeaponType.E30));
+
+    return P2_hand;
+  }
+
+  private List<AdventureCard> p3Hand() {
+    List<AdventureCard> P3_hand = new ArrayList<>();
+    P3_hand.add(new AdventureCard(FoeType.F5));
+    P3_hand.add(new AdventureCard(FoeType.F5));
+    P3_hand.add(new AdventureCard(FoeType.F5));
+    P3_hand.add(new AdventureCard(FoeType.F15));
+    P3_hand.add(new AdventureCard(WeaponType.D5));
+    P3_hand.add(new AdventureCard(WeaponType.S10));
+    P3_hand.add(new AdventureCard(WeaponType.S10));
+    P3_hand.add(new AdventureCard(WeaponType.S10));
+    P3_hand.add(new AdventureCard(WeaponType.H10));
+    P3_hand.add(new AdventureCard(WeaponType.H10));
+    P3_hand.add(new AdventureCard(WeaponType.B15));
+    P3_hand.add(new AdventureCard(WeaponType.L20));
+
+    return P3_hand;
+  }
+
+  private List<AdventureCard> p4Hand() {
+    List<AdventureCard> P4_hand = new ArrayList<>();
+    P4_hand.add(new AdventureCard(FoeType.F5));
+    P4_hand.add(new AdventureCard(FoeType.F15));
+    P4_hand.add(new AdventureCard(FoeType.F15));
+    P4_hand.add(new AdventureCard(FoeType.F40));
+    P4_hand.add(new AdventureCard(WeaponType.D5));
+    P4_hand.add(new AdventureCard(WeaponType.D5));
+    P4_hand.add(new AdventureCard(WeaponType.S10));
+    P4_hand.add(new AdventureCard(WeaponType.H10));
+    P4_hand.add(new AdventureCard(WeaponType.H10));
+    P4_hand.add(new AdventureCard(WeaponType.B15));
+    P4_hand.add(new AdventureCard(WeaponType.L20));
+    P4_hand.add(new AdventureCard(WeaponType.E30));
+
+    return P4_hand;
+  }
 }
