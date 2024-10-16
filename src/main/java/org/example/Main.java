@@ -17,14 +17,14 @@ public class Main {
     game.setupPlayers();
     game.createQuest(2);
     Quest quest = game.getQuest();
-    quest.setSponsor(game.getCurrentPlayer());
 
-    Participant participant = new Participant(game.getPlayers().get(1));
-    quest.getParticipants().add(participant);
-    quest.getStages().get(0).addCard(new AdventureCard(FoeType.F10));
-    participant.addCardToAttack(new AdventureCard(WeaponType.D5), game.getDisplay());
+    quest.getParticipants().add(new Participant(game.getPlayers().get(1)));
+    quest.getParticipants().add(new Participant(game.getPlayers().get(2)));
+    quest.rewardShields(game.getDisplay());
+    // quest.getStages().get(0).addCard(new AdventureCard(FoeType.F10));
+    // participant.addCardToAttack(new AdventureCard(WeaponType.D5), game.getDisplay());
 
-    quest.resolveAttacks(0, game.getDisplay());
+    // quest.resolveAttacks(0, game.getDisplay());
 
 
     // game.getDisplay().promptNextParticipantAttack(1, quest.getParticipants().get(0));

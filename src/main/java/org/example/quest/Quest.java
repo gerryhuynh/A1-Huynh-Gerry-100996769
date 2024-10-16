@@ -76,10 +76,21 @@ public class Quest {
       }
       resolveAttacks(i, display);
     }
+    rewardShields(display);
   }
 
   public void rewardShields(Display display) {
-    return;
+    display.print("\nQUEST COMPLETE!");
+    if (participants.size() > 0) {
+      display.print(String.format("REWARDING %d SHIELDS TO PARTICIPANTS...", numStages));
+      for (Participant participant : participants) {
+        int originalShields = participant.getPlayer().getShields();
+        participant.getPlayer().setShields(participant.getPlayer().getShields() + numStages);
+        display.print(String.format("\n%s's shields: %d -> %d", participant.getPlayer().getName(), originalShields, participant.getPlayer().getShields()));
+      }
+    } else {
+      display.print("No participants were successful in defeating the quest's stages.");
+    }
   }
 
   public void resolveAttacks(int stageIndex, Display display) {
