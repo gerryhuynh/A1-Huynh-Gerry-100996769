@@ -170,6 +170,12 @@ public class Display {
     clear();
   }
 
+  public void promptContinueToAttack() {
+    print("\nPress the return key to continue to setting up the attack.");
+    input.nextLine();
+    clear();
+  }
+
   public void printParticipants(List<Participant> participants) {
     print("\nELIGIBLE PARTICIPANTS:");
     print(participants.toString());

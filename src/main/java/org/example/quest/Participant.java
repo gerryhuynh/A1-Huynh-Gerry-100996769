@@ -24,6 +24,7 @@ public class Participant {
   public void drawCard(AdventureDeck adventureDeck, Display display) {
     display.print(String.format("%s draws an adventure card...", player.getName()));
     player.addToHand(adventureDeck.draw(1), display);
+    display.promptContinueToAttack();
   }
 
   public void addCardToAttack(AdventureCard card, Display display) {
@@ -34,6 +35,14 @@ public class Participant {
 
   public List<AdventureCard> getAttackCards() {
     return attackCards;
+  }
+
+  public int getAttackValue() {
+    return attackCards.stream().mapToInt(AdventureCard::getValue).sum();
+  }
+
+  public void clearAttackCards() {
+    attackCards.clear();
   }
 
   @Override

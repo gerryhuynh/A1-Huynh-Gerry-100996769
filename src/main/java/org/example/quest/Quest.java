@@ -74,14 +74,43 @@ public class Quest {
         participant.drawCard(adventureDeck, display);
         setupAttack(i + 1, participant, display);
       }
+      resolveAttacks(i, display);
     }
+  }
+
+  public void resolveAttacks(int stageIndex, Display display) {
+    display.print(String.format("\nRESOLVING STAGE %d ATTACKS...", stageIndex + 1));
+    Stage currentStage = stages.get(stageIndex);
+    int stageValue = currentStage.getValue();
+    int participantAttackValue = 0;
+    List<Participant> activeParticipants = new ArrayList<>();
+
+    for (Participant participant : participants) {
+      display.print(String.format("\nPARTICIPANT: %s", participant.getPlayer().getName()));
+      participantAttackValue = participant.getAttackValue();
+      display.print(String.format("\nSponsor's Defense: %s. Value: %d", currentStage.getCards().toString(), stageValue));
+      display.print(String.format("Your Attack: %s. Value: %d", participant.getAttackCards().toString(), participantAttackValue));
+
+      if (participantAttackValue >= stageValue) {
+        display.print(String.format("\nYour attack is successful!"));
+        display.print(String.format("You will continue to the next stage."));
+        activeParticipants.add(participant);
+      } else {
+        display.print(String.format("\nYour attack is unsuccessful."));
+        display.print(String.format("You are no longer eligible to continue the quest."));
+      }
+      participant.clearAttackCards();
+      display.promptNextPlayer();
+      display.clear();
+    }
+    this.participants = activeParticipants;
   }
 
   public void setupAttack(int stageNum, Participant participant, Display display) {
     boolean validCard = false;
     display.printAttackSetup(stageNum, participant);
     while (true) {
-      if (participant.getPlayer().getHand().size() != 0) {
+      if (participant.getAttackCards().size() != 0) {
         display.printHand(participant.getPlayer().getHand());
       }
       int cardIndex = display.promptForCardIndexWithQuit(participant.getPlayer().getHand().size(), true);
@@ -95,10 +124,6 @@ public class Quest {
         participant.addCardToAttack(card, display);
       }
     }
-  }
-
-  public void resolveAttacks(int stageIndex, Display display) {
-    return;
   }
 
   public boolean validateAttackCard(List<AdventureCard> attackCards, AdventureCard card, Display display) {
