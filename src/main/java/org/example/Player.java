@@ -29,7 +29,10 @@ public class Player {
 
       int numCardsToTrim = computeNumCardsToTrim(cards.size());
       if (numCardsToTrim > 0) {
-        trimmedCards = trimHand(numCardsToTrim, display);
+        while (cards.size() > Player.MAX_HAND_SIZE) {
+          trimmedCards.add(cards.removeFirst());
+        }
+        trimmedCards.addAll(trimHand(numCardsToTrim, display));
       }
       hand.addAll(cards);
       sortHand();
@@ -45,6 +48,7 @@ public class Player {
 
     public int computeNumCardsToTrim(int numCardsToAdd) {
       int numCardsToTrim = hand.size() + numCardsToAdd - MAX_HAND_SIZE;
+      if (numCardsToTrim > hand.size()) numCardsToTrim = hand.size();
       return numCardsToTrim > 0 ? numCardsToTrim : 0;
     }
 

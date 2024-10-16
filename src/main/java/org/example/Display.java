@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
 public class Display {
-  public static final String CLEAR_SCREEN_COMMAND = "\033[H\033[2J";
+  public static final String CLEAR_SCREEN_COMMAND = "\n".repeat(50);
   private PrintWriter output;
   private Scanner input;
 
