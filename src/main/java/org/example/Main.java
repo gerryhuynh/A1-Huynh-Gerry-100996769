@@ -15,12 +15,16 @@ public class Main {
   public static void main(String[] args) {
     Game game = new Game();
     game.setupPlayers();
+    game.dealAdventureCards();
     game.createQuest(2);
     Quest quest = game.getQuest();
+    quest.setSponsor(game.getCurrentPlayer());
+    quest.setSponsorNumCardsUsed(2);
+    quest.replenishSponsorHands(game.getDisplay(), game.getAdventureDeck());
 
-    quest.getParticipants().add(new Participant(game.getPlayers().get(1)));
-    quest.getParticipants().add(new Participant(game.getPlayers().get(2)));
-    quest.rewardShields(game.getDisplay());
+    // quest.getParticipants().add(new Participant(game.getPlayers().get(1)));
+    // quest.getParticipants().add(new Participant(game.getPlayers().get(2)));
+    // quest.rewardShields(game.getDisplay());
     // quest.getStages().get(0).addCard(new AdventureCard(FoeType.F10));
     // participant.addCardToAttack(new AdventureCard(WeaponType.D5), game.getDisplay());
 

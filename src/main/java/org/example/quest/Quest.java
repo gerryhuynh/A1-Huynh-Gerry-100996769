@@ -77,10 +77,13 @@ public class Quest {
       resolveAttacks(i, display);
     }
     rewardShields(display);
+    replenishSponsorHands(display, adventureDeck);
   }
 
   public void replenishSponsorHands(Display display, AdventureDeck adventureDeck) {
-    return;
+    int numCardsToDraw = sponsorNumCardsUsed + numStages;
+    display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), numCardsToDraw));
+    sponsor.addToHand(adventureDeck.draw(numCardsToDraw), display);
   }
 
   public void rewardShields(Display display) {
@@ -95,6 +98,7 @@ public class Quest {
     } else {
       display.print("No participants were successful in defeating the quest's stages.");
     }
+    display.promptReturnToSponsor();
   }
 
   public void resolveAttacks(int stageIndex, Display display) {
@@ -283,6 +287,6 @@ public class Quest {
   }
 
   public void setSponsorNumCardsUsed(int sponsorNumCardsUsed) {
-    return;
+    this.sponsorNumCardsUsed = sponsorNumCardsUsed;
   }
 }

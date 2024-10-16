@@ -50,7 +50,7 @@ public class Player {
 
     public List<AdventureCard> trimHand(int numCards, Display display) {
       List<AdventureCard> trimmedCards = new ArrayList<>();
-      while (hand.size() + numCards > MAX_HAND_SIZE) {
+      for (int i = 0; i < numCards; i++) {
         int removeCardIndex = display.promptForCardToDiscard(hand);
         trimmedCards.add(hand.remove(removeCardIndex));
       }

@@ -217,6 +217,12 @@ public class Display {
     clear();
   }
 
+  public void promptReturnToSponsor() {
+    print("\nPress the return key to clear the display and return to the sponsor.");
+    input.nextLine();
+    clear();
+  }
+
   public void promptEndTurn(String playerName) {
     print(String.format("\n%s'S TURN ENDED.", playerName));
     print("\nPress the return key to end your turn and clear the display.");
