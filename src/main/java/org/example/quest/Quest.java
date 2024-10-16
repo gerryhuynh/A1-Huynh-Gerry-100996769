@@ -97,6 +97,10 @@ public class Quest {
     }
   }
 
+  public void resolveAttacks(int stageIndex, Display display) {
+    return;
+  }
+
   public boolean validateAttackCard(List<AdventureCard> attackCards, AdventureCard card, Display display) {
     if (card.getType() instanceof WeaponType) {
       boolean hasDuplicateWeapon = attackCards.stream()

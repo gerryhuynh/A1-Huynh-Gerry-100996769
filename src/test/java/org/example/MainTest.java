@@ -1624,4 +1624,69 @@ class MainTest {
       assertTrue(output.toString().contains("Press the return key to clear the display for the next player."), "Prompts next participant");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_29: Quest Attack - Resolve Attacks")
+  class RESP_29 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+    private Quest quest;
+    private Participant participant;
+    @BeforeEach
+    void setUp() {
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+
+      game.setupPlayers();
+      game.createQuest(2);
+      quest = game.getQuest();
+      quest.setSponsor(game.getCurrentPlayer());
+      participant = new Participant(game.getPlayers().get(1));
+      quest.getParticipants().add(participant);
+      quest.getStages().get(0).addCard(new AdventureCard(FoeType.F10));
+      display.setScanner(new Scanner("\n"));
+    }
+
+    @Test
+    @DisplayName("RESP_29_test_1: unsuccessful attack")
+    void RESP_29_test_1() {
+      participant.addCardToAttack(new AdventureCard(WeaponType.D5), display);
+      quest.resolveAttacks(0, display);
+      assertTrue(output.toString().contains("Your attack is unsuccessful."), "Prints unsuccessful attack message");
+    }
+
+    @Test
+    @DisplayName("RESP_29_test_2: successful attack")
+    void RESP_29_test_2() {
+      participant.addCardToAttack(new AdventureCard(WeaponType.E30), display);
+      quest.resolveAttacks(0, display);
+      assertTrue(output.toString().contains("Your attack is successful!"), "Prints successful attack message");
+    }
+
+    @Test
+    @DisplayName("RESP_29_test_3: successful attack if equal value")
+    void RESP_29_test_3() {
+      participant.addCardToAttack(new AdventureCard(WeaponType.H10), display);
+      quest.resolveAttacks(0, display);
+      assertTrue(output.toString().contains("Your attack is successful!"), "Prints successful attack message");
+    }
+
+    @Test
+    @DisplayName("RESP_29_test_4: successful attack continues to next stage")
+    void RESP_29_test_4() {
+      participant.addCardToAttack(new AdventureCard(WeaponType.E30), display);
+      quest.resolveAttacks(0, display);
+      assertTrue(quest.getParticipants().contains(participant), "Continues to next stage");
+    }
+
+    @Test
+    @DisplayName("RESP_29_test_5: unsuccessful attack does not continue to next stage")
+    void RESP_29_test_5() {
+      participant.addCardToAttack(new AdventureCard(WeaponType.D5), display);
+      quest.resolveAttacks(0, display);
+      assertFalse(quest.getParticipants().contains(participant), "Does not continue to next stage");
+    }
+  }
 }
