@@ -1583,4 +1583,45 @@ class MainTest {
       assertTrue(output.toString().contains(cardToAdd.toString()), "Prints card added to attack");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_28: Quest Attack - Handle QUIT")
+  class RESP_28 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+    private Quest quest;
+
+    @BeforeEach
+    void setUp() {
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+
+      game.setupPlayers();
+      game.createQuest(2);
+      quest = game.getQuest();
+      quest.setSponsor(game.getPlayers().get(0));
+      quest.addAllPlayersExceptSponsorToParticipants(game.getPlayers());
+    }
+
+    @Test
+    @DisplayName("RESP_28_test_1: prints participant's attack setup")
+    void RESP_28_test_1() {
+      Participant participant = quest.getParticipants().get(0);
+      participant.addCardToAttack(new AdventureCard(WeaponType.D5), display);
+      display.setScanner(new Scanner("\n"));
+      display.promptNextParticipantAttack(1, participant);
+      assertTrue(output.toString().contains(participant.getAttackCards().toString()), "Prints participant's attack setup");
+    }
+
+    @Test
+    @DisplayName("RESP_28_test_2: prompts next participant")
+    void RESP_28_test_2() {
+      Participant participant = quest.getParticipants().get(0);
+      display.setScanner(new Scanner("\n"));
+      display.promptNextParticipantAttack(1, participant);
+      assertTrue(output.toString().contains("Press the return key to clear the display for the next player."), "Prompts next participant");
+    }
+  }
 }

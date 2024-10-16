@@ -225,6 +225,10 @@ public class Display {
     winners.forEach(winner -> print(String.format("- %s", winner.getName())));
   }
 
+  public void promptNextParticipantAttack(int stageNum, Participant participant) {
+    return;
+  }
+
   public void clear() {
     output.print(CLEAR_SCREEN_COMMAND);
     output.flush();
