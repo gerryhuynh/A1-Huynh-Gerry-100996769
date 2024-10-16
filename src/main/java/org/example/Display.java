@@ -152,6 +152,13 @@ public class Display {
     print(cards.toString());
   }
 
+  public void promptNextParticipantAttack(int stageNum, Participant participant) {
+    print(String.format("\nSTAGE %d ATTACK SETUP COMPLETE FOR %s.", stageNum, participant.getPlayer().getName()));
+    printCardAddedToAttack(participant.getAttackCards());
+    promptNextPlayer();
+    clear();
+  }
+
   public void printQuestSetupComplete(Quest quest) {
     print("\nQUEST SETUP COMPLETE.");
     print("Cards used for the quest:");
@@ -223,10 +230,6 @@ public class Display {
   public void printGameOver(List<Player> winners) {
     print("\nGame Over! Winners:");
     winners.forEach(winner -> print(String.format("- %s", winner.getName())));
-  }
-
-  public void promptNextParticipantAttack(int stageNum, Participant participant) {
-    return;
   }
 
   public void clear() {

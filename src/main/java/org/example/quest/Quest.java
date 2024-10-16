@@ -73,8 +73,6 @@ public class Quest {
       for (Participant participant : participants) {
         participant.drawCard(adventureDeck, display);
         setupAttack(i + 1, participant, display);
-        display.promptNextPlayer();
-        display.clear();
       }
     }
   }
@@ -87,6 +85,10 @@ public class Quest {
         display.printHand(participant.getPlayer().getHand());
       }
       int cardIndex = display.promptForCardIndexWithQuit(participant.getPlayer().getHand().size(), true);
+      if (cardIndex == QUIT) {
+        display.promptNextParticipantAttack(stageNum, participant);
+        break;
+      }
       AdventureCard card = participant.getPlayer().getHand().get(cardIndex);
       validCard = validateAttackCard(participant.getAttackCards(), card, display);
       if (validCard) {
