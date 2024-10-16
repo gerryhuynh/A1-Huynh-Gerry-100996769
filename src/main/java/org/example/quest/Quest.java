@@ -78,6 +78,10 @@ public class Quest {
     }
   }
 
+  public void rewardShields(Display display) {
+    return;
+  }
+
   public void resolveAttacks(int stageIndex, Display display) {
     display.print(String.format("\nRESOLVING STAGE %d ATTACKS...", stageIndex + 1));
     Stage currentStage = stages.get(stageIndex);

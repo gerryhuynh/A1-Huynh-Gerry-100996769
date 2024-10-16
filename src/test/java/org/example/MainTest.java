@@ -1689,4 +1689,67 @@ class MainTest {
       assertFalse(quest.getParticipants().contains(participant), "Does not continue to next stage");
     }
   }
+
+  @Nested
+  @DisplayName("RESP_30: Quest Attack - Reward Shields")
+  class RESP_30 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+    private Quest quest;
+
+    @BeforeEach
+    void setUp() {
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+      game.setupPlayers();
+    }
+
+    @Test
+    @DisplayName("RESP_30_test_1: rewards shields to 1 ending participant")
+    void RESP_30_test_1() {
+      game.createQuest(2);
+      quest = game.getQuest();
+      Participant participant = new Participant(game.getPlayers().get(1));
+      quest.getParticipants().add(participant);
+      quest.rewardShields(display);
+      assertEquals(participant.getPlayer().getShields(), 2, "Rewards shields to participant");
+    }
+
+    @Test
+    @DisplayName("RESP_30_test_2: rewards shields to multiple ending participants")
+    void RESP_30_test_2() {
+      game.createQuest(2);
+      quest = game.getQuest();
+      Participant participant1 = new Participant(game.getPlayers().get(1));
+      Participant participant2 = new Participant(game.getPlayers().get(2));
+      quest.getParticipants().add(participant1);
+      quest.getParticipants().add(participant2);
+      quest.rewardShields(display);
+      assertEquals(participant1.getPlayer().getShields(), 2, "Rewards shields to participant 1");
+      assertEquals(participant2.getPlayer().getShields(), 2, "Rewards shields to participant 2");
+    }
+
+    @Test
+    @DisplayName("RESP_30_test_3: does not reward shields to non-participants")
+    void RESP_30_test_3() {
+      game.createQuest(2);
+      quest = game.getQuest();
+      Participant participant = new Participant(game.getPlayers().get(1));
+      quest.rewardShields(display);
+      assertEquals(participant.getPlayer().getShields(), 0, "Does not reward shields to non-participants");
+    }
+
+    @Test
+    @DisplayName("RESP_30_test_4: rewards the same number of shields as the number of stages")
+    void RESP_30_test_4() {
+      game.createQuest(5);
+      quest = game.getQuest();
+      Participant participant = new Participant(game.getPlayers().get(1));
+      quest.getParticipants().add(participant);
+      quest.rewardShields(display);
+      assertEquals(participant.getPlayer().getShields(), quest.getNumStages(), "Rewards the same number of shields as the number of stages");
+    }
+  }
 }
