@@ -1704,6 +1704,7 @@ class MainTest {
       display = new Display(new PrintWriter(output));
       game.setDisplay(display);
       game.setupPlayers();
+      display.setScanner(new Scanner("\n"));
     }
 
     @Test
@@ -1750,6 +1751,45 @@ class MainTest {
       quest.getParticipants().add(participant);
       quest.rewardShields(display);
       assertEquals(participant.getPlayer().getShields(), quest.getNumStages(), "Rewards the same number of shields as the number of stages");
+    }
+  }
+
+  @Nested
+  @DisplayName("RESP_31: Quest Attack - Replenish Sponsor Hands")
+  class RESP_31 {
+    private final Game game = new Game();
+    private StringWriter output;
+    private Display display;
+    private Quest quest;
+
+    @BeforeEach
+    void setUp() {
+      output = new StringWriter();
+      display = new Display(new PrintWriter(output));
+      game.setDisplay(display);
+      game.setupPlayers();
+      game.createQuest(2);
+      quest = game.getQuest();
+      quest.setSponsor(game.getCurrentPlayer());
+      quest.setSponsorNumCardsUsed(2);
+    }
+
+    @Test
+    @DisplayName("RESP_31_test_1: adds to sponsor hands with correct number of cards")
+    void RESP_31_test_1() {
+      quest.replenishSponsorHands(display, game.getAdventureDeck());
+      int expectedNumCards = quest.getSponsorNumCardsUsed() + quest.getNumStages();
+      assertEquals(quest.getSponsor().getHand().size(), expectedNumCards, "Replenishes sponsor hands with correct number of cards");
+    }
+
+    @Test
+    @DisplayName("RESP_31_test_2: trims sponsor hands to " + Player.MAX_HAND_SIZE + " cards")
+    void RESP_31_test_2() {
+      game.dealAdventureCards();
+      int numCardsToAdd = quest.getSponsorNumCardsUsed() + quest.getNumStages();
+      display.setScanner(new Scanner("1\n".repeat(numCardsToAdd)));
+      quest.replenishSponsorHands(display, game.getAdventureDeck());
+      assertEquals(quest.getSponsor().getHand().size(), Player.MAX_HAND_SIZE, "Trims sponsor hands to " + Player.MAX_HAND_SIZE + " cards");
     }
   }
 }

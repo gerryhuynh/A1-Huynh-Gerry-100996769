@@ -79,6 +79,10 @@ public class Quest {
     rewardShields(display);
   }
 
+  public void replenishSponsorHands(Display display, AdventureDeck adventureDeck) {
+    return;
+  }
+
   public void rewardShields(Display display) {
     display.print("\nQUEST COMPLETE!");
     if (participants.size() > 0) {
@@ -276,5 +280,9 @@ public class Quest {
 
   public int getSponsorNumCardsUsed() {
     return sponsorNumCardsUsed;
+  }
+
+  public void setSponsorNumCardsUsed(int sponsorNumCardsUsed) {
+    return;
   }
 }
