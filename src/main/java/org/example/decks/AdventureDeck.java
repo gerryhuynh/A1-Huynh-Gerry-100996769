@@ -31,10 +31,6 @@ public class AdventureDeck extends Deck<AdventureCard, AdventureType> {
         return drawnCards;
     }
 
-    public void addToTopOfDeck(List<AdventureCard> cards) {
-        this.cards.addAll(0, cards);
-    }
-
     @Override
     protected void addCards(AdventureType type) {
         for (int i = 0; i < type.getDefaultCount(); i++) {

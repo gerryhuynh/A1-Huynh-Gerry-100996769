@@ -25,6 +25,10 @@ public abstract class Deck<T extends Card<S>, S extends CardType> {
 		return cards.remove(0);
 	}
 
+	public void addToTopOfDeck(List<T> cards) {
+		this.cards.addAll(0, cards);
+	}
+
 	public int size() {
 		return cards.size();
 	}
@@ -50,7 +54,7 @@ public abstract class Deck<T extends Card<S>, S extends CardType> {
 
 	protected <R extends S> Map<R, Integer> getCardsByType(Class<R> typeClass) {
 		Map<R, Integer> cardMap = new HashMap<>();
-		
+
 		for (T card : cards) {
 			S type = card.getType();
 			if (typeClass.isInstance(type)) {
@@ -58,7 +62,7 @@ public abstract class Deck<T extends Card<S>, S extends CardType> {
 				cardMap.put(castedType, cardMap.getOrDefault(castedType, 0) + 1);
 			}
 		}
-		
+
 		return cardMap;
 	}
 }

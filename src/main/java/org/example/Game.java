@@ -23,15 +23,25 @@ public class Game {
   private Quest quest;
 
   public Game() {
+    this(new AdventureDeck(), new EventDeck(), true);
+  }
+
+  public Game(AdventureDeck adventureDeck, EventDeck eventDeck) {
+    this(adventureDeck, eventDeck, false);
+  }
+
+  private Game(AdventureDeck adventureDeck, EventDeck eventDeck, boolean shuffle) {
     this.players = new ArrayList<>();
-    this.adventureDeck = new AdventureDeck();
-    this.eventDeck = new EventDeck();
+    this.adventureDeck = adventureDeck;
+    this.eventDeck = eventDeck;
     this.currentTurn = null;
     this.display = new Display(new PrintWriter(System.out));
     this.gameOver = false;
 
-    adventureDeck.shuffle();
-    eventDeck.shuffle();
+    if (shuffle) {
+      this.adventureDeck.shuffle();
+      this.eventDeck.shuffle();
+    }
   }
 
   public void setupPlayers() {
@@ -57,6 +67,10 @@ public class Game {
   public void startTurn() {
     display.printCurrentPlayer(currentTurn.getPlayer());
     display.printHand(currentTurn.getPlayer().getHand());
+    drawEventCard();
+  }
+
+  public void drawEventCard() {
     currentTurn.setEventCard(eventDeck.draw());
     display.printDrawnEventCard(currentTurn.getEventCard());
     display.printEventCardEffect(currentTurn.getEventCard());
