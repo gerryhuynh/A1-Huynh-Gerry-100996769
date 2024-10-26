@@ -46,8 +46,8 @@ public class GameSteps {
     game.dealAdventureCards();
   }
 
-  @Then("Player {int}'s starting hand is:")
-  public void player_s_starting_hand_is(int playerNumber, String hand) {
+  @Then("Player {int}'s hand is:")
+  public void player_s_hand_is(int playerNumber, String hand) {
     Player player = game.getPlayers().get(playerNumber - 1);
 
     List<String> handList = Arrays.asList(hand.split(", "));
@@ -58,7 +58,7 @@ public class GameSteps {
         .map(AdventureCard::getType)
         .collect(Collectors.toList());
 
-    assertEquals(expectedTypes, actualTypes, "Player " + playerNumber + " has correct starting hand");
+    assertEquals(expectedTypes, actualTypes, "Player " + playerNumber + " has correct hand");
   }
 
   @Given("the game starts turn")
@@ -171,7 +171,49 @@ public class GameSteps {
     assertFalse(quest.getParticipantsAsPlayers().contains(player), "Player " + playerNumber + " is removed from quest");
   }
 
+  @Then("there are no more stages")
+  public void there_are_no_more_stages() {
+    assertNull(quest.getCurrentStage(), "There are no more stages");
+  }
+
+  @When("shields are rewarded")
+  public void shields_are_rewarded() {
+    display.setInput("\n".repeat(quest.getParticipants().size()));
+
+    quest.rewardShields(display);
+  }
+
+  @Then("Player {int} has {int} shields")
+  public void player_has_shields(int playerNumber, int shields) {
+    Player player = game.getPlayers().get(playerNumber - 1);
+
+    assertEquals(shields, player.getShields(), "Player " + playerNumber + " has correct shields");
+  }
+
+  @When("replenishing sponsor's hand for {string}")
+  public void replenishing_sponsor_s_hand_for(String scenario) {
+    display.setInput(getReplenishSponsorHandInputForScenario(scenario));
+
+    quest.replenishSponsorHand(display, game.getAdventureDeck());
+  }
+
+  @Then("Player {int}'s hand has {int} cards")
+  public void player_s_hand_has_cards(int playerNumber, int numCards) {
+    Player player = game.getPlayers().get(playerNumber - 1);
+
+    assertEquals(numCards, player.getHand().size(), "Player " + playerNumber + " has correct hand size");
+  }
+
   // Helper methods
+
+  private String getReplenishSponsorHandInputForScenario(String scenario) {
+    switch (scenario) {
+      case "A1 scenario":
+        return A1Scenario.getReplenishSponsorHandInput();
+      default:
+        throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    }
+  }
 
   private String getAttackSetupInputForScenario(String scenario, int playerNumber, int stageNumber) {
     switch (scenario) {

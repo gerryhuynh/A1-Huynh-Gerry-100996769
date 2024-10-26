@@ -1778,7 +1778,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_31_test_1: adds to sponsor hands with correct number of cards")
     void RESP_31_test_1() {
-      quest.replenishSponsorHands(display, game.getAdventureDeck());
+      quest.replenishSponsorHand(display, game.getAdventureDeck());
       int expectedNumCards = quest.getSponsorNumCardsUsed() + quest.getNumStages();
       assertEquals(quest.getSponsor().getHand().size(), expectedNumCards, "Replenishes sponsor hands with correct number of cards");
     }
@@ -1789,7 +1789,7 @@ class MainTest {
       game.dealAdventureCards();
       int numCardsToAdd = quest.getSponsorNumCardsUsed() + quest.getNumStages();
       display.setInput("1\n".repeat(numCardsToAdd));
-      quest.replenishSponsorHands(display, game.getAdventureDeck());
+      quest.replenishSponsorHand(display, game.getAdventureDeck());
       assertEquals(quest.getSponsor().getHand().size(), Player.MAX_HAND_SIZE, "Trims sponsor hands to " + Player.MAX_HAND_SIZE + " cards");
     }
   }
@@ -1863,7 +1863,7 @@ class MainTest {
     String p3stage4drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(3, 4);
     String p4stage4drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(4, 4);
     String resolveStage4 = "\n\n\n";
-    String trimP2hand = "1\n1\n1\n";
+    String trimP2hand = A1Scenario.getReplenishSponsorHandInput();
 
     return sponsor +
         questStagesSetup +

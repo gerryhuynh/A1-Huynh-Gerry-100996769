@@ -153,6 +153,10 @@ public class A1Scenario {
     }
   }
 
+  public static String getReplenishSponsorHandInput() {
+    return "1\n1\n1\n";
+  }
+
   // Stage attack setup helper methods
 
   private static String getStage1AttackSetupInputForPlayer(int playerNumber) {

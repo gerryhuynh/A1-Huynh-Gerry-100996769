@@ -1,18 +1,18 @@
 Feature: Assignment 2
 
-  Scenario: JP-Scenario
+  Scenario: A1_scenario
 
     # Game and Quest Setup
 
     Given the game is setup with rigged deck for "A1 scenario"
     When the game deals adventure cards to players
-    Then Player 1's starting hand is:
+    Then Player 1's hand is:
       | F5, F5, F15, F15, D5, S10, S10, H10, H10, B15, B15, L20 |
-    And Player 2's starting hand is:
+    And Player 2's hand is:
       | F5, F5, F15, F15, F40, D5, S10, H10, H10, B15, B15, E30 |
-    And Player 3's starting hand is:
+    And Player 3's hand is:
       | F5, F5, F5, F15, D5, S10, S10, S10, H10, H10, B15, L20 |
-    And Player 4's starting hand is:
+    And Player 4's hand is:
       | F5, F15, F15, F40, D5, D5, S10, H10, H10, B15, L20, E30 |
 
     Given the game starts turn
@@ -118,3 +118,22 @@ Feature: Assignment 2
     Given the quest resolves attacks on stage
     Then Player 3's attack fails and is removed from quest
     And Player 4's attack succeeds and remains a participant
+
+    # Quest Resolution
+
+    Given next stage starts
+    Then there are no more stages
+    And Player 1's hand is:
+      | F5, F10, F15, F15, F30, H10, B15, B15, L20 |
+    And Player 3's hand is:
+      | F5, F5, F15, F30, S10 |
+    And Player 4's hand is:
+      | F15, F15, F40, L20 |
+
+    When shields are rewarded
+    Then Player 1 has 0 shields
+    And Player 3 has 0 shields
+    And Player 4 has 4 shields
+
+    When replenishing sponsor's hand for "A1 scenario"
+    Then Player 2's hand has 12 cards

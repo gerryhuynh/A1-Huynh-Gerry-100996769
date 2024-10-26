@@ -82,7 +82,7 @@ public class Quest {
     }
 
     rewardShields(display);
-    replenishSponsorHands(display, adventureDeck);
+    replenishSponsorHand(display, adventureDeck);
   }
 
   public void promptForParticipants(Display display) {
@@ -109,7 +109,7 @@ public class Quest {
     }
   }
 
-  public void replenishSponsorHands(Display display, AdventureDeck adventureDeck) {
+  public void replenishSponsorHand(Display display, AdventureDeck adventureDeck) {
     int numCardsToDraw = sponsorNumCardsUsed + numStages;
     display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), numCardsToDraw));
     sponsor.addToHand(adventureDeck.draw(numCardsToDraw), display);
