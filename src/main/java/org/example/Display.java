@@ -249,7 +249,7 @@ public class Display {
     output.flush();
   }
 
-  public void setScanner(Scanner input) {
-    this.input = input;
+  public void setInput(String input) {
+    this.input = new Scanner(input);
   }
 }

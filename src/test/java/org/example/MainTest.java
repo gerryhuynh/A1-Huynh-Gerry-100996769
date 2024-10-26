@@ -262,7 +262,7 @@ class MainTest {
     @ParameterizedTest(name = "RESP_06_test_2_{index}: when P{0} turn ends, next player is P{1}")
     @MethodSource("playerTurns")
     void RESP_06_test_2(int currentPlayer, int nextPlayer) {
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       game.endTurn();
       Player expected = game.getPlayers().get(nextPlayer - 1);
       assertEquals(expected, game.getCurrentPlayer(), "Next player is P" + nextPlayer);
@@ -450,7 +450,7 @@ class MainTest {
     @DisplayName("RESP_09_test_3: trims hand if adding cards to hand exceeds " + Player.MAX_HAND_SIZE)
     void RESP_09_test_3() {
       game.dealAdventureCards();
-      display.setScanner(new Scanner("1\n2\n"));
+      display.setInput("1\n2\n");
       game.playEventCard();
       assertEquals(Player.MAX_HAND_SIZE, player.getHand().size(), "Hand size is " + Player.MAX_HAND_SIZE);
     }
@@ -524,7 +524,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_11_test_2: prompts player to choose a card number")
     void RESP_11_test_2() {
-      display.setScanner(new Scanner("1\n"));
+      display.setInput("1\n");
       display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("CHOOSE A CARD POSITION:"), "Player is prompted to choose a card position");
     }
@@ -532,7 +532,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_11_test_3: prints not a valid number message if player enters invalid input")
     void RESP_11_test_3() {
-      display.setScanner(new Scanner("invalid\n1"));
+      display.setInput("invalid\n1");
       display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Not a valid number"), "Not a valid number message is printed");
     }
@@ -541,7 +541,7 @@ class MainTest {
     @DisplayName("RESP_11_test_4: prints out of range message if player enters number greater than max index")
     void RESP_11_test_4() {
       String input = String.valueOf(hand.size() + 2) + "\n1";
-      display.setScanner(new Scanner(input));
+      display.setInput(input);
       display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Out of range"), "Out of range message is printed");
     }
@@ -549,7 +549,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_11_test_5: prints out of range message if player enters number less than 1")
     void RESP_11_test_5() {
-      display.setScanner(new Scanner("0\n1"));
+      display.setInput("0\n1");
       display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Out of range"), "Out of range message is printed");
     }
@@ -557,7 +557,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_11_test_6: prints empty input message if player enters empty input")
     void RESP_11_test_6() {
-      display.setScanner(new Scanner("\n1"));
+      display.setInput("\n1");
       display.promptForCardIndex(hand.size());
       assertTrue(output.toString().contains("Empty input"), "Empty input message is printed");
     }
@@ -565,7 +565,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_11_test_7: returns index of card if player enters valid input")
     void RESP_11_test_7() {
-      display.setScanner(new Scanner("2"));
+      display.setInput("2");
       int removeCardIndex = display.promptForCardIndex(hand.size());
       assertEquals(1, removeCardIndex, "Returns index of card to discard");
     }
@@ -586,7 +586,7 @@ class MainTest {
       hand = game.getCurrentPlayer().getHand();
       output = new StringWriter();
       display = new Display(new PrintWriter(output));
-      display.setScanner(new Scanner("2"));
+      display.setInput("2");
     }
 
     @Test
@@ -631,7 +631,7 @@ class MainTest {
       player = game.getCurrentPlayer();
       output = new StringWriter();
       display = new Display(new PrintWriter(output));
-      display.setScanner(new Scanner("1\n2\n"));
+      display.setInput("1\n2\n");
       numCardsToTrim = 2;
     }
 
@@ -651,7 +651,7 @@ class MainTest {
       numCardsToTrim = 0;
       int originalSize = player.getHand().size();
 
-      display.setScanner(new Scanner(""));
+      display.setInput("");
 
       player.trimHand(numCardsToTrim, display);
       assertEquals(originalSize, player.getHand().size(), "Doesn't remove any cards if number of cards to trim is 0");
@@ -668,7 +668,7 @@ class MainTest {
     @DisplayName("RESP_13_test_4: returns empty list if number of cards to trim is 0")
     void RESP_13_test_4() {
       numCardsToTrim = 0;
-      display.setScanner(new Scanner(""));
+      display.setInput("");
 
       List<AdventureCard> trimmedCards = player.trimHand(numCardsToTrim, display);
       assertTrue(trimmedCards.isEmpty(), "Returns empty list if number of cards to trim is 0");
@@ -690,7 +690,7 @@ class MainTest {
       player = game.getCurrentPlayer();
       output = new StringWriter();
       display = new Display(new PrintWriter(output));
-      display.setScanner(new Scanner("1\n2\n"));
+      display.setInput("1\n2\n");
 
       cardsToAdd = new ArrayList<>();
       cardsToAdd.add(new AdventureCard(FoeType.F5));
@@ -776,7 +776,7 @@ class MainTest {
       game.getCurrentTurn().setEventCard(new EventCard(EType.PROSPERITY));
       output = new StringWriter();
       display = new Display(new PrintWriter(output));
-      display.setScanner(new Scanner("\n".repeat(game.getPlayers().size())));
+      display.setInput("\n".repeat(game.getPlayers().size()));
       game.setDisplay(display);
     }
 
@@ -801,7 +801,7 @@ class MainTest {
     void RESP_15_test_3() {
       game.dealAdventureCards();
       String input = "1\n2\n\n".repeat(game.getPlayers().size());
-      display.setScanner(new Scanner(input));
+      display.setInput(input);
 
       game.playEventCard();
       for (Player player : game.getPlayers()) {
@@ -842,7 +842,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_16_test_1: indicates the current player's turn has ended")
     void RESP_16_test_1() {
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       display.promptEndTurn(game.getCurrentPlayer().getName());
       assertTrue(output.toString().contains(
         String.format("%s'S TURN ENDED", game.getCurrentPlayer().getName())),
@@ -852,7 +852,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_16_test_2: prompts player to press the return key to end their turn")
     void RESP_16_test_2() {
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       display.promptEndTurn(game.getCurrentPlayer().getName());
       assertTrue(output.toString().contains("Press the return key to end your turn and clear the display"), "Prompts player to press the return key to end their turn");
     }
@@ -860,7 +860,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_16_test_3: clears display")
     void RESP_16_test_3() {
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       display.clear();
       assertEquals(Display.CLEAR_SCREEN_COMMAND, output.toString(), "Clears display");
     }
@@ -869,7 +869,7 @@ class MainTest {
     @DisplayName("RESP_16_test_4: clears current turn's event card")
     void RESP_16_test_4() {
       game.startTurn();
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       game.endTurn();
       assertNull(game.getCurrentTurn().getEventCard(), "Clears current turn's event card");
     }
@@ -938,7 +938,7 @@ class MainTest {
     @DisplayName("RESP_18_test_1: sets game over to true if a player has won")
     void RESP_18_test_1() {
       game.getPlayers().get(0).setShields(Game.SHIELDS_TO_WIN);
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
 
       game.endTurn();
       assertTrue(game.isGameOver(), "Sets game over to true if a player has won");
@@ -948,7 +948,7 @@ class MainTest {
     @DisplayName("RESP_18_test_2: prints game over message")
     void RESP_18_test_2() {
       game.getPlayers().get(0).setShields(Game.SHIELDS_TO_WIN);
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
 
       game.endTurn();
       assertTrue(output.toString().contains("Game Over! Winners:"), "Prints game over message");
@@ -958,7 +958,7 @@ class MainTest {
     @DisplayName("RESP_18_test_3: prints winners")
     void RESP_18_test_3() {
       game.getPlayers().get(1).setShields(Game.SHIELDS_TO_WIN);
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
 
       game.endTurn();
       assertTrue(output.toString().contains(game.getPlayers().get(1).getName()), "Prints winners");
@@ -969,7 +969,7 @@ class MainTest {
     void RESP_18_test_4() {
       game.getPlayers().get(0).setShields(Game.SHIELDS_TO_WIN);
       game.getPlayers().get(1).setShields(Game.SHIELDS_TO_WIN);
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
 
       game.endTurn();
       assertTrue(output.toString().contains(game.getPlayers().get(0).getName()), "Prints winners");
@@ -1047,7 +1047,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_20_test_1: prompts current player to be the sponsor first")
     void RESP_20_test_1() {
-      display.setScanner(new Scanner("Y\n\n"));
+      display.setInput("Y\n\n");
       game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       String expectedMessage = String.format("%s, do you want to be the sponsor for this %d-stage quest?", game.getCurrentPlayer().getName(), game.getQuest().getNumStages());
       assertTrue(output.toString().contains(expectedMessage), "Prompts player to be the sponsor");
@@ -1056,7 +1056,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_20_test_2: prompts next player to be the sponsor if current player declines")
     void RESP_20_test_2() {
-      display.setScanner(new Scanner("N\n\nY\n\n"));
+      display.setInput("N\n\nY\n\n");
       game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       int nextPlayerIndex = (game.getPlayers().indexOf(game.getCurrentPlayer()) + 1) % game.getPlayers().size();
       String nextPlayer = game.getPlayers().get(nextPlayerIndex).getName();
@@ -1067,7 +1067,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_20_test_3: sets sponsor if player accepts")
     void RESP_20_test_3() {
-      display.setScanner(new Scanner("Y\n\n"));
+      display.setInput("Y\n\n");
       game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       assertEquals(game.getCurrentPlayer(), game.getQuest().getSponsor(), "Sets sponsor if player accepts");
     }
@@ -1075,7 +1075,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_20_test_4: does not set sponsor if no player accepts")
     void RESP_20_test_4() {
-      display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
+      display.setInput("N\n\n".repeat(game.getPlayers().size()));
       game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       assertNull(game.getQuest().getSponsor(), "Does not set sponsor if no player accepts");
     }
@@ -1083,7 +1083,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_20_test_5: prints invalid input message if player enters invalid input")
     void RESP_20_test_5() {
-      display.setScanner(new Scanner("invalid\n\nY\n\n"));
+      display.setInput("invalid\n\nY\n\n");
       game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       assertTrue(output.toString().contains("Invalid input"), "Prints invalid input message if player enters invalid input");
     }
@@ -1091,7 +1091,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_20_test_6: prints sponsor found message if player accepts")
     void RESP_20_test_6() {
-      display.setScanner(new Scanner("Y\n\n"));
+      display.setInput("Y\n\n");
       game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       String expectedMessage = String.format("%s will be the sponsor for this quest", game.getCurrentPlayer().getName());
       assertTrue(output.toString().contains(expectedMessage), "Prints sponsor found message if player accepts");
@@ -1100,7 +1100,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_20_test_7: prints sponsor declined message if player declines")
     void RESP_20_test_7() {
-      display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
+      display.setInput("N\n\n".repeat(game.getPlayers().size()));
       game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       String expectedMessage = String.format("%s declined to be the sponsor", game.getCurrentPlayer().getName());
       assertTrue(output.toString().contains(expectedMessage), "Prints sponsor declined message if player declines");
@@ -1109,7 +1109,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_20_test_8: prints no sponsor found message if no player accepts and ends quest and turn")
     void RESP_20_test_8() {
-      display.setScanner(new Scanner("N\n\n".repeat(game.getPlayers().size())));
+      display.setInput("N\n\n".repeat(game.getPlayers().size()));
       game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), game.getDisplay());
       String expectedMessage = String.format("No sponsor found");
       assertTrue(output.toString().contains(expectedMessage), "Prints no sponsor found message if no player accepts");
@@ -1168,7 +1168,7 @@ class MainTest {
     @DisplayName("RESP_21_test_4: prompts sponsor to choose a card number")
     void RESP_21_test_4() {
       Player sponsor = game.getQuest().getSponsor();
-      display.setScanner(new Scanner("1\n"));
+      display.setInput("1\n");
       display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
       assertTrue(output.toString().contains("CHOOSE A CARD POSITION:"), "Prints stage setup rules");
     }
@@ -1177,7 +1177,7 @@ class MainTest {
     @DisplayName("RESP_21_test_5: returns index of card if input is in valid range")
     void RESP_21_test_5() {
       Player sponsor = game.getQuest().getSponsor();
-      display.setScanner(new Scanner("2\n"));
+      display.setInput("2\n");
       int index = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
       assertEquals(1, index, "Returns index of card if input is in valid range");
     }
@@ -1186,7 +1186,7 @@ class MainTest {
     @DisplayName("RESP_21_test_6: returns QUIT if input is QUIT")
     void RESP_21_test_6() {
       Player sponsor = game.getQuest().getSponsor();
-      display.setScanner(new Scanner("QUIT\n"));
+      display.setInput("QUIT\n");
       int index = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
       assertEquals(Quest.QUIT, index, "Returns QUIT if input is QUIT");
     }
@@ -1316,7 +1316,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_23_test_3: returns false if previous stage has higher value")
     void RESP_23_test_3() {
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       quest.getStages().get(0).addCard(new AdventureCard(FoeType.F15));
       quest.getStages().get(1).addCard(new AdventureCard(FoeType.F5));
       Stage currentStage = quest.getStages().get(1);
@@ -1327,7 +1327,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_23_test_4: prints insufficient value message if previous stage has higher value")
     void RESP_23_test_4() {
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       quest.getStages().get(0).addCard(new AdventureCard(FoeType.F15));
       quest.getStages().get(1).addCard(new AdventureCard(FoeType.F5));
       Stage currentStage = quest.getStages().get(1);
@@ -1338,7 +1338,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_23_test_5: returns true if all conditions are met")
     void RESP_23_test_5() {
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       quest.getStages().get(0).addCard(new AdventureCard(FoeType.F5));
       quest.getStages().get(1).addCard(new AdventureCard(FoeType.F15));
       Stage currentStage = quest.getStages().get(1);
@@ -1349,7 +1349,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_23_test_6: prints cards used for stage")
     void RESP_23_test_6() {
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       quest.getStages().get(0).addCard(new AdventureCard(FoeType.F5));
       quest.getStages().get(1).addCard(new AdventureCard(FoeType.F15));
       Stage currentStage = quest.getStages().get(1);
@@ -1382,7 +1382,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_24_test_1: prints eligible participants")
     void RESP_24_test_1() {
-      display.setScanner(new Scanner("Y\n\n".repeat(quest.getParticipants().size())));
+      display.setInput("Y\n\n".repeat(quest.getParticipants().size()));
       List<Participant> participants = quest.getParticipants();
       display.printParticipants(participants);
       assertTrue(output.toString().contains(participants.toString()), "Prints eligible participants");
@@ -1397,7 +1397,7 @@ class MainTest {
           quest.getParticipants().add(new Participant(player));
         }
       }
-      display.setScanner(new Scanner("N\n\nY\n\nY\n\n"));
+      display.setInput("N\n\nY\n\nY\n\n");
       List<Participant> participants = display.promptForParticipants(quest.getParticipants());
       assertEquals(2, participants.size(), "Prompts for participants and withdraws player");
     }
@@ -1424,7 +1424,7 @@ class MainTest {
       display = new Display(new PrintWriter(output));
       game.setupPlayers();
       game.setDisplay(display);
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
     }
 
     @Test
@@ -1456,7 +1456,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_25_test_4: trims hand - player's hand size does not exceed " + Player.MAX_HAND_SIZE)
     void RESP_25_test_4() {
-      display.setScanner(new Scanner("1\n\n"));
+      display.setInput("1\n\n");
       game.dealAdventureCards();
       Participant participant = new Participant(game.getPlayers().get(1));
       participant.drawCard(game.getAdventureDeck(), display);
@@ -1612,7 +1612,7 @@ class MainTest {
     void RESP_28_test_1() {
       Participant participant = quest.getParticipants().get(0);
       participant.addCardToAttack(new AdventureCard(WeaponType.D5), display);
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       display.promptNextParticipantAttack(1, participant);
       assertTrue(output.toString().contains(participant.getAttackCards().toString()), "Prints participant's attack setup");
     }
@@ -1621,7 +1621,7 @@ class MainTest {
     @DisplayName("RESP_28_test_2: prompts next participant")
     void RESP_28_test_2() {
       Participant participant = quest.getParticipants().get(0);
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
       display.promptNextParticipantAttack(1, participant);
       assertTrue(output.toString().contains("Press the return key to clear the display for the next player."), "Prompts next participant");
     }
@@ -1648,7 +1648,7 @@ class MainTest {
       participant = new Participant(game.getPlayers().get(1));
       quest.getParticipants().add(participant);
       quest.getStages().get(0).addCard(new AdventureCard(FoeType.F10));
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
     }
 
     @Test
@@ -1706,7 +1706,7 @@ class MainTest {
       display = new Display(new PrintWriter(output));
       game.setDisplay(display);
       game.setupPlayers();
-      display.setScanner(new Scanner("\n"));
+      display.setInput("\n");
     }
 
     @Test
@@ -1789,7 +1789,7 @@ class MainTest {
     void RESP_31_test_2() {
       game.dealAdventureCards();
       int numCardsToAdd = quest.getSponsorNumCardsUsed() + quest.getNumStages();
-      display.setScanner(new Scanner("1\n".repeat(numCardsToAdd)));
+      display.setInput("1\n".repeat(numCardsToAdd));
       quest.replenishSponsorHands(display, game.getAdventureDeck());
       assertEquals(quest.getSponsor().getHand().size(), Player.MAX_HAND_SIZE, "Trims sponsor hands to " + Player.MAX_HAND_SIZE + " cards");
     }
@@ -1816,7 +1816,7 @@ class MainTest {
     game.startTurn();
     game.getCurrentTurn().setEventCard(new EventCard(QType.Q4));
 
-    display.setScanner(new Scanner(input()));
+    display.setInput(input());
 
     game.playEventCard();
 
