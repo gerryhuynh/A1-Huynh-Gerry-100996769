@@ -99,3 +99,22 @@ Feature: Assignment 2
     Given the quest resolves attacks on stage
     Then Player 3's attack succeeds and remains a participant
     And Player 4's attack succeeds and remains a participant
+
+    # Stage 4 Attacks
+
+    Given next stage starts
+    And all participants participate in quest
+    And participant draws an adventure card
+    When Player 3 sets up attack for "A1 scenario" on stage 4
+    Then participant's stage attack is:
+      | B15, H10, L20 |
+
+    Given next participant's turn
+    And participant draws an adventure card
+    When Player 4 sets up attack for "A1 scenario" on stage 4
+    Then participant's stage attack is:
+      | D5, S10, L20, E30 |
+
+    Given the quest resolves attacks on stage
+    Then Player 3's attack fails and is removed from quest
+    And Player 4's attack succeeds and remains a participant
