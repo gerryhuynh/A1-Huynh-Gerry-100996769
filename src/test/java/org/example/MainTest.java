@@ -1844,53 +1844,47 @@ class MainTest {
 
   private String input() {
     String sponsor = "N\n\nY\n\n";
-    String p2Stage1Setup = "1\n7\nQUIT\n\n";
-    String p2Stage2Setup = "2\n5\nQUIT\n\n";
-    String p2Stage3Setup = "2\n3\n4\nQUIT\n\n";
-    String p2Stage4Setup = "2\n3\nQUIT\n\n\n";
+    String questStagesSetup = A1Scenario.getQuestStagesSetupInput();
     String participationStage1 = "Y\n\n".repeat(3);
-    String p1stage1trimAndAttackSetup = "1\n\n5\n5\nQUIT\n\n";
-    String p3stage1trimAndAttackSetup = "1\n\n5\n4\nQUIT\n\n";
-    String p4stage1trimAndAttackSetup = "1\n\n4\n6\nQUIT\n\n";
+    String p1stage1trimAndAttackSetup = "1\n\n" + A1Scenario.getAttackSetupInput(1, 1);
+    String p3stage1trimAndAttackSetup = "1\n\n" + A1Scenario.getAttackSetupInput(3, 1);
+    String p4stage1trimAndAttackSetup = "1\n\n" + A1Scenario.getAttackSetupInput(4, 1);
     String resolveStage1 = "\n\n\n";
     String participationStage2 = "Y\n\n".repeat(3);
-    String p1stage2drawAndAttackSetup = "\n7\n6\nQUIT\n\n";
-    String p3stage2drawAndAttackSetup = "\n9\n4\nQUIT\n\n";
-    String p4stage2drawAndAttackSetup = "\n6\n6\nQUIT\n\n";
+    String p1stage2drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(1, 2);
+    String p3stage2drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(3, 2);
+    String p4stage2drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(4, 2);
     String resolveStage2 = "\n\n\n";
     String participationStage3 = "Y\n\n".repeat(2);
-    String p3stage3drawAndAttackSetup = "\n9\n6\n4\nQUIT\n\n";
-    String p4stage3drawAndAttackSetup = "\n7\n5\n6\nQUIT\n\n";
+    String p3stage3drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(3, 3);
+    String p4stage3drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(4, 3);
     String resolveStage3 = "\n\n";
     String participationStage4 = "Y\n\n".repeat(2);
-    String p3stage4drawAndAttackSetup = "\n7\n6\n6\nQUIT\n\n";
-    String p4stage4drawAndAttackSetup = "\n4\n4\n4\n5\nQUIT\n\n";
+    String p3stage4drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(3, 4);
+    String p4stage4drawAndAttackSetup = "\n" + A1Scenario.getAttackSetupInput(4, 4);
     String resolveStage4 = "\n\n\n";
     String trimP2hand = "1\n1\n1\n";
 
     return sponsor +
-       p2Stage1Setup +
-       p2Stage2Setup +
-       p2Stage3Setup +
-       p2Stage4Setup +
-       participationStage1 +
-       p1stage1trimAndAttackSetup +
-       p3stage1trimAndAttackSetup +
-       p4stage1trimAndAttackSetup +
-       resolveStage1 +
-       participationStage2 +
-       p1stage2drawAndAttackSetup +
-       p3stage2drawAndAttackSetup +
-       p4stage2drawAndAttackSetup +
-       resolveStage2 +
-       participationStage3 +
-       p3stage3drawAndAttackSetup +
-       p4stage3drawAndAttackSetup +
-       resolveStage3 +
-       participationStage4 +
-       p3stage4drawAndAttackSetup +
-       p4stage4drawAndAttackSetup +
-       resolveStage4 +
-       trimP2hand;
+        questStagesSetup +
+        participationStage1 +
+        p1stage1trimAndAttackSetup +
+        p3stage1trimAndAttackSetup +
+        p4stage1trimAndAttackSetup +
+        resolveStage1 +
+        participationStage2 +
+        p1stage2drawAndAttackSetup +
+        p3stage2drawAndAttackSetup +
+        p4stage2drawAndAttackSetup +
+        resolveStage2 +
+        participationStage3 +
+        p3stage3drawAndAttackSetup +
+        p4stage3drawAndAttackSetup +
+        resolveStage3 +
+        participationStage4 +
+        p3stage4drawAndAttackSetup +
+        p4stage4drawAndAttackSetup +
+        resolveStage4 +
+        trimP2hand;
   }
 }

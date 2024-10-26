@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.example.cards.AdventureCard;
+import org.example.cards.EventCard;
+import org.example.enums.adventure.AdventureType;
 import org.example.enums.adventure.FoeType;
 import org.example.enums.adventure.WeaponType;
-import org.example.enums.adventure.AdventureType;
-import org.example.cards.EventCard;
 import org.example.enums.event.QType;
 
 public class A1Scenario {
@@ -136,6 +136,71 @@ public class A1Scenario {
     String p2Stage4Setup = "2\n3\nQUIT\n\n\n";
 
     return p2Stage1Setup + p2Stage2Setup + p2Stage3Setup + p2Stage4Setup;
+  }
+
+  public static String getAttackSetupInput(int playerNumber, int stageNumber) {
+    switch (stageNumber) {
+      case 1:
+        return getStage1AttackSetupInputForPlayer(playerNumber);
+      case 2:
+        return getStage2AttackSetupInputForPlayer(playerNumber);
+      case 3:
+        return getStage3AttackSetupInputForPlayer(playerNumber);
+      case 4:
+        return getStage4AttackSetupInputForPlayer(playerNumber);
+      default:
+        throw new IllegalArgumentException("Unknown stage number: " + stageNumber);
+    }
+  }
+
+  // Stage attack setup helper methods
+
+  private static String getStage1AttackSetupInputForPlayer(int playerNumber) {
+    switch (playerNumber) {
+      case 1:
+        return "5\n5\nQUIT\n\n";
+      case 3:
+        return "5\n4\nQUIT\n\n";
+      case 4:
+        return "4\n6\nQUIT\n\n";
+      default:
+        throw new IllegalArgumentException("Unknown player number: " + playerNumber);
+    }
+  }
+
+  private static String getStage2AttackSetupInputForPlayer(int playerNumber) {
+    switch (playerNumber) {
+      case 1:
+        return "7\n6\nQUIT\n\n";
+      case 3:
+        return "9\n4\nQUIT\n\n";
+      case 4:
+        return "6\n6\nQUIT\n\n";
+      default:
+        throw new IllegalArgumentException("Unknown player number: " + playerNumber);
+    }
+  }
+
+  private static String getStage3AttackSetupInputForPlayer(int playerNumber) {
+    switch (playerNumber) {
+      case 3:
+        return "9\n6\n4\nQUIT\n\n";
+      case 4:
+        return "7\n5\n6\nQUIT\n\n";
+      default:
+        throw new IllegalArgumentException("Unknown player number: " + playerNumber);
+    }
+  }
+
+  private static String getStage4AttackSetupInputForPlayer(int playerNumber) {
+    switch (playerNumber) {
+      case 3:
+        return "7\n6\n6\nQUIT\n\n";
+      case 4:
+        return "4\n4\n4\n5\nQUIT\n\n";
+      default:
+        throw new IllegalArgumentException("Unknown player number: " + playerNumber);
+    }
   }
 
   // End game hands
