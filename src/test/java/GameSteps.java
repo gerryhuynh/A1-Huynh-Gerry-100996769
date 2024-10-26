@@ -159,6 +159,18 @@ public class GameSteps {
     assertTrue(quest.getParticipantsAsPlayers().contains(player), "Player " + playerNumber + " remains a participant");
   }
 
+  @Given("next stage starts")
+  public void the_next_stage_starts() {
+    quest.getNextStage();
+  }
+
+  @Then("Player {int}'s attack fails and is removed from quest")
+  public void player_s_attack_fails_and_is_removed_from_quest(int playerNumber) {
+    Player player = game.getPlayers().get(playerNumber - 1);
+
+    assertFalse(quest.getParticipantsAsPlayers().contains(player), "Player " + playerNumber + " is removed from quest");
+  }
+
   // Helper methods
 
   private String getAttackSetupInputForScenario(String scenario, int playerNumber, int stageNumber) {
