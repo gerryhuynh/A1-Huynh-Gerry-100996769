@@ -1,4 +1,5 @@
-package rigs;
+package common;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import org.example.cards.EventCard;
 import org.example.enums.event.QType;
 
 public class A1Scenario {
+
   // Starting cards
 
   private static final AdventureType[] P1_HAND = {
@@ -109,7 +111,7 @@ public class A1Scenario {
     return createDeck(RIGGED_TOP_OF_DECK);
   }
 
-  public static List<AdventureCard> getA1ScenarioAdventureCards() {
+  public static List<AdventureCard> getAdventureCards() {
     List<AdventureCard> cards = new ArrayList<>();
     cards.addAll(getP1Hand());
     cards.addAll(getP2Hand());
@@ -119,7 +121,7 @@ public class A1Scenario {
     return cards;
   }
 
-  public static List<EventCard> getA1ScenarioEventCards() {
+  public static List<EventCard> getEventCards() {
     return Arrays.asList(
       new EventCard(QType.Q4)
     );
@@ -127,7 +129,7 @@ public class A1Scenario {
 
   // Inputs
 
-  public static String getA1ScenarioQuestStagesSetupInput() {
+  public static String getQuestStagesSetupInput() {
     String p2Stage1Setup = "1\n7\nQUIT\n\n";
     String p2Stage2Setup = "2\n5\nQUIT\n\n";
     String p2Stage3Setup = "2\n3\n4\nQUIT\n\n";

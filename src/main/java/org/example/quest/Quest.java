@@ -27,7 +27,7 @@ public class Quest {
     this.numStages = numStages;
     this.stages = new ArrayList<>();
     for (int i = 0; i < numStages; i++) {
-      this.stages.add(new Stage());
+      this.stages.add(new Stage(i + 1));
     }
     this.currentStage = stages.get(0);
     this.participants = new ArrayList<>();
@@ -65,19 +65,47 @@ public class Quest {
   public void startAttack(Display display, List<Player> players, AdventureDeck adventureDeck) {
     display.print("\nATTACK PHASE...");
     addAllPlayersExceptSponsorToParticipants(players);
-    for (int i = 0; i < numStages; i++) {
-      if (participants.size() == 0) break;
-      display.print(String.format("STAGE: %d", i + 1));
-      display.printParticipants(participants);
-      participants = display.promptForParticipants(participants);
-      for (Participant participant : participants) {
-        participant.drawCard(adventureDeck, display);
-        setupAttack(i + 1, participant, display);
+
+    while (currentStage != null && !participants.isEmpty()) {
+      display.print(String.format("STAGE: %d", currentStage.getStageNumber()));
+      promptForParticipants(display);
+
+      while (currentParticipant != null) {
+        currentParticipant.drawCard(adventureDeck, display);
+        setupAttack(display);
+        getNextParticipant();
       }
-      resolveAttacks(i, display);
+
+      resolveAttacks(display);
+      getNextStage();
     }
+
     rewardShields(display);
     replenishSponsorHands(display, adventureDeck);
+  }
+
+  public void promptForParticipants(Display display) {
+    display.printParticipants(participants);
+    participants = display.promptForParticipants(participants);
+    currentParticipant = participants.get(0);
+  }
+
+  private void getNextParticipant() {
+    int currentIndex = participants.indexOf(currentParticipant);
+    if (currentIndex < participants.size() - 1) {
+      currentParticipant = participants.get(currentIndex + 1);
+    } else {
+      currentParticipant = null;
+    }
+  }
+
+  private void getNextStage() {
+    int currentIndex = stages.indexOf(currentStage);
+    if (currentIndex < stages.size() - 1) {
+      currentStage = stages.get(currentIndex + 1);
+    } else {
+      currentStage = null;
+    }
   }
 
   public void replenishSponsorHands(Display display, AdventureDeck adventureDeck) {
@@ -101,15 +129,15 @@ public class Quest {
     display.promptReturnToSponsor();
   }
 
-  public void resolveAttacks(int stageIndex, Display display) {
-    display.print(String.format("\nRESOLVING STAGE %d ATTACKS...", stageIndex + 1));
-    Stage currentStage = stages.get(stageIndex);
+  public void resolveAttacks(Display display) {
+    display.print(String.format("\nRESOLVING STAGE %d ATTACKS...", currentStage.getStageNumber()));
     int stageValue = currentStage.getValue();
     int participantAttackValue = 0;
     List<Participant> activeParticipants = new ArrayList<>();
 
     for (Participant participant : participants) {
       display.print(String.format("\nPARTICIPANT: %s", participant.getPlayer().getName()));
+
       participantAttackValue = participant.getAttackValue();
       display.print(String.format("\nSponsor's Defense: %s. Value: %d", currentStage.getCards().toString(), stageValue));
       display.print(String.format("Your Attack: %s. Value: %d", participant.getAttackCards().toString(), participantAttackValue));
@@ -126,25 +154,31 @@ public class Quest {
       display.promptNextPlayer();
       display.clear();
     }
-    this.participants = activeParticipants;
+
+    participants = activeParticipants;
   }
 
-  public void setupAttack(int stageNum, Participant participant, Display display) {
+  public void setupAttack(Display display) {
     boolean validCard = false;
-    display.printAttackSetup(stageNum, participant);
+    int stageNumber = currentStage.getStageNumber();
+
+    display.printAttackSetup(stageNumber, currentParticipant);
+
     while (true) {
-      if (participant.getAttackCards().size() != 0) {
-        display.printHand(participant.getPlayer().getHand());
+      if (currentParticipant.getAttackCards().size() != 0) {
+        display.printHand(currentParticipant.getPlayer().getHand());
       }
-      int cardIndex = display.promptForCardIndexWithQuit(participant.getPlayer().getHand().size(), true);
+
+      int cardIndex = display.promptForCardIndexWithQuit(currentParticipant.getPlayer().getHand().size(), true);
       if (cardIndex == QUIT) {
-        display.promptNextParticipantAttack(stageNum, participant);
+        display.promptNextParticipantAttack(stageNumber, currentParticipant);
         break;
       }
-      AdventureCard card = participant.getPlayer().getHand().get(cardIndex);
-      validCard = validateAttackCard(participant.getAttackCards(), card, display);
+
+      AdventureCard card = currentParticipant.getPlayer().getHand().get(cardIndex);
+      validCard = validateAttackCard(currentParticipant.getAttackCards(), card, display);
       if (validCard) {
-        participant.addCardToAttack(card, display);
+        currentParticipant.addCardToAttack(card, display);
       }
     }
   }
@@ -243,6 +277,8 @@ public class Quest {
     sponsorNumCardsUsed++;
     display.printCardAddedToStage(stage.getCards());
   }
+
+  // Getters and Setters
 
   public int getNumStages() {
     return numStages;

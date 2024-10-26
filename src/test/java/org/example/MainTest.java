@@ -11,7 +11,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -38,7 +37,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import rigs.A1Scenario;
+import common.A1Scenario;
 
 class MainTest {
   @Nested
@@ -1217,7 +1216,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_22_test_1: returns true if card is valid")
     void RESP_22_test_1() {
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       boolean validCard = quest.validateStageSetupCard(stage, quest.getSponsor().getHand().get(0), display);
       assertTrue(validCard, "Returns true if card is valid");
     }
@@ -1225,7 +1224,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_22_test_2: returns false if stage already has a Foe card")
     void RESP_22_test_2() {
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       stage.addCard(new AdventureCard(FoeType.F5));
       boolean validCard = quest.validateStageSetupCard(stage, new AdventureCard(FoeType.F10), display);
       assertFalse(validCard, "Returns false if stage already has a Foe card");
@@ -1234,7 +1233,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_22_test_3: returns false if stage for a duplicate Weapon card")
     void RESP_22_test_3() {
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       stage.addCard(new AdventureCard(WeaponType.D5));
       boolean validCard = quest.validateStageSetupCard(stage, new AdventureCard(WeaponType.D5), display);
       assertFalse(validCard, "Returns false if stage already has a Weapon card");
@@ -1243,7 +1242,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_22_test_4: adds valid card to stage")
     void RESP_22_test_4() {
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       quest.addCardToStage(stage, quest.getSponsor().getHand().get(0), display);
       assertEquals(1, stage.getCards().size(), "Adds valid card to stage");
     }
@@ -1252,7 +1251,7 @@ class MainTest {
     @DisplayName("RESP_22_test_5: removes card from sponsor's hand")
     void RESP_22_test_5() {
       int originalHandSize = quest.getSponsor().getHand().size();
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       quest.addCardToStage(stage, quest.getSponsor().getHand().get(0), display);
       assertEquals(originalHandSize - 1, quest.getSponsor().getHand().size(), "Removes card from sponsor's hand");
     }
@@ -1260,7 +1259,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_22_test_6: increments sponsorNumCardsUsed when adding valid card to stage")
     void RESP_22_test_6() {
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       quest.addCardToStage(stage, quest.getSponsor().getHand().get(0), display);
       assertEquals(1, quest.getSponsorNumCardsUsed(), "Increments sponsorNumCardsUsed");
     }
@@ -1268,7 +1267,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_22_test_7: prints cards added to stage")
     void RESP_22_test_7() {
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       AdventureCard card = quest.getSponsor().getHand().get(0);
       quest.addCardToStage(stage, card, display);
       assertTrue(output.toString().contains(card.toString()), "Prints cards added to stage");
@@ -1300,7 +1299,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_23_test_1: returns false if stage is empty")
     void RESP_23_test_1() {
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       boolean validQuit = quest.validateStageSetupQuit(stage, display);
       assertFalse(validQuit, "Returns false if stage is empty");
     }
@@ -1308,7 +1307,7 @@ class MainTest {
     @Test
     @DisplayName("RESP_23_test_2: prints cannot be empty message if stage is empty")
     void RESP_23_test_2() {
-      Stage stage = new Stage();
+      Stage stage = new Stage(1);
       quest.validateStageSetupQuit(stage, display);
       assertTrue(output.toString().contains("A stage cannot be empty."), "Prints cannot be empty message");
     }
@@ -1655,7 +1654,7 @@ class MainTest {
     @DisplayName("RESP_29_test_1: unsuccessful attack")
     void RESP_29_test_1() {
       participant.addCardToAttack(new AdventureCard(WeaponType.D5), display);
-      quest.resolveAttacks(0, display);
+      quest.resolveAttacks(display);
       assertTrue(output.toString().contains("Your attack is unsuccessful."), "Prints unsuccessful attack message");
     }
 
@@ -1663,7 +1662,7 @@ class MainTest {
     @DisplayName("RESP_29_test_2: successful attack")
     void RESP_29_test_2() {
       participant.addCardToAttack(new AdventureCard(WeaponType.E30), display);
-      quest.resolveAttacks(0, display);
+      quest.resolveAttacks(display);
       assertTrue(output.toString().contains("Your attack is successful!"), "Prints successful attack message");
     }
 
@@ -1671,7 +1670,7 @@ class MainTest {
     @DisplayName("RESP_29_test_3: successful attack if equal value")
     void RESP_29_test_3() {
       participant.addCardToAttack(new AdventureCard(WeaponType.H10), display);
-      quest.resolveAttacks(0, display);
+      quest.resolveAttacks(display);
       assertTrue(output.toString().contains("Your attack is successful!"), "Prints successful attack message");
     }
 
@@ -1679,7 +1678,7 @@ class MainTest {
     @DisplayName("RESP_29_test_4: successful attack continues to next stage")
     void RESP_29_test_4() {
       participant.addCardToAttack(new AdventureCard(WeaponType.E30), display);
-      quest.resolveAttacks(0, display);
+      quest.resolveAttacks(display);
       assertTrue(quest.getParticipants().contains(participant), "Continues to next stage");
     }
 
@@ -1687,7 +1686,7 @@ class MainTest {
     @DisplayName("RESP_29_test_5: unsuccessful attack does not continue to next stage")
     void RESP_29_test_5() {
       participant.addCardToAttack(new AdventureCard(WeaponType.D5), display);
-      quest.resolveAttacks(0, display);
+      quest.resolveAttacks(display);
       assertFalse(quest.getParticipants().contains(participant), "Does not continue to next stage");
     }
   }

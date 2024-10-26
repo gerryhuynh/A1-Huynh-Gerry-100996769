@@ -8,9 +8,11 @@ import org.example.enums.adventure.WeaponType;
 
 public class Stage {
   private List<AdventureCard> cards;
+  private int stageNumber;
 
-  public Stage() {
+  public Stage(int stageNumber) {
     this.cards = new ArrayList<>();
+    this.stageNumber = stageNumber;
   }
 
   public boolean hasFoe() {
@@ -33,6 +35,10 @@ public class Stage {
 
   public int getValue() {
     return cards.stream().mapToInt(AdventureCard::getValue).sum();
+  }
+
+  public int getStageNumber() {
+    return stageNumber;
   }
 
   public List<AdventureCard> getCards() {

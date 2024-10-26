@@ -15,7 +15,7 @@ import org.example.enums.adventure.FoeType;
 import org.example.enums.adventure.WeaponType;
 import org.example.decks.AdventureDeck;
 import org.example.decks.EventDeck;
-import rigs.A1Scenario;
+import common.A1Scenario;
 import rigs.TestAdventureDeck;
 import rigs.TestEventDeck;
 import org.example.cards.EventCard;
@@ -102,7 +102,7 @@ public class GameSteps {
   private void buildQuestStagesForScenario(String scenario) {
     switch (scenario) {
       case "A1 scenario":
-        display.setInput(A1Scenario.getA1ScenarioQuestStagesSetupInput());
+        display.setInput(A1Scenario.getQuestStagesSetupInput());
         break;
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
@@ -114,7 +114,7 @@ public class GameSteps {
   private AdventureDeck getAdventureDeckForScenario(String scenario) {
     switch (scenario) {
       case "A1 scenario":
-        return new TestAdventureDeck(A1Scenario.getA1ScenarioAdventureCards());
+        return new TestAdventureDeck(A1Scenario.getAdventureCards());
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }
@@ -123,7 +123,7 @@ public class GameSteps {
   private EventDeck getEventDeckForScenario(String scenario) {
     switch (scenario) {
       case "A1 scenario":
-        return new TestEventDeck(A1Scenario.getA1ScenarioEventCards());
+        return new TestEventDeck(A1Scenario.getEventCards());
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }

@@ -90,9 +90,10 @@ public class Game {
     display.print(currentTurn.playEventCard(this));
   }
 
-  public void createQuest(int numStages) {
+  public Quest createQuest(int numStages) {
     display.print("\nCreating quest with " + numStages + " stages...");
     quest = new Quest(numStages);
+    return quest;
   }
 
   public void startQuest() {
