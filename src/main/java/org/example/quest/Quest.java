@@ -2,6 +2,7 @@ package org.example.quest;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.example.Display;
 import org.example.Player;
@@ -90,7 +91,7 @@ public class Quest {
     currentParticipant = participants.get(0);
   }
 
-  private void getNextParticipant() {
+  public void getNextParticipant() {
     int currentIndex = participants.indexOf(currentParticipant);
     if (currentIndex < participants.size() - 1) {
       currentParticipant = participants.get(currentIndex + 1);
@@ -99,7 +100,7 @@ public class Quest {
     }
   }
 
-  private void getNextStage() {
+  public void getNextStage() {
     int currentIndex = stages.indexOf(currentStage);
     if (currentIndex < stages.size() - 1) {
       currentStage = stages.get(currentIndex + 1);
@@ -298,6 +299,12 @@ public class Quest {
 
   public List<Participant> getParticipants() {
     return participants;
+  }
+
+  public List<Player> getParticipantsAsPlayers() {
+    return participants.stream()
+      .map(Participant::getPlayer)
+      .collect(Collectors.toList());
   }
 
   public Participant getCurrentParticipant() {
