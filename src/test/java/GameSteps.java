@@ -3,9 +3,12 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.example.Game;
 import org.example.Player;
+import org.example.Display;
 import org.example.cards.AdventureCard;
 import org.example.enums.adventure.AdventureType;
 import org.example.enums.adventure.FoeType;
@@ -16,9 +19,12 @@ import rigs.A1Scenario;
 import rigs.TestAdventureDeck;
 import rigs.TestEventDeck;
 import org.example.cards.EventCard;
+import org.example.enums.event.QType;
 
 public class GameSteps {
   private Game game;
+  private StringWriter output = new StringWriter();
+  private Display display = new Display(new PrintWriter(output));
   private AdventureDeck adventureDeck;
   private EventDeck eventDeck;
 
@@ -27,12 +33,12 @@ public class GameSteps {
     adventureDeck = getAdventureDeckForScenario(scenario);
     eventDeck = getEventDeckForScenario(scenario);
 
-    game = new Game(adventureDeck, eventDeck);
+    game = new Game(adventureDeck, eventDeck, display);
     game.setupPlayers();
   }
 
-  @When("the game deals adventure cards")
-  public void the_game_deals_adventure_cards() {
+  @When("the game deals adventure cards to players")
+  public void the_game_deals_adventure_cards_to_players() {
     game.dealAdventureCards();
   }
 
@@ -61,7 +67,49 @@ public class GameSteps {
     assertEquals(eventType, drawnCard.getType().toString(), "Drawn event card is correct");
   }
 
+  @Given("the game creates quest for current event card")
+  public void the_game_creates_quest_for_current_event_card() {
+    QType questCard = (QType) game.getCurrentEventCard().getType();
+    game.createQuest(questCard.getNumStages());
+  }
+
+  @Given("Player 1 declines to sponsor and Player 2 accepts to sponsor quest")
+  public void player_declines_to_sponsor() {
+    display.setInput("N\n\nY\n\n");
+    game.getQuest().findSponsor(game.getPlayers(), game.getCurrentPlayer(), display);
+  }
+
+  @When("Player builds the quest stages for {string}")
+  public void player_builds_the_quest_stages_for(String scenario) {
+    buildQuestStagesForScenario(scenario);
+  }
+
+  @Then("Stage {int} is setup with:")
+  public void stage_is_setup_with(int stageNumber, String stageSetup) {
+    List<String> stageSetupList = Arrays.asList(stageSetup.split(", "));
+    List<AdventureType> expectedStageSetup = stageSetupList.stream()
+        .map(this::parseCardType)
+        .collect(Collectors.toList());
+    List<AdventureType> actualStageSetup = game.getQuest().getStages().get(stageNumber - 1).getCards().stream()
+        .map(AdventureCard::getType)
+        .collect(Collectors.toList());
+
+    assertEquals(expectedStageSetup, actualStageSetup, "Stage " + stageNumber + " is setup with correct foes");
+  }
+
   // Helper methods
+
+  private void buildQuestStagesForScenario(String scenario) {
+    switch (scenario) {
+      case "A1 scenario":
+        display.setInput(A1Scenario.getA1ScenarioQuestStagesSetupInput());
+        break;
+      default:
+        throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    }
+
+    game.getQuest().setup(display);
+  }
 
   private AdventureDeck getAdventureDeckForScenario(String scenario) {
     switch (scenario) {

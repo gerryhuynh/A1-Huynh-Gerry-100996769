@@ -23,19 +23,29 @@ public class Game {
   private Quest quest;
 
   public Game() {
-    this(new AdventureDeck(), new EventDeck(), true);
+    this(
+      new AdventureDeck(),
+      new EventDeck(),
+      new Display(new PrintWriter(System.out)),
+      true
+    );
   }
 
-  public Game(AdventureDeck adventureDeck, EventDeck eventDeck) {
-    this(adventureDeck, eventDeck, false);
+  public Game(AdventureDeck adventureDeck, EventDeck eventDeck, Display display) {
+    this(
+      adventureDeck,
+      eventDeck,
+      display,
+      false
+    );
   }
 
-  private Game(AdventureDeck adventureDeck, EventDeck eventDeck, boolean shuffle) {
+  private Game(AdventureDeck adventureDeck, EventDeck eventDeck, Display display, boolean shuffle) {
     this.players = new ArrayList<>();
     this.adventureDeck = adventureDeck;
     this.eventDeck = eventDeck;
     this.currentTurn = null;
-    this.display = new Display(new PrintWriter(System.out));
+    this.display = display;
     this.gameOver = false;
 
     if (shuffle) {

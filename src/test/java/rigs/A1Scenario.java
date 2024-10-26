@@ -12,6 +12,8 @@ import org.example.cards.EventCard;
 import org.example.enums.event.QType;
 
 public class A1Scenario {
+  // Starting cards
+
   private static final AdventureType[] P1_HAND = {
     FoeType.F5,
     FoeType.F5,
@@ -85,6 +87,8 @@ public class A1Scenario {
     WeaponType.L20
   };
 
+  // Game setup
+
   public static List<AdventureCard> getP1Hand() {
     return createHand(P1_HAND);
   }
@@ -121,6 +125,19 @@ public class A1Scenario {
     );
   }
 
+  // Inputs
+
+  public static String getA1ScenarioQuestStagesSetupInput() {
+    String p2Stage1Setup = "1\n7\nQUIT\n\n";
+    String p2Stage2Setup = "2\n5\nQUIT\n\n";
+    String p2Stage3Setup = "2\n3\n4\nQUIT\n\n";
+    String p2Stage4Setup = "2\n3\nQUIT\n\n\n";
+
+    return p2Stage1Setup + p2Stage2Setup + p2Stage3Setup + p2Stage4Setup;
+  }
+
+  // End game hands
+
   public static List<AdventureType> getP1EndGameHand() {
     return Arrays.asList(
       FoeType.F5,
@@ -153,6 +170,8 @@ public class A1Scenario {
       WeaponType.L20
     );
   }
+
+  // Helper methods
 
   private static List<AdventureCard> createDeck(AdventureType... types) {
     List<AdventureCard> deck = new ArrayList<>();
