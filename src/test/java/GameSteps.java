@@ -2,30 +2,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import io.cucumber.java.en.*;
 
+import shared.A1Scenario;
+import shared.TestAdventureDeck;
+import shared.TestEventDeck;
+import shared.TwoWinnerGameTwoWinnerQuest;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.example.Display;
-import org.example.Game;
-import org.example.Player;
-import org.example.cards.AdventureCard;
-import org.example.cards.EventCard;
-import org.example.decks.AdventureDeck;
-import org.example.decks.EventDeck;
-import org.example.enums.adventure.AdventureType;
-import org.example.enums.adventure.FoeType;
-import org.example.enums.adventure.WeaponType;
-import org.example.enums.event.QType;
-import org.example.quest.Quest;
-
-import common.A1Scenario;
-import common.TwoWinnerGameTwoWinnerQuest;
-
-import rigs.TestAdventureDeck;
-import rigs.TestEventDeck;
+import game.Display;
+import game.Game;
+import game.Player;
+import game.cards.AdventureCard;
+import game.cards.EventCard;
+import game.decks.AdventureDeck;
+import game.decks.EventDeck;
+import game.enums.adventure.AdventureType;
+import game.enums.adventure.FoeType;
+import game.enums.adventure.WeaponType;
+import game.enums.event.QType;
+import game.quest.Quest;
 
 public class GameSteps {
   private Game game;
