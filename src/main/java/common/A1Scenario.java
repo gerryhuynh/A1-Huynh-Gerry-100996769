@@ -92,23 +92,23 @@ public class A1Scenario {
   // Game setup
 
   public static List<AdventureCard> getP1Hand() {
-    return createHand(P1_HAND);
+    return Setup.createHand(P1_HAND);
   }
 
   public static List<AdventureCard> getP2Hand() {
-    return createHand(P2_HAND);
+    return Setup.createHand(P2_HAND);
   }
 
   public static List<AdventureCard> getP3Hand() {
-    return createHand(P3_HAND);
+    return Setup.createHand(P3_HAND);
   }
 
   public static List<AdventureCard> getP4Hand() {
-    return createHand(P4_HAND);
+    return Setup.createHand(P4_HAND);
   }
 
   public static List<AdventureCard> getRiggedTopOfDeck() {
-    return createDeck(RIGGED_TOP_OF_DECK);
+    return Setup.createDeck(RIGGED_TOP_OF_DECK);
   }
 
   public static List<AdventureCard> getAdventureCards() {
@@ -240,19 +240,5 @@ public class A1Scenario {
       FoeType.F40,
       WeaponType.L20
     );
-  }
-
-  // Helper methods
-
-  private static List<AdventureCard> createDeck(AdventureType... types) {
-    List<AdventureCard> deck = new ArrayList<>();
-    for (AdventureType type : types) {
-      deck.add(new AdventureCard(type));
-    }
-    return deck;
-  }
-
-  private static List<AdventureCard> createHand(AdventureType[] types) {
-    return createDeck(types);
   }
 }

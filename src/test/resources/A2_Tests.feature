@@ -19,8 +19,10 @@ Feature: Assignment 2
     Then a "Q4" event card is drawn
 
     Given the game creates quest for current event card
-    And Player 1 declines to sponsor and Player 2 accepts to sponsor quest
-    When Player builds the quest stages for "A1 scenario"
+    And Player 1 declines to sponsor quest
+    And quest gets next potential sponsor
+    And Player 2 accepts to sponsor quest
+    When Player 2 builds the quest stages for "A1 scenario"
     Then stage 1 is setup with:
       | F5, H10 |
     And stage 2 is setup with:

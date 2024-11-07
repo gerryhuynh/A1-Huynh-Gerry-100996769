@@ -28,8 +28,8 @@ import rigs.TestEventDeck;
 
 public class GameSteps {
   private Game game;
-  private StringWriter output = new StringWriter();
-  private Display display = new Display(new PrintWriter(output));
+  private final StringWriter output = new StringWriter();
+  private final Display display = new Display(new PrintWriter(output));
   private Quest quest;
 
   @Given("the game is setup with rigged deck for {string}")
@@ -79,15 +79,33 @@ public class GameSteps {
     quest = game.createQuest(questCard.getNumStages());
   }
 
-  @Given("Player 1 declines to sponsor and Player 2 accepts to sponsor quest")
-  public void player_declines_to_sponsor() {
-    display.setInput("N\n\nY\n\n");
+  // Really should be "Player declines to sponsor quest"
+  // But this is more readable in the context of the feature file
+  @Given("Player {int} declines to sponsor quest")
+  public void player_declines_to_sponsor_quest(int playerNumber) {
+    display.setInput("N\n\n");
 
-    quest.findSponsor(game.getPlayers(), game.getCurrentPlayer(), display);
+    quest.promptForSponsor(game.getCurrentPlayer(), display);
   }
 
-  @When("Player builds the quest stages for {string}")
-  public void player_builds_the_quest_stages_for(String scenario) {
+  // Really should be "Player accepts to sponsor quest"
+  // But this is more readable in the context of the feature file
+  @Given("Player {int} accepts to sponsor quest")
+  public void player_accepts_to_sponsor_quest(int playerNumber) {
+    display.setInput("Y\n\n");
+
+    quest.promptForSponsor(game.getCurrentPlayer(), display);
+  }
+
+  @Given("quest gets next potential sponsor")
+  public void quest_gets_next_potential_sponsor() {
+    quest.getNextPotentialSponsor(game.getPlayers(), game.getCurrentPlayer());
+  }
+
+  // Really should be "Player builds the quest stages for {string}"
+  // But this is more readable in the context of the feature file
+  @When("Player {int} builds the quest stages for {string}")
+  public void player_builds_the_quest_stages_for(int playerNumber, String scenario) {
     buildQuestStagesForScenario(scenario);
     quest.addAllPlayersExceptSponsorToParticipants(game.getPlayers());
   }
@@ -225,7 +243,7 @@ public class GameSteps {
   }
 
   private boolean isFirstStage() {
-    return quest.getStages().get(0) == quest.getCurrentStage();
+    return quest.getStages().getFirst() == quest.getCurrentStage();
   }
 
   private void buildQuestStagesForScenario(String scenario) {

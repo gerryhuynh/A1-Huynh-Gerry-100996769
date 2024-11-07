@@ -92,7 +92,7 @@ public class Game {
 
   public Quest createQuest(int numStages) {
     display.print("\nCreating quest with " + numStages + " stages...");
-    quest = new Quest(numStages);
+    quest = new Quest(numStages, getCurrentPlayer());
     return quest;
   }
 

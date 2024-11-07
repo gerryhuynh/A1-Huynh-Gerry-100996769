@@ -21,9 +21,10 @@ public class Quest {
   private List<Participant> participants;
   private Participant currentParticipant;
   private Player sponsor;
+  private Player currentPotentialSponsor;
   private int sponsorNumCardsUsed;
 
-  public Quest(int numStages) {
+  public Quest(int numStages, Player currentPlayer) {
     this.isActive = true;
     this.numStages = numStages;
     this.stages = new ArrayList<>();
@@ -34,33 +35,43 @@ public class Quest {
     this.participants = new ArrayList<>();
     this.currentParticipant = null;
     this.sponsor = null;
+    this.currentPotentialSponsor = currentPlayer;
   }
 
   public void findSponsor(List<Player> players, Player currentPlayer, Display display) {
-    int startIndex = players.indexOf(currentPlayer);
-    int playerCount = players.size();
-
     display.print("\nFinding sponsor for quest...");
 
-    for (int i = 0; i < playerCount; i++) {
-      int index = (startIndex + i) % playerCount;
-      Player player = players.get(index);
+    while (currentPotentialSponsor != null && sponsor == null) {
+      promptForSponsor(currentPlayer, display);
 
-      boolean sponsorFound = display.promptForSponsor(player, currentPlayer, this.numStages);
-      if (sponsorFound) {
-        this.sponsor = player;
-        display.printSponsorFound(player);
-        break;
-      } else {
-        display.printSponsorDeclined(player);
+      if (sponsor == null) {
+        getNextPotentialSponsor(players, currentPlayer);
+        if (currentPotentialSponsor != null) display.promptNextPlayer();
+        else display.promptReturnToOriginalPlayer();
+        display.clear();
       }
-      if (i < playerCount - 1) display.promptNextPlayer();
-      else display.promptReturnToOriginalPlayer();
-
-      display.clear();
     }
 
     if (sponsor == null) display.printSponsorNotFound();
+  }
+
+  public void promptForSponsor(Player currentPlayer, Display display) {
+    boolean sponsorFound = display.promptForSponsor(currentPotentialSponsor, currentPlayer, this.numStages);
+
+    if (sponsorFound) {
+      this.sponsor = currentPotentialSponsor;
+      display.printSponsorFound(currentPotentialSponsor);
+      currentPotentialSponsor = null;
+    } else {
+      display.printSponsorDeclined(currentPotentialSponsor);
+    }
+  }
+
+  public void getNextPotentialSponsor(List<Player> players, Player currentPlayer) {
+    int currentIndex = players.indexOf(currentPotentialSponsor);
+    int nextIndex = (currentIndex + 1) % players.size();
+
+    currentPotentialSponsor = (nextIndex == players.indexOf(currentPlayer)) ? null : players.get(nextIndex);
   }
 
   public void startAttack(Display display, List<Player> players, AdventureDeck adventureDeck) {
