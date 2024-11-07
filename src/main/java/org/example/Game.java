@@ -21,7 +21,7 @@ public class Game {
   private Display display;
   private boolean gameOver;
   private Quest quest;
-
+  private List<Player> winners;
   public Game() {
     this(
       new AdventureDeck(),
@@ -47,6 +47,7 @@ public class Game {
     this.currentTurn = null;
     this.display = display;
     this.gameOver = false;
+    this.winners = new ArrayList<>();
 
     if (shuffle) {
       this.adventureDeck.shuffle();
@@ -112,21 +113,20 @@ public class Game {
 
   public void endTurn() {
     currentTurn.endTurn(display);
-    List<Player> winners = checkWinners();
+    checkWinners();
     if (winners.size() > 0) {
       endGame(winners);
     }
     nextTurn();
   }
 
-  public List<Player> checkWinners() {
-    List<Player> winners = new ArrayList<>();
+  public void checkWinners() {
+    winners.clear();
     for (Player player : players) {
       if (player.getShields() >= SHIELDS_TO_WIN) {
         winners.add(player);
       }
     }
-    return winners;
   }
 
   public void endGame(List<Player> winners) {
@@ -178,5 +178,9 @@ public class Game {
 
   public Quest getQuest() {
     return quest;
+  }
+
+  public List<Player> getWinners() {
+    return winners;
   }
 }

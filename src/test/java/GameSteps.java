@@ -22,6 +22,7 @@ import org.example.enums.event.QType;
 import org.example.quest.Quest;
 
 import common.A1Scenario;
+import common.TwoWinnerGameTwoWinnerQuest;
 
 import rigs.TestAdventureDeck;
 import rigs.TestEventDeck;
@@ -123,9 +124,10 @@ public class GameSteps {
     assertEquals(expectedStageSetup, actualStageSetup, "Stage " + stageNumber + " is setup with correct foes");
   }
 
-  @Given("all participants participate in quest")
-  public void all_participants_participate_in_quest() {
-    display.setInput("Y\n\n".repeat(quest.getParticipants().size()));
+  @Given("{string} participants participate in quest")
+  public void participants_participate_in_quest(String condition) {
+    String input = getParticipantsInputForCondition(condition);
+    display.setInput(input);
 
     quest.promptForParticipants(display);
   }
@@ -222,12 +224,33 @@ public class GameSteps {
     assertEquals(numCards, player.getHand().size(), "Player " + playerNumber + " has correct hand size");
   }
 
+  @Given("next player's turn")
+  public void next_player_s_turn() {
+    game.nextTurn();
+  }
+
+  @When("checking for winners")
+  public void checking_for_winners() {
+    game.checkWinners();
+  }
+
+  @Then("Player {int} is a winner")
+  public void player_is_a_winner(int playerNumber) {
+    Player player = game.getPlayers().get(playerNumber - 1);
+
+    assertTrue(game.getWinners().contains(player), "Player " + playerNumber + " is a winner");
+  }
+
   // Helper methods
 
   private String getReplenishSponsorHandInputForScenario(String scenario) {
     switch (scenario) {
       case "A1 scenario":
         return A1Scenario.getReplenishSponsorHandInput();
+      case "2winner_game_2winner_quest-q1":
+        return TwoWinnerGameTwoWinnerQuest.getQ1ReplenishSponsorHandInput();
+      case "2winner_game_2winner_quest-q2":
+        return TwoWinnerGameTwoWinnerQuest.getQ2ReplenishSponsorHandInput();
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }
@@ -237,6 +260,10 @@ public class GameSteps {
     switch (scenario) {
       case "A1 scenario":
         return A1Scenario.getAttackSetupInput(playerNumber, stageNumber);
+      case "2winner_game_2winner_quest-q1":
+        return TwoWinnerGameTwoWinnerQuest.getQ1AttackSetupInput(playerNumber, stageNumber);
+      case "2winner_game_2winner_quest-q2":
+        return TwoWinnerGameTwoWinnerQuest.getQ2AttackSetupInput(playerNumber, stageNumber);
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }
@@ -251,6 +278,12 @@ public class GameSteps {
       case "A1 scenario":
         display.setInput(A1Scenario.getQuestStagesSetupInput());
         break;
+      case "2winner_game_2winner_quest-q1":
+        display.setInput(TwoWinnerGameTwoWinnerQuest.getQ1StagesSetupInput());
+        break;
+      case "2winner_game_2winner_quest-q2":
+        display.setInput(TwoWinnerGameTwoWinnerQuest.getQ2StagesSetupInput());
+        break;
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }
@@ -258,10 +291,23 @@ public class GameSteps {
     quest.setup(display);
   }
 
+  private String getParticipantsInputForCondition(String condition) {
+    switch (condition) {
+      case "all":
+        return "Y\n\n".repeat(quest.getParticipants().size());
+      case "all except first":
+        return "N\n\n" + "Y\n\n".repeat(quest.getParticipants().size() - 1);
+      default:
+        throw new IllegalArgumentException("Unknown condition: " + condition);
+    }
+  }
+
   private AdventureDeck getAdventureDeckForScenario(String scenario) {
     switch (scenario) {
       case "A1 scenario":
         return new TestAdventureDeck(A1Scenario.getAdventureCards());
+      case "2winner_game_2winner_quest":
+        return new TestAdventureDeck(TwoWinnerGameTwoWinnerQuest.getAdventureCards());
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }
@@ -271,6 +317,8 @@ public class GameSteps {
     switch (scenario) {
       case "A1 scenario":
         return new TestEventDeck(A1Scenario.getEventCards());
+      case "2winner_game_2winner_quest":
+        return new TestEventDeck(TwoWinnerGameTwoWinnerQuest.getEventCards());
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }

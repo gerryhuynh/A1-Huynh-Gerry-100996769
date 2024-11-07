@@ -1,4 +1,4 @@
-package rigs;
+package common;
 
 import org.example.decks.AdventureDeck;
 import org.example.cards.AdventureCard;

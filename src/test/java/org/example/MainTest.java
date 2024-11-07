@@ -891,9 +891,9 @@ class MainTest {
       Player player = game.getPlayers().get(0);
       player.setShields(Game.SHIELDS_TO_WIN);
 
-      List<Player> winners = game.checkWinners();
-      assertEquals(1, winners.size(), "Returns a list of winners");
-      assertEquals(player, winners.get(0), "Returns the player who has won");
+      game.checkWinners();
+      assertEquals(1, game.getWinners().size(), "Returns a list of winners");
+      assertEquals(player, game.getWinners().get(0), "Returns the player who has won");
     }
 
     @Test
@@ -902,8 +902,8 @@ class MainTest {
       Player player = game.getPlayers().get(0);
       player.setShields(Game.SHIELDS_TO_WIN - 1);
 
-      List<Player> winners = game.checkWinners();
-      assertTrue(winners.isEmpty(), "Returns an empty list if no player has won");
+      game.checkWinners();
+      assertTrue(game.getWinners().isEmpty(), "Returns an empty list if no player has won");
     }
 
     @Test
@@ -913,8 +913,8 @@ class MainTest {
         player.setShields(Game.SHIELDS_TO_WIN);
       }
 
-      List<Player> winners = game.checkWinners();
-      assertEquals(game.getPlayers(), winners, "Returns all winners");
+      game.checkWinners();
+      assertEquals(game.getPlayers(), game.getWinners(), "Returns all winners");
     }
   }
 
