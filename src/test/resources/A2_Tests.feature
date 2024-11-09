@@ -521,3 +521,14 @@ Feature: Assignment 2
     And a "Plague" event card is drawn
     And Player 2 loses 2 shields
     And Player 2 has 2 shields
+
+    # P3 Prosperity
+
+    And next player's turn
+    And the game starts turn
+    And a "Prosperity" event card is drawn
+    And all players draw 2 adventure cards for "1winner_game_with_events"
+    And Player 1's hand has 12 cards
+    And Player 2's hand has 10 cards
+    And Player 3's hand has 10 cards
+    And Player 4's hand has 10 cards

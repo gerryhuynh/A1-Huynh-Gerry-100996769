@@ -252,7 +252,23 @@ public class GameSteps {
     assertEquals(shieldsBefore - shields, shieldsAfter, "Player " + playerNumber + " has correct shields");
   }
 
+  @Then("all players draw 2 adventure cards for {string}")
+  public void all_players_draw_adventure_cards_for(String scenario) {
+    display.setInput(getProsperityDrawCardsInputForScenario(scenario));
+
+    game.playEventCard();
+  }
+
   // Helper methods
+
+  private String getProsperityDrawCardsInputForScenario(String scenario) {
+    switch (scenario) {
+      case "1winner_game_with_events":
+        return OneWinnerGameWithEvents.getProsperityDrawCardsInput(game.getPlayers().size());
+      default:
+        throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    }
+  }
 
   private String getReplenishSponsorHandInputForScenario(String scenario) {
     switch (scenario) {

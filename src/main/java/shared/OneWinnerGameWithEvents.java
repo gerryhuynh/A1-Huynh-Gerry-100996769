@@ -194,6 +194,12 @@ public class OneWinnerGameWithEvents {
     return "1\n".repeat(4);
   }
 
+  public static String getProsperityDrawCardsInput(int numPlayers) {
+    final int NUM_CARDS_TO_DRAW = 2;
+
+    return "4\n".repeat(NUM_CARDS_TO_DRAW) + "\n".repeat(numPlayers);
+  }
+
   public static String getQ2StagesSetupInput() {
     String p1Stage1Setup = "1\nQUIT\n\n";
     String p1Stage2Setup = "2\nQUIT\n\n";
