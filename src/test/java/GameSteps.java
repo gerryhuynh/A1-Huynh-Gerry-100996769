@@ -241,6 +241,17 @@ public class GameSteps {
     assertTrue(game.getWinners().contains(player), "Player " + playerNumber + " is a winner");
   }
 
+  @Then("Player {int} loses {int} shields")
+  public void player_loses_shields(int playerNumber, int shields) {
+    Player player = game.getPlayers().get(playerNumber - 1);
+    int shieldsBefore = player.getShields();
+
+    game.playEventCard();
+    int shieldsAfter = player.getShields();
+
+    assertEquals(shieldsBefore - shields, shieldsAfter, "Player " + playerNumber + " has correct shields");
+  }
+
   // Helper methods
 
   private String getReplenishSponsorHandInputForScenario(String scenario) {

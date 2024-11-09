@@ -514,3 +514,10 @@ Feature: Assignment 2
     And replenishing sponsor's hand for "1winner_game_with_events-q1"
     And Player 1's hand has 12 cards
 
+    # P2 Plague
+
+    And next player's turn
+    And the game starts turn
+    And a "Plague" event card is drawn
+    And Player 2 loses 2 shields
+    And Player 2 has 2 shields
