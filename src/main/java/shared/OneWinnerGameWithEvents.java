@@ -9,96 +9,117 @@ import game.cards.EventCard;
 import game.enums.adventure.AdventureType;
 import game.enums.adventure.FoeType;
 import game.enums.adventure.WeaponType;
+import game.enums.event.EType;
 import game.enums.event.QType;
 
-public class TwoWinnerGameTwoWinnerQuest {
+public class OneWinnerGameWithEvents {
 
   // Starting cards
 
   private static final AdventureType[] P1_HAND = {
+    FoeType.F5,
+    FoeType.F5,
+    FoeType.F5,
+    FoeType.F5,
+    FoeType.F5,
+    FoeType.F5,
+    FoeType.F10,
     FoeType.F10,
     FoeType.F15,
-    FoeType.F20,
-    FoeType.F25,
-    FoeType.F30,
-    FoeType.F40,
-    FoeType.F50,
-    WeaponType.S10,
-    WeaponType.S10,
-    WeaponType.S10,
-    WeaponType.H10,
-    WeaponType.B15
+    FoeType.F15,
+    FoeType.F15,
+    FoeType.F20
   };
 
   private static final AdventureType[] P2_HAND = {
     FoeType.F5,
-    FoeType.F5,
     WeaponType.D5,
     WeaponType.S10,
     WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.H10,
     WeaponType.H10,
     WeaponType.H10,
     WeaponType.B15,
-    WeaponType.B15,
-    WeaponType.L20,
-    WeaponType.L20,
-    WeaponType.E30
+    WeaponType.B15
   };
 
   private static final AdventureType[] P3_HAND = {
     FoeType.F5,
-    FoeType.F5,
-    FoeType.F5,
-    FoeType.F10,
-    FoeType.F15,
-    FoeType.F25,
-    FoeType.F25,
-    FoeType.F30,
     WeaponType.D5,
     WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.S10,
     WeaponType.H10,
-    WeaponType.H10
+    WeaponType.H10,
+    WeaponType.H10,
+    WeaponType.B15,
+    WeaponType.B15
   };
 
   private static final AdventureType[] P4_HAND = {
-    FoeType.F15,
-    FoeType.F30,
+    FoeType.F10,
     WeaponType.D5,
-    WeaponType.D5,
+    WeaponType.S10,
     WeaponType.S10,
     WeaponType.S10,
     WeaponType.S10,
     WeaponType.H10,
+    WeaponType.H10,
+    WeaponType.H10,
     WeaponType.B15,
-    WeaponType.L20,
-    WeaponType.L20,
-    WeaponType.E30
+    WeaponType.B15,
+    WeaponType.B15
   };
 
   private static final AdventureType[] RIGGED_TOP_OF_DECK = {
+    WeaponType.E30, // Q1 Stage 1
     FoeType.F70,
-    FoeType.F20,
-    FoeType.F35,
-    FoeType.F15,
-    FoeType.F10,
-    FoeType.F20,
-    FoeType.F10,
-    FoeType.F25,
-    FoeType.F15,
-    FoeType.F5,
-    FoeType.F15,
-    FoeType.F20,
-    FoeType.F25,
+    WeaponType.D5,
+    WeaponType.E30, // Q1 Stage 2
+    FoeType.F50,
+    WeaponType.D5,
+    WeaponType.L20, // Q1 Stage 3
+    FoeType.F50,
     WeaponType.S10,
+    WeaponType.L20, // Q1 Stage 4
+    FoeType.F40,
     WeaponType.S10,
-    WeaponType.H10,
+    FoeType.F15,    // Q1 P1 replenish hands
+    FoeType.F30,
+    FoeType.F30,
+    FoeType.F30,
+    FoeType.F30,
+    FoeType.F25,
+    FoeType.F25,
+    FoeType.F25,
+    FoeType.F25,    // Prosperity P1
+    FoeType.F25,
+    WeaponType.L20, // Prosperity P2
     WeaponType.L20,
-    WeaponType.S10,
-    WeaponType.S10,
+    FoeType.F40,    // Prosperity P3
+    FoeType.F35,
+    WeaponType.S10, // Prosperity P4
     WeaponType.H10,
+    WeaponType.H10, // Queen's Favor P4
     WeaponType.H10,
-    WeaponType.B15,
-    WeaponType.L20
+    WeaponType.L20, // Q2 Stage 1
+    FoeType.F35,
+    WeaponType.D5,
+    WeaponType.L20, // Q2 Stage 2
+    FoeType.F35,
+    WeaponType.B15, // Q2 Stage 3
+    FoeType.F35,
+    FoeType.F20,    // Q2 P1 replenish hands
+    FoeType.F20,
+    FoeType.F20,
+    FoeType.F20,
+    FoeType.F20,
+    FoeType.F20
   };
 
   // Game setup
@@ -136,6 +157,9 @@ public class TwoWinnerGameTwoWinnerQuest {
   public static List<EventCard> getEventCards() {
     return Arrays.asList(
       new EventCard(QType.Q4),
+      new EventCard(EType.PLAGUE),
+      new EventCard(EType.PROSPERITY),
+      new EventCard(EType.QUEENS_FAVOR),
       new EventCard(QType.Q3)
     );
   }
@@ -143,9 +167,12 @@ public class TwoWinnerGameTwoWinnerQuest {
   // Inputs
 
   public static String getQ1StagesSetupInput() {
-    String p1StagesSetup = "1\nQUIT\n\n".repeat(4);
+    String p1Stage1Setup = "6\nQUIT\n\n";
+    String p1Stage2Setup = "6\nQUIT\n\n";
+    String p1Stage3Setup = "7\nQUIT\n\n";
+    String p1Stage4Setup = "9\nQUIT\n\n";
 
-    return p1StagesSetup + "\n";
+    return p1Stage1Setup + p1Stage2Setup + p1Stage3Setup + p1Stage4Setup + "\n";
   }
 
   public static String getQ1AttackSetupInput(int playerNumber, int stageNumber) {
@@ -164,15 +191,15 @@ public class TwoWinnerGameTwoWinnerQuest {
   }
 
   public static String getQ1ReplenishSponsorHandInput() {
-    return "4\n".repeat(4);
+    return "1\n".repeat(4);
   }
 
   public static String getQ2StagesSetupInput() {
-    String p3Stage1Setup = "1\nQUIT\n\n";
-    String p3Stage2Setup = "2\nQUIT\n\n";
-    String p3Stage3Setup = "2\nQUIT\n\n";
+    String p1Stage1Setup = "1\nQUIT\n\n";
+    String p1Stage2Setup = "2\nQUIT\n\n";
+    String p1Stage3Setup = "2\nQUIT\n\n";
 
-    return p3Stage1Setup + p3Stage2Setup + p3Stage3Setup + "\n";
+    return p1Stage1Setup + p1Stage2Setup + p1Stage3Setup + "\n";
   }
 
   public static String getQ2AttackSetupInput(int playerNumber, int stageNumber) {
@@ -189,7 +216,7 @@ public class TwoWinnerGameTwoWinnerQuest {
   }
 
   public static String getQ2ReplenishSponsorHandInput() {
-    return "4\n".repeat(2);
+    return "4\n".repeat(3);
   }
 
   // Stage attack setup helper methods
@@ -199,11 +226,11 @@ public class TwoWinnerGameTwoWinnerQuest {
   private static String getQ1S1AttackSetupInputForPlayer(int playerNumber) {
     switch (playerNumber) {
       case 2:
-        return "8\nQUIT\n\n";
+        return "2\nQUIT\n\n";
       case 3:
-        return "9\nQUIT\n\n";
+        return "3\nQUIT\n\n";
       case 4:
-        return "9\nQUIT\n\n";
+        return "3\nQUIT\n\n";
       default:
         throw new IllegalArgumentException("Unknown player number: " + playerNumber);
     }
@@ -212,7 +239,9 @@ public class TwoWinnerGameTwoWinnerQuest {
   private static String getQ1S2AttackSetupInputForPlayer(int playerNumber) {
     switch (playerNumber) {
       case 2:
-        return "10\nQUIT\n\n";
+        return "9\nQUIT\n\n";
+      case 3:
+        return "11\nQUIT\n\n";
       case 4:
         return "10\nQUIT\n\n";
       default:
@@ -223,9 +252,11 @@ public class TwoWinnerGameTwoWinnerQuest {
   private static String getQ1S3AttackSetupInputForPlayer(int playerNumber) {
     switch (playerNumber) {
       case 2:
-        return "10\n8\nQUIT\n\n";
+        return "2\n5\nQUIT\n\n";
+      case 3:
+        return "5\n8\nQUIT\n\n";
       case 4:
-        return "7\n9\n5\nQUIT\n\n";
+        return "4\n7\nQUIT\n\n";
       default:
         throw new IllegalArgumentException("Unknown player number: " + playerNumber);
     }
@@ -234,9 +265,11 @@ public class TwoWinnerGameTwoWinnerQuest {
   private static String getQ1S4AttackSetupInputForPlayer(int playerNumber) {
     switch (playerNumber) {
       case 2:
-        return "10\n8\nQUIT\n\n";
+        return "2\n4\n1\nQUIT\n\n";
+      case 3:
+        return "6\n8\n5\nQUIT\n\n";
       case 4:
-        return "10\nQUIT\n\n";
+        return "4\n7\n1\nQUIT\n\n";
       default:
         throw new IllegalArgumentException("Unknown player number: " + playerNumber);
     }

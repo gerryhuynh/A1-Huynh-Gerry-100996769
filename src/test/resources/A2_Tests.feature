@@ -363,3 +363,154 @@ Feature: Assignment 2
     And checking for winners
     And Player 2 is a winner
     And Player 4 is a winner
+
+  Scenario: 1winner_game_with_events
+
+    # Game and Quest Setup
+
+    Given the game is setup with rigged deck for "1winner_game_with_events"
+    And the game deals adventure cards to players
+    When the game starts turn
+
+    # Quest 1
+
+    Then a "Q4" event card is drawn
+
+    And Player 1's hand is:
+      | F5, F5, F5, F5, F5, F5, F10, F10, F15, F15, F15, F20 |
+    And Player 2's hand is:
+      | F5, D5, S10, S10, S10, S10, S10, H10, H10, H10, B15, B15 |
+    And Player 3's hand is:
+      | F5, D5, S10, S10, S10, S10, S10, H10, H10, H10, B15, B15 |
+    And Player 4's hand is:
+      | F10, D5, S10, S10, S10, S10, H10, H10, H10, B15, B15, B15 |
+
+    And the game creates quest for current event card
+    And Player 1 accepts to sponsor quest
+    And Player 1 builds the quest stages for "1winner_game_with_events-q1"
+    And stage 1 is setup with:
+      | F5 |
+    And stage 2 is setup with:
+      | F10 |
+    And stage 3 is setup with:
+      | F15 |
+    And stage 4 is setup with:
+      | F20 |
+
+    # Quest 1 Stage 1 Attacks
+
+    And "all" participants participate in quest
+    And participant draws an adventure card
+    And Player 2 sets up attack for "1winner_game_with_events-q1" on stage 1
+    And participant's stage attack is:
+      | S10 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 3 sets up attack for "1winner_game_with_events-q1" on stage 1
+    And participant's stage attack is:
+      | S10 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 4 sets up attack for "1winner_game_with_events-q1" on stage 1
+    And participant's stage attack is:
+      | S10 |
+
+    And the quest resolves attacks on stage
+    And Player 2's attack succeeds and remains a participant
+    And Player 3's attack succeeds and remains a participant
+    And Player 4's attack succeeds and remains a participant
+
+    # Quest 1 Stage 2 Attacks
+
+    And next stage starts
+    And "all" participants participate in quest
+    And participant draws an adventure card
+    And Player 2 sets up attack for "1winner_game_with_events-q1" on stage 2
+    And participant's stage attack is:
+      | B15 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 3 sets up attack for "1winner_game_with_events-q1" on stage 2
+    And participant's stage attack is:
+      | B15 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 4 sets up attack for "1winner_game_with_events-q1" on stage 2
+    And participant's stage attack is:
+      | B15 |
+
+    And the quest resolves attacks on stage
+    And Player 2's attack succeeds and remains a participant
+    And Player 3's attack succeeds and remains a participant
+    And Player 4's attack succeeds and remains a participant
+
+    # Quest 1 Stage 3 Attacks
+
+    And next stage starts
+    And "all" participants participate in quest
+    And participant draws an adventure card
+    And Player 2 sets up attack for "1winner_game_with_events-q1" on stage 3
+    And participant's stage attack is:
+      | S10, H10 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 3 sets up attack for "1winner_game_with_events-q1" on stage 3
+    And participant's stage attack is:
+      | S10, H10 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 4 sets up attack for "1winner_game_with_events-q1" on stage 3
+    And participant's stage attack is:
+      | S10, H10 |
+
+    And the quest resolves attacks on stage
+    And Player 2's attack succeeds and remains a participant
+    And Player 3's attack succeeds and remains a participant
+    And Player 4's attack succeeds and remains a participant
+
+    # Quest 1 Stage 4 Attacks
+
+    And next stage starts
+    And "all" participants participate in quest
+    And participant draws an adventure card
+    And Player 2 sets up attack for "1winner_game_with_events-q1" on stage 4
+    And participant's stage attack is:
+      | S10, H10, D5 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 3 sets up attack for "1winner_game_with_events-q1" on stage 4
+    And participant's stage attack is:
+      | S10, H10, D5 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 4 sets up attack for "1winner_game_with_events-q1" on stage 4
+    And participant's stage attack is:
+      | S10, H10, D5 |
+
+    And the quest resolves attacks on stage
+    And Player 2's attack succeeds and remains a participant
+    And Player 3's attack succeeds and remains a participant
+    And Player 4's attack succeeds and remains a participant
+
+    # Quest 1 Resolution
+
+    And next stage starts
+    And there are no more stages
+
+    And shields are rewarded
+    And Player 1 has 0 shields
+    And Player 2 has 4 shields
+    And Player 3 has 4 shields
+    And Player 4 has 4 shields
+
+    And replenishing sponsor's hand for "1winner_game_with_events-q1"
+    And Player 1's hand has 12 cards
+
