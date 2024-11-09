@@ -540,3 +540,44 @@ Feature: Assignment 2
     And a "Queen's Favor" event card is drawn
     And Player 4 draws 2 adventure cards for "1winner_game_with_events"
     And Player 4's hand has 12 cards
+
+    # Quest 2
+
+    And next player's turn
+    And the game starts turn
+    And a "Q3" event card is drawn
+
+    And the game creates quest for current event card
+    And Player 1 accepts to sponsor quest
+    And Player 1 builds the quest stages for "1winner_game_with_events-q2"
+    And stage 1 is setup with:
+      | F5 |
+    And stage 2 is setup with:
+      | F10 |
+    And stage 3 is setup with:
+      | F15 |
+
+    # Quest 2 Stage 1 Attacks
+
+    And "all" participants participate in quest
+    And participant draws an adventure card
+    And Player 2 sets up attack for "1winner_game_with_events-q2" on stage 1
+    And participant's stage attack is:
+      | S10 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 3 sets up attack for "1winner_game_with_events-q2" on stage 1
+    And participant's stage attack is:
+      | S10 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 4 sets up attack for "1winner_game_with_events-q2" on stage 1
+    And participant's stage attack is:
+      | |
+
+    And the quest resolves attacks on stage
+    And Player 2's attack succeeds and remains a participant
+    And Player 3's attack succeeds and remains a participant
+    And Player 4's attack fails and is removed from quest

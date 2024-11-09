@@ -201,11 +201,9 @@ public class OneWinnerGameWithEvents {
   }
 
   public static String getQ2StagesSetupInput() {
-    String p1Stage1Setup = "1\nQUIT\n\n";
-    String p1Stage2Setup = "2\nQUIT\n\n";
-    String p1Stage3Setup = "2\nQUIT\n\n";
+    String p1StageSetup = "1\nQUIT\n\n".repeat(3);
 
-    return p1Stage1Setup + p1Stage2Setup + p1Stage3Setup + "\n";
+    return p1StageSetup + "\n";
   }
 
   public static String getQ2AttackSetupInput(int playerNumber, int stageNumber) {
@@ -286,9 +284,11 @@ public class OneWinnerGameWithEvents {
   private static String getQ2S1AttackSetupInputForPlayer(int playerNumber) {
     switch (playerNumber) {
       case 2:
-        return "7\nQUIT\n\n";
+        return "1\nQUIT\n\n";
+      case 3:
+        return "8\nQUIT\n\n";
       case 4:
-        return "7\nQUIT\n\n";
+        return "QUIT\n\n";
       default:
         throw new IllegalArgumentException("Unknown player number: " + playerNumber);
     }

@@ -10,6 +10,7 @@ import shared.OneWinnerGameWithEvents;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -149,10 +150,15 @@ public class GameSteps {
 
   @Then("participant's stage attack is:")
   public void participant_s_stage_attack_is(String stageAttack) {
-    List<String> stageAttackList = Arrays.asList(stageAttack.split(", "));
-    List<AdventureType> expectedStageAttack = stageAttackList.stream()
-        .map(this::parseCardType)
-        .collect(Collectors.toList());
+    List<AdventureType> expectedStageAttack = new ArrayList<>();
+
+    if (stageAttack != null) {
+      List<String> stageAttackList = Arrays.asList(stageAttack.split(", "));
+      expectedStageAttack = stageAttackList.stream()
+          .map(this::parseCardType)
+          .collect(Collectors.toList());
+    }
+
     List<AdventureType> actualStageAttack = quest.getCurrentParticipant().getAttackCards().stream()
         .map(AdventureCard::getType)
         .collect(Collectors.toList());
