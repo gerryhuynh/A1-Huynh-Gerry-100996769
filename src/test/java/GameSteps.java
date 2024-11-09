@@ -41,7 +41,7 @@ public class GameSteps {
     game.setupPlayers();
   }
 
-  @When("the game deals adventure cards to players")
+  @Given("the game deals adventure cards to players")
   public void the_game_deals_adventure_cards_to_players() {
     game.dealAdventureCards();
   }
@@ -61,7 +61,7 @@ public class GameSteps {
     assertEquals(expectedTypes, actualTypes, "Player " + playerNumber + " has correct hand");
   }
 
-  @Given("the game starts turn")
+  @When("the game starts turn")
   public void the_game_starts_turn() {
     game.startTurn();
   }
@@ -73,7 +73,7 @@ public class GameSteps {
     assertEquals(eventType, drawnCard.getType().toString(), "Drawn event card is correct");
   }
 
-  @Given("the game creates quest for current event card")
+  @Then("the game creates quest for current event card")
   public void the_game_creates_quest_for_current_event_card() {
     QType questCard = (QType) game.getCurrentEventCard().getType();
     quest = game.createQuest(questCard.getNumStages());
@@ -81,7 +81,7 @@ public class GameSteps {
 
   // Really should be "Player declines to sponsor quest"
   // But this is more readable in the context of the feature file
-  @Given("Player {int} declines to sponsor quest")
+  @Then("Player {int} declines to sponsor quest")
   public void player_declines_to_sponsor_quest(int playerNumber) {
     display.setInput("N\n\n");
 
@@ -90,21 +90,21 @@ public class GameSteps {
 
   // Really should be "Player accepts to sponsor quest"
   // But this is more readable in the context of the feature file
-  @Given("Player {int} accepts to sponsor quest")
+  @Then("Player {int} accepts to sponsor quest")
   public void player_accepts_to_sponsor_quest(int playerNumber) {
     display.setInput("Y\n\n");
 
     quest.promptForSponsor(game.getCurrentPlayer(), display);
   }
 
-  @Given("quest gets next potential sponsor")
+  @Then("quest gets next potential sponsor")
   public void quest_gets_next_potential_sponsor() {
     quest.getNextPotentialSponsor(game.getPlayers(), game.getCurrentPlayer());
   }
 
   // Really should be "Player builds the quest stages for {string}"
   // But this is more readable in the context of the feature file
-  @When("Player {int} builds the quest stages for {string}")
+  @Then("Player {int} builds the quest stages for {string}")
   public void player_builds_the_quest_stages_for(int playerNumber, String scenario) {
     buildQuestStagesForScenario(scenario);
     quest.addAllPlayersExceptSponsorToParticipants(game.getPlayers());
@@ -123,7 +123,7 @@ public class GameSteps {
     assertEquals(expectedStageSetup, actualStageSetup, "Stage " + stageNumber + " is setup with correct foes");
   }
 
-  @Given("{string} participants participate in quest")
+  @Then("{string} participants participate in quest")
   public void participants_participate_in_quest(String condition) {
     String input = getParticipantsInputForCondition(condition);
     display.setInput(input);
@@ -131,7 +131,7 @@ public class GameSteps {
     quest.promptForParticipants(display);
   }
 
-  @Given("participant draws an adventure card")
+  @Then("participant draws an adventure card")
   public void participant_draws_an_adventure_card() {
     String input = String.format("%s\n", isFirstStage() ? "1\n" : "");
     display.setInput(input.repeat(quest.getParticipants().size()));
@@ -139,7 +139,7 @@ public class GameSteps {
     quest.getCurrentParticipant().drawCard(game.getAdventureDeck(), display);
   }
 
-  @When("Player {int} sets up attack for {string} on stage {int}")
+  @Then("Player {int} sets up attack for {string} on stage {int}")
   public void player_sets_up_attack_for(int playerNumber, String scenario, int stageNumber) {
     display.setInput(getAttackSetupInputForScenario(scenario, playerNumber, stageNumber));
 
@@ -159,12 +159,12 @@ public class GameSteps {
     assertEquals(expectedStageAttack, actualStageAttack, "Participant has correct stage attack");
   }
 
-  @Given("next participant's turn")
+  @Then("next participant's turn")
   public void next_participant_s_turn() {
     quest.getNextParticipant();
   }
 
-  @Given("the quest resolves attacks on stage")
+  @Then("the quest resolves attacks on stage")
   public void the_quest_resolves_attacks_on_stage() {
     display.setInput("\n".repeat(quest.getParticipants().size()));
 
@@ -178,7 +178,7 @@ public class GameSteps {
     assertTrue(quest.getParticipantsAsPlayers().contains(player), "Player " + playerNumber + " remains a participant");
   }
 
-  @Given("next stage starts")
+  @Then("next stage starts")
   public void the_next_stage_starts() {
     quest.getNextStage();
   }
@@ -195,7 +195,7 @@ public class GameSteps {
     assertNull(quest.getCurrentStage(), "There are no more stages");
   }
 
-  @When("shields are rewarded")
+  @Then("shields are rewarded")
   public void shields_are_rewarded() {
     display.setInput("\n".repeat(quest.getParticipants().size()));
 
@@ -209,7 +209,7 @@ public class GameSteps {
     assertEquals(shields, player.getShields(), "Player " + playerNumber + " has correct shields");
   }
 
-  @When("replenishing sponsor's hand for {string}")
+  @Then("replenishing sponsor's hand for {string}")
   public void replenishing_sponsor_s_hand_for(String scenario) {
     display.setInput(getReplenishSponsorHandInputForScenario(scenario));
 
@@ -223,12 +223,12 @@ public class GameSteps {
     assertEquals(numCards, player.getHand().size(), "Player " + playerNumber + " has correct hand size");
   }
 
-  @Given("next player's turn")
+  @Then("next player's turn")
   public void next_player_s_turn() {
     game.nextTurn();
   }
 
-  @When("checking for winners")
+  @Then("checking for winners")
   public void checking_for_winners() {
     game.checkWinners();
   }
