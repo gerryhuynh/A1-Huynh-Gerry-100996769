@@ -220,7 +220,7 @@ public class OneWinnerGameWithEvents {
   }
 
   public static String getQ2ReplenishSponsorHandInput() {
-    return "4\n".repeat(3);
+    return "1\n".repeat(3);
   }
 
   // Stage attack setup helper methods
@@ -297,9 +297,9 @@ public class OneWinnerGameWithEvents {
   private static String getQ2S2AttackSetupInputForPlayer(int playerNumber) {
     switch (playerNumber) {
       case 2:
-        return "8\n6\nQUIT\n\n";
-      case 4:
-        return "6\n6\nQUIT\n\n";
+        return "3\nQUIT\n\n";
+      case 3:
+        return "11\nQUIT\n\n";
       default:
         throw new IllegalArgumentException("Unknown player number: " + playerNumber);
     }
@@ -308,9 +308,9 @@ public class OneWinnerGameWithEvents {
   private static String getQ2S3AttackSetupInputForPlayer(int playerNumber) {
     switch (playerNumber) {
       case 2:
-        return "9\nQUIT\n\n";
-      case 4:
-        return "8\nQUIT\n\n";
+        return "1\n1\nQUIT\n\n";
+      case 3:
+        return "10\n10\nQUIT\n\n";
       default:
         throw new IllegalArgumentException("Unknown player number: " + playerNumber);
     }

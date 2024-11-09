@@ -581,3 +581,58 @@ Feature: Assignment 2
     And Player 2's attack succeeds and remains a participant
     And Player 3's attack succeeds and remains a participant
     And Player 4's attack fails and is removed from quest
+
+    # Quest 2 Stage 2 Attacks
+
+    And next stage starts
+    And "all" participants participate in quest
+    And participant draws an adventure card
+    And Player 2 sets up attack for "1winner_game_with_events-q2" on stage 2
+    And participant's stage attack is:
+      | B15 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 3 sets up attack for "1winner_game_with_events-q2" on stage 2
+    And participant's stage attack is:
+      | B15 |
+
+    And the quest resolves attacks on stage
+    And Player 2's attack succeeds and remains a participant
+    And Player 3's attack succeeds and remains a participant
+
+    # Quest 2 Stage 3 Attacks
+
+    And next stage starts
+    And "all" participants participate in quest
+    And participant draws an adventure card
+    And Player 2 sets up attack for "1winner_game_with_events-q2" on stage 3
+    And participant's stage attack is:
+      | S10, H10 |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 3 sets up attack for "1winner_game_with_events-q2" on stage 3
+    And participant's stage attack is:
+      | S10, H10 |
+
+    And the quest resolves attacks on stage
+    And Player 2's attack succeeds and remains a participant
+    And Player 3's attack succeeds and remains a participant
+
+    # Quest 2 Resolution
+
+    And next stage starts
+    And there are no more stages
+
+    And shields are rewarded
+    And Player 1 has 0 shields
+    And Player 2 has 5 shields
+    And Player 3 has 7 shields
+    And Player 4 has 4 shields
+
+    And replenishing sponsor's hand for "1winner_game_with_events-q2"
+    And Player 1's hand has 12 cards
+
+    And checking for winners
+    And Player 3 is a winner
