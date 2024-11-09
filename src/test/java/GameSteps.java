@@ -108,7 +108,8 @@ public class GameSteps {
   // But this is more readable in the context of the feature file
   @Then("Player {int} builds the quest stages for {string}")
   public void player_builds_the_quest_stages_for(int playerNumber, String scenario) {
-    buildQuestStagesForScenario(scenario);
+    display.setInput(getQuestStagesSetupInputForScenario(scenario));
+    quest.setup(display);
     quest.addAllPlayersExceptSponsorToParticipants(game.getPlayers());
   }
 
@@ -285,131 +286,85 @@ public class GameSteps {
   // Helper methods
 
   private String getQueensFavorDrawCardsInputForScenario(String scenario) {
-    switch (scenario) {
-      case "1winner_game_with_events":
-        return "";
-      default:
-        throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    if (scenario.equals("1winner_game_with_events")) {
+      return "";
     }
+    throw new IllegalArgumentException("Unknown scenario: " + scenario);
   }
 
   private String getProsperityDrawCardsInputForScenario(String scenario) {
-    switch (scenario) {
-      case "1winner_game_with_events":
-        return OneWinnerGameWithEvents.getProsperityDrawCardsInput(game.getPlayers().size());
-      default:
-        throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    if (scenario.equals("1winner_game_with_events")) {
+      return OneWinnerGameWithEvents.getProsperityDrawCardsInput(game.getPlayers().size());
     }
+    throw new IllegalArgumentException("Unknown scenario: " + scenario);
   }
 
   private String getReplenishSponsorHandInputForScenario(String scenario) {
-    switch (scenario) {
-      case "A1 scenario":
-        return A1Scenario.getReplenishSponsorHandInput();
-      case "2winner_game_2winner_quest-q1":
-        return TwoWinnerGameTwoWinnerQuest.getQ1ReplenishSponsorHandInput();
-      case "2winner_game_2winner_quest-q2":
-        return TwoWinnerGameTwoWinnerQuest.getQ2ReplenishSponsorHandInput();
-      case "1winner_game_with_events-q1":
-        return OneWinnerGameWithEvents.getQ1ReplenishSponsorHandInput();
-      case "1winner_game_with_events-q2":
-        return OneWinnerGameWithEvents.getQ2ReplenishSponsorHandInput();
-      case "0_winner_quest":
-        return "1\n".repeat(2);
-      default:
-        throw new IllegalArgumentException("Unknown scenario: " + scenario);
-    }
+    return switch (scenario) {
+      case "A1 scenario" -> A1Scenario.getReplenishSponsorHandInput();
+      case "2winner_game_2winner_quest-q1" -> TwoWinnerGameTwoWinnerQuest.getQ1ReplenishSponsorHandInput();
+      case "2winner_game_2winner_quest-q2" -> TwoWinnerGameTwoWinnerQuest.getQ2ReplenishSponsorHandInput();
+      case "1winner_game_with_events-q1" -> OneWinnerGameWithEvents.getQ1ReplenishSponsorHandInput();
+      case "1winner_game_with_events-q2" -> OneWinnerGameWithEvents.getQ2ReplenishSponsorHandInput();
+      case "0_winner_quest" -> "1\n".repeat(2);
+      default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    };
   }
 
   private String getAttackSetupInputForScenario(String scenario, int playerNumber, int stageNumber) {
-    switch (scenario) {
-      case "A1 scenario":
-        return A1Scenario.getAttackSetupInput(playerNumber, stageNumber);
-      case "2winner_game_2winner_quest-q1":
-        return TwoWinnerGameTwoWinnerQuest.getQ1AttackSetupInput(playerNumber, stageNumber);
-      case "2winner_game_2winner_quest-q2":
-        return TwoWinnerGameTwoWinnerQuest.getQ2AttackSetupInput(playerNumber, stageNumber);
-      case "1winner_game_with_events-q1":
-        return OneWinnerGameWithEvents.getQ1AttackSetupInput(playerNumber, stageNumber);
-      case "1winner_game_with_events-q2":
-        return OneWinnerGameWithEvents.getQ2AttackSetupInput(playerNumber, stageNumber);
-      case "0_winner_quest":
-        return "QUIT\n\n";
-      default:
-        throw new IllegalArgumentException("Unknown scenario: " + scenario);
-    }
+    return switch (scenario) {
+      case "A1 scenario" -> A1Scenario.getAttackSetupInput(playerNumber, stageNumber);
+      case "2winner_game_2winner_quest-q1" -> TwoWinnerGameTwoWinnerQuest.getQ1AttackSetupInput(playerNumber, stageNumber);
+      case "2winner_game_2winner_quest-q2" -> TwoWinnerGameTwoWinnerQuest.getQ2AttackSetupInput(playerNumber, stageNumber);
+      case "1winner_game_with_events-q1" -> OneWinnerGameWithEvents.getQ1AttackSetupInput(playerNumber, stageNumber);
+      case "1winner_game_with_events-q2" -> OneWinnerGameWithEvents.getQ2AttackSetupInput(playerNumber, stageNumber);
+      case "0_winner_quest" -> "QUIT\n\n";
+      default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    };
   }
 
   private boolean isFirstStage() {
     return quest.getStages().getFirst() == quest.getCurrentStage();
   }
 
-  private void buildQuestStagesForScenario(String scenario) {
-    switch (scenario) {
-      case "A1 scenario":
-        display.setInput(A1Scenario.getQuestStagesSetupInput());
-        break;
-      case "2winner_game_2winner_quest-q1":
-        display.setInput(TwoWinnerGameTwoWinnerQuest.getQ1StagesSetupInput());
-        break;
-      case "2winner_game_2winner_quest-q2":
-        display.setInput(TwoWinnerGameTwoWinnerQuest.getQ2StagesSetupInput());
-        break;
-      case "1winner_game_with_events-q1":
-        display.setInput(OneWinnerGameWithEvents.getQ1StagesSetupInput());
-        break;
-      case "1winner_game_with_events-q2":
-        display.setInput(OneWinnerGameWithEvents.getQ2StagesSetupInput());
-        break;
-      case "0_winner_quest":
-        display.setInput("1\nQUIT\n\n".repeat(2) + "\n");
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown scenario: " + scenario);
-    }
-
-    quest.setup(display);
+  private String getQuestStagesSetupInputForScenario(String scenario) {
+    return switch (scenario) {
+      case "A1 scenario" -> A1Scenario.getQuestStagesSetupInput();
+      case "2winner_game_2winner_quest-q1" -> TwoWinnerGameTwoWinnerQuest.getQ1StagesSetupInput();
+      case "2winner_game_2winner_quest-q2" -> TwoWinnerGameTwoWinnerQuest.getQ2StagesSetupInput();
+      case "1winner_game_with_events-q1" -> OneWinnerGameWithEvents.getQ1StagesSetupInput();
+      case "1winner_game_with_events-q2" -> OneWinnerGameWithEvents.getQ2StagesSetupInput();
+      case "0_winner_quest" -> "1\nQUIT\n\n".repeat(2) + "\n";
+      default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    };
   }
 
   private String getParticipantsInputForCondition(String condition) {
-    switch (condition) {
-      case "all":
-        return "Y\n\n".repeat(quest.getParticipants().size());
-      case "all except first":
-        return "N\n\n" + "Y\n\n".repeat(quest.getParticipants().size() - 1);
-      default:
-        throw new IllegalArgumentException("Unknown condition: " + condition);
-    }
+    return switch (condition) {
+      case "all" -> "Y\n\n".repeat(quest.getParticipants().size());
+      case "all except first" -> "N\n\n" + "Y\n\n".repeat(quest.getParticipants().size() - 1);
+      default -> throw new IllegalArgumentException("Unknown condition: " + condition);
+    };
   }
 
   private AdventureDeck getAdventureDeckForScenario(String scenario) {
-    switch (scenario) {
-      case "A1 scenario":
-        return new TestAdventureDeck(A1Scenario.getAdventureCards());
-      case "2winner_game_2winner_quest":
-        return new TestAdventureDeck(TwoWinnerGameTwoWinnerQuest.getAdventureCards());
-      case "1winner_game_with_events":
-        return new TestAdventureDeck(OneWinnerGameWithEvents.getAdventureCards());
-      case "0_winner_quest":
-        return new TestAdventureDeck(ZeroWinnerQuest.getAdventureCards());
-      default:
-        throw new IllegalArgumentException("Unknown scenario: " + scenario);
-    }
+    return switch (scenario) {
+      case "A1 scenario" -> new TestAdventureDeck(A1Scenario.getAdventureCards());
+      case "2winner_game_2winner_quest" -> new TestAdventureDeck(TwoWinnerGameTwoWinnerQuest.getAdventureCards());
+      case "1winner_game_with_events" -> new TestAdventureDeck(OneWinnerGameWithEvents.getAdventureCards());
+      case "0_winner_quest" -> new TestAdventureDeck(ZeroWinnerQuest.getAdventureCards());
+      default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    };
   }
 
   private EventDeck getEventDeckForScenario(String scenario) {
-    switch (scenario) {
-      case "A1 scenario":
-        return new TestEventDeck(A1Scenario.getEventCards());
-      case "2winner_game_2winner_quest":
-        return new TestEventDeck(TwoWinnerGameTwoWinnerQuest.getEventCards());
-      case "1winner_game_with_events":
-        return new TestEventDeck(OneWinnerGameWithEvents.getEventCards());
-      case "0_winner_quest":
-        return new TestEventDeck(ZeroWinnerQuest.getEventCards());
-      default:
-        throw new IllegalArgumentException("Unknown scenario: " + scenario);
-    }
+    return switch (scenario) {
+      case "A1 scenario" -> new TestEventDeck(A1Scenario.getEventCards());
+      case "2winner_game_2winner_quest" -> new TestEventDeck(TwoWinnerGameTwoWinnerQuest.getEventCards());
+      case "1winner_game_with_events" -> new TestEventDeck(OneWinnerGameWithEvents.getEventCards());
+      case "0_winner_quest" -> new TestEventDeck(ZeroWinnerQuest.getEventCards());
+      default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    };
   }
 
   private AdventureType parseCardType(String card) {
