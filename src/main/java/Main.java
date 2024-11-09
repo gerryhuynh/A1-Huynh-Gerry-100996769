@@ -2,14 +2,14 @@ import java.io.PrintWriter;
 
 import game.Display;
 import game.Game;
-import game.decks.AdventureDeck;
-import game.decks.EventDeck;
+// import game.decks.AdventureDeck;
+// import game.decks.EventDeck;
 
 // import shared.A1Scenario;
-import shared.TestAdventureDeck;
-import shared.TestEventDeck;
+// import shared.TestAdventureDeck;
+// import shared.TestEventDeck;
 // import shared.TwoWinnerGameTwoWinnerQuest;
-import shared.OneWinnerGameWithEvents;
+// import shared.OneWinnerGameWithEvents;
 
 public class Main {
   public static void main(String[] args) {
@@ -60,53 +60,53 @@ public class Main {
 
     // ONE WINNER GAME WITH EVENTS
 
-    Display display = new Display(new PrintWriter(System.out));
-    AdventureDeck adventureDeck = new TestAdventureDeck(OneWinnerGameWithEvents.getAdventureCards());
-    EventDeck eventDeck = new TestEventDeck(OneWinnerGameWithEvents.getEventCards());
-    Game game = new Game(adventureDeck, eventDeck, display);
-
-    game.setupPlayers();
-    game.dealAdventureCards();
-
-    game.getAdventureDeck().addToTopOfDeck(OneWinnerGameWithEvents.getRiggedTopOfDeck());
-    game.getPlayers().get(0).overWriteHand(OneWinnerGameWithEvents.getP1Hand(), display);
-    game.getPlayers().get(1).overWriteHand(OneWinnerGameWithEvents.getP2Hand(), display);
-    game.getPlayers().get(2).overWriteHand(OneWinnerGameWithEvents.getP3Hand(), display);
-    game.getPlayers().get(3).overWriteHand(OneWinnerGameWithEvents.getP4Hand(), display);
-
-    game.startTurn();
-    game.playEventCard();
-    game.endTurn();
-
-    game.startTurn();
-    game.playEventCard();
-    game.endTurn();
-
-    game.startTurn();
-    game.playEventCard();
-    game.endTurn();
-
-    game.startTurn();
-    game.playEventCard();
-    game.endTurn();
-
-    game.startTurn();
-    game.playEventCard();
-    game.endTurn();
-
-    // NORMAL GAME LOOP
-
     // Display display = new Display(new PrintWriter(System.out));
-    // Game game = new Game();
+    // AdventureDeck adventureDeck = new TestAdventureDeck(OneWinnerGameWithEvents.getAdventureCards());
+    // EventDeck eventDeck = new TestEventDeck(OneWinnerGameWithEvents.getEventCards());
+    // Game game = new Game(adventureDeck, eventDeck, display);
 
-    // game.setDisplay(display);
     // game.setupPlayers();
     // game.dealAdventureCards();
 
-    // while (!game.isGameOver()) {
-    //   game.startTurn();
-    //   game.playEventCard();
-    //   game.endTurn();
-    // }
+    // game.getAdventureDeck().addToTopOfDeck(OneWinnerGameWithEvents.getRiggedTopOfDeck());
+    // game.getPlayers().get(0).overWriteHand(OneWinnerGameWithEvents.getP1Hand(), display);
+    // game.getPlayers().get(1).overWriteHand(OneWinnerGameWithEvents.getP2Hand(), display);
+    // game.getPlayers().get(2).overWriteHand(OneWinnerGameWithEvents.getP3Hand(), display);
+    // game.getPlayers().get(3).overWriteHand(OneWinnerGameWithEvents.getP4Hand(), display);
+
+    // game.startTurn();
+    // game.playEventCard();
+    // game.endTurn();
+
+    // game.startTurn();
+    // game.playEventCard();
+    // game.endTurn();
+
+    // game.startTurn();
+    // game.playEventCard();
+    // game.endTurn();
+
+    // game.startTurn();
+    // game.playEventCard();
+    // game.endTurn();
+
+    // game.startTurn();
+    // game.playEventCard();
+    // game.endTurn();
+
+    // NORMAL GAME LOOP
+
+    Display display = new Display(new PrintWriter(System.out));
+    Game game = new Game();
+
+    game.setDisplay(display);
+    game.setupPlayers();
+    game.dealAdventureCards();
+
+    while (!game.isGameOver()) {
+      game.startTurn();
+      game.playEventCard();
+      game.endTurn();
+    }
   }
 }

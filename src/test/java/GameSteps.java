@@ -7,7 +7,7 @@ import shared.TestAdventureDeck;
 import shared.TestEventDeck;
 import shared.TwoWinnerGameTwoWinnerQuest;
 import shared.OneWinnerGameWithEvents;
-
+import shared.ZeroWinnerQuest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -272,6 +272,16 @@ public class GameSteps {
     game.playEventCard();
   }
 
+  @Then("there are no more participants")
+  public void there_are_no_more_participants() {
+    assertTrue(quest.getParticipants().isEmpty(), "There are no more participants");
+  }
+
+  @Then("there are no winners")
+  public void there_are_no_winners() {
+    assertTrue(game.getWinners().isEmpty(), "There are no winners");
+  }
+
   // Helper methods
 
   private String getQueensFavorDrawCardsInputForScenario(String scenario) {
@@ -304,6 +314,8 @@ public class GameSteps {
         return OneWinnerGameWithEvents.getQ1ReplenishSponsorHandInput();
       case "1winner_game_with_events-q2":
         return OneWinnerGameWithEvents.getQ2ReplenishSponsorHandInput();
+      case "0_winner_quest":
+        return "1\n".repeat(2);
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }
@@ -321,6 +333,8 @@ public class GameSteps {
         return OneWinnerGameWithEvents.getQ1AttackSetupInput(playerNumber, stageNumber);
       case "1winner_game_with_events-q2":
         return OneWinnerGameWithEvents.getQ2AttackSetupInput(playerNumber, stageNumber);
+      case "0_winner_quest":
+        return "QUIT\n\n";
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }
@@ -346,6 +360,9 @@ public class GameSteps {
         break;
       case "1winner_game_with_events-q2":
         display.setInput(OneWinnerGameWithEvents.getQ2StagesSetupInput());
+        break;
+      case "0_winner_quest":
+        display.setInput("1\nQUIT\n\n".repeat(2) + "\n");
         break;
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
@@ -373,6 +390,8 @@ public class GameSteps {
         return new TestAdventureDeck(TwoWinnerGameTwoWinnerQuest.getAdventureCards());
       case "1winner_game_with_events":
         return new TestAdventureDeck(OneWinnerGameWithEvents.getAdventureCards());
+      case "0_winner_quest":
+        return new TestAdventureDeck(ZeroWinnerQuest.getAdventureCards());
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }
@@ -386,6 +405,8 @@ public class GameSteps {
         return new TestEventDeck(TwoWinnerGameTwoWinnerQuest.getEventCards());
       case "1winner_game_with_events":
         return new TestEventDeck(OneWinnerGameWithEvents.getEventCards());
+      case "0_winner_quest":
+        return new TestEventDeck(ZeroWinnerQuest.getEventCards());
       default:
         throw new IllegalArgumentException("Unknown scenario: " + scenario);
     }

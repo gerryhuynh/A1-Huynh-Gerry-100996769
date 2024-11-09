@@ -636,3 +636,71 @@ Feature: Assignment 2
 
     And checking for winners
     And Player 3 is a winner
+
+  Scenario: 0_winner_quest
+
+    # Game and Quest Setup
+
+    Given the game is setup with rigged deck for "0_winner_quest"
+    And the game deals adventure cards to players
+    When the game starts turn
+
+    Then a "Q2" event card is drawn
+
+    And Player 1's hand has 12 cards
+    And Player 1's hand is:
+      | F5, F10, S10, S10, S10, S10, S10, S10, S10, S10, S10, S10 |
+
+    And the game creates quest for current event card
+    And Player 1 accepts to sponsor quest
+    And Player 1 builds the quest stages for "0_winner_quest"
+    And stage 1 is setup with:
+      | F5 |
+    And stage 2 is setup with:
+      | F10 |
+
+    # Quest 1 Stage 1 Attacks
+
+    And "all" participants participate in quest
+    And participant draws an adventure card
+    And Player 2 sets up attack for "0_winner_quest" on stage 1
+    And participant's stage attack is:
+      | |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 3 sets up attack for "0_winner_quest" on stage 1
+    And participant's stage attack is:
+      | |
+
+    And next participant's turn
+    And participant draws an adventure card
+    And Player 4 sets up attack for "0_winner_quest" on stage 1
+    And participant's stage attack is:
+      | |
+
+    And the quest resolves attacks on stage
+    And Player 2's attack fails and is removed from quest
+    And Player 3's attack fails and is removed from quest
+    And Player 4's attack fails and is removed from quest
+
+    # Quest 1 Resolution
+
+    And next stage starts
+    And there are no more participants
+
+    And Player 1 has 0 shields
+    And Player 2 has 0 shields
+    And Player 3 has 0 shields
+    And Player 4 has 0 shields
+
+    And Player 1's hand has 10 cards
+    And Player 2's hand has 12 cards
+    And Player 3's hand has 12 cards
+    And Player 4's hand has 12 cards
+
+    And replenishing sponsor's hand for "0_winner_quest"
+    And Player 1's hand has 12 cards
+
+    And checking for winners
+    And there are no winners
