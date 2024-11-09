@@ -259,7 +259,23 @@ public class GameSteps {
     game.playEventCard();
   }
 
+  @Then("Player {int} draws 2 adventure cards for {string}")
+  public void player_draws_adventure_cards_for(int playerNumber, String scenario) {
+    display.setInput(getQueensFavorDrawCardsInputForScenario(scenario));
+
+    game.playEventCard();
+  }
+
   // Helper methods
+
+  private String getQueensFavorDrawCardsInputForScenario(String scenario) {
+    switch (scenario) {
+      case "1winner_game_with_events":
+        return "";
+      default:
+        throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    }
+  }
 
   private String getProsperityDrawCardsInputForScenario(String scenario) {
     switch (scenario) {

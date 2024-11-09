@@ -532,3 +532,11 @@ Feature: Assignment 2
     And Player 2's hand has 10 cards
     And Player 3's hand has 10 cards
     And Player 4's hand has 10 cards
+
+    # P4 Queens Favor
+
+    And next player's turn
+    And the game starts turn
+    And a "Queen's Favor" event card is drawn
+    And Player 4 draws 2 adventure cards for "1winner_game_with_events"
+    And Player 4's hand has 12 cards
