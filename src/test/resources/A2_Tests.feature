@@ -137,11 +137,20 @@ Feature: Assignment 2
 
     And shields are rewarded
     And Player 1 has 0 shields
+    And Player 2 has 0 shields
     And Player 3 has 0 shields
     And Player 4 has 4 shields
 
+    And Player 1's hand has 9 cards
+    And Player 2's hand has 3 cards
+    And Player 3's hand has 5 cards
+    And Player 4's hand has 4 cards
+
     And replenishing sponsor's hand for "A1 scenario"
     And Player 2's hand has 12 cards
+
+    And checking for winners
+    And there are no winners
 
   Scenario: 2winner_game_2winner_quest
 
