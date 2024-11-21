@@ -1,4 +1,4 @@
-# Assignment 2
+# Assignment 3
 
 **Author:** Gerry Huynh (100996769)
 
