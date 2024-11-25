@@ -32,7 +32,7 @@ public class Player {
       int numCardsToTrim = computeNumCardsToTrim(cards.size());
       if (numCardsToTrim > 0) {
         while (cards.size() > Player.MAX_HAND_SIZE) {
-          trimmedCards.add(cards.removeFirst());
+          trimmedCards.add(cards.remove(0));
         }
         trimmedCards.addAll(trimHand(numCardsToTrim, display));
       }

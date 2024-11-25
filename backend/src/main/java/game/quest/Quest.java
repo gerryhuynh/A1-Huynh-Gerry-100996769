@@ -99,7 +99,7 @@ public class Quest {
   public void promptForParticipants(Display display) {
     display.printParticipants(participants);
     participants = display.promptForParticipants(participants);
-    currentParticipant = participants.get(0);
+    currentParticipant = participants.isEmpty() ? null : participants.get(0);
   }
 
   public void getNextParticipant() {

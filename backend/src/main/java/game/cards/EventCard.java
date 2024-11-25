@@ -16,16 +16,12 @@ public class EventCard extends Card<EventType> {
   }
 
   public String play(Game game) {
-    switch (getType()) {
-      case EType.PLAGUE: return plagueEffect(game.getCurrentPlayer());
-      case EType.QUEENS_FAVOR: return queensFavorEffect(game.getCurrentPlayer(), game.getAdventureDeck(), game.getDisplay());
-      case EType.PROSPERITY: return prosperityEffect(game);
-      default:
-        if (getType() instanceof QType) {
-          return startQuest(game);
-        }
-        return "";
-    }
+    EventType type = getType();
+    if (type == EType.PLAGUE) return plagueEffect(game.getCurrentPlayer());
+    if (type == EType.QUEENS_FAVOR) return queensFavorEffect(game.getCurrentPlayer(), game.getAdventureDeck(), game.getDisplay());
+    if (type == EType.PROSPERITY) return prosperityEffect(game);
+    if (type instanceof QType) return startQuest(game);
+    return "";
   }
 
   private String startQuest(Game game) {
