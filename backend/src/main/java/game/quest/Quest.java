@@ -23,7 +23,7 @@ public class Quest {
   private Participant currentParticipant;
   private Participant currentPotentialParticipant;
   private List<Participant> activeParticipants;
-  private List<AdventureCard> cardsToReplenish;
+  private List<AdventureCard> cardsToAddToHand;
   private Player sponsor;
   private Player currentPotentialSponsor;
   private int sponsorNumCardsUsed;
@@ -143,11 +143,11 @@ public class Quest {
   }
 
   public void replenishSponsorHand(Display display, AdventureDeck adventureDeck) {
-    display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), getNumCardsToReplenish()));
-    sponsor.addToHand(adventureDeck.draw(getNumCardsToReplenish()), display);
+    display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), getNumCardsToAddToHand()));
+    sponsor.addToHand(adventureDeck.draw(getNumCardsToAddToHand()), display);
   }
 
-  public int getNumCardsToReplenish() {
+  public int getNumCardsToAddToHand() {
     return sponsorNumCardsUsed + numStages;
   }
 
@@ -218,6 +218,22 @@ public class Quest {
         currentParticipant.addCardToAttack(card, display);
       }
     }
+  }
+
+  public Map.Entry<Boolean, String> validateAttackCard(List<AdventureCard> attackCards, AdventureCard card) {
+    if (card.getType() instanceof WeaponType) {
+      boolean hasDuplicateWeapon = attackCards.stream()
+        .filter(c -> c.getType() instanceof WeaponType)
+        .anyMatch(c -> c.getType().equals(card.getType()));
+
+      if (hasDuplicateWeapon) {
+        return Map.entry(false, "Duplicate Weapon cards are not allowed in a stage.");
+      }
+    }
+    if (card.getType() instanceof FoeType) {
+      return Map.entry(false, "Foe cards are not allowed in an attack.");
+    }
+    return Map.entry(true, "");
   }
 
   public boolean validateAttackCard(List<AdventureCard> attackCards, AdventureCard card, Display display) {
@@ -433,12 +449,12 @@ public class Quest {
     return activeParticipants;
   }
 
-  public List<AdventureCard> getCardsToReplenish() {
-    return cardsToReplenish;
+  public List<AdventureCard> getCardsToAddToHand() {
+    return cardsToAddToHand;
   }
 
-  public void setCardsToReplenish(List<AdventureCard> cardsToReplenish) {
-    this.cardsToReplenish = cardsToReplenish;
+  public void setCardsToAddToHand(List<AdventureCard> cardsToAddToHand) {
+    this.cardsToAddToHand = cardsToAddToHand;
   }
 
   @Override

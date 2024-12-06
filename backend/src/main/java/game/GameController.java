@@ -16,6 +16,7 @@ import game.enums.event.QType;
 import game.cards.AdventureCard;
 import game.quest.Stage;
 import game.cards.EventCard;
+import game.quest.Participant;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:8081")
@@ -157,8 +158,6 @@ public class GameController {
     response.put("stageSetupComplete", false);
     response.put("questSetupComplete", false);
 
-    System.out.println(quest.toString());
-
     if (cardPosition.equalsIgnoreCase("quit")) {
       Map.Entry<Boolean, String> validQuit = quest.validateStageSetupQuit(quest.getCurrentSetupStage());
       boolean isValid = validQuit.getKey();
@@ -257,8 +256,6 @@ public class GameController {
     if (quest.getCurrentPotentialParticipant() == null) {
       // END OF PARTICIPANTS FINDING
       quest.replaceParticipants();
-      System.out.println("\n\nCURRENT PARTICIPANT:");
-      System.out.println(quest.getCurrentParticipant());
     }
 
     return response;
@@ -268,6 +265,7 @@ public class GameController {
   public Map<String, Object> nextPotentialParticipant() {
     Map<String, Object> response = new HashMap<>();
     response.put("message", "");
+    response.put("continueQuest", false);
     response.put("questComplete", false);
 
     if (quest.getCurrentPotentialParticipant() == null && quest.getActiveParticipants().size() == 0) {
@@ -276,6 +274,16 @@ public class GameController {
         No participants were successful in defeating the quest's stages. Return to the sponsor.
         """);
       response.put("questComplete", true);
+    } else if (quest.getCurrentPotentialParticipant() == null) {
+      response.put("message", String.format("""
+        Participants found: %s
+
+        Starting Stage %d for %s.
+        """, quest.getParticipants().toString(),
+          quest.getCurrentStage().getStageNumber(),
+          quest.getCurrentParticipant().getPlayer().getName()
+        ));
+      response.put("continueQuest", true);
     } else {
       response.put("message", String.format("""
         %s, do you want to be a participant for this stage?
@@ -288,40 +296,38 @@ public class GameController {
     return response;
   }
 
+  @GetMapping("/nextAttackTurn")
+  public Map<String, Object> nextAttackTurn() {
+    Player currentParticipant = quest.getCurrentParticipant().getPlayer();
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", "");
+    response.put("questAttackTurn", currentParticipant.getName());
+
+    response.put("message", String.format("""
+      <strong>%s's turn.</strong>
+
+      %s
+      """, currentParticipant.getName(),
+        questAddToHand(currentParticipant, game.getAdventureDeck().draw(1))
+      ));
+
+    return response;
+  }
+
   @GetMapping("/replenishSponsorHands")
   public Map<String, Object> replenishSponsorHands() {
     Map<String, Object> response = new HashMap<>();
     response.put("message", "");
 
-    quest.setCardsToReplenish(game.getAdventureDeck().draw(quest.getNumCardsToReplenish()));
-
-    String baseMessage = String.format("""
-      <strong>REPLENISHING SPONSOR %s HANDS...</strong> (%d cards)
-
-      <strong>ADVENTURE CARDS TO ADD TO HAND:</strong>
-      %s
-
-      """, quest.getSponsor().getName(),
-        quest.getNumCardsToReplenish(),
-        quest.getCardsToReplenish().toString()
+    String baseMessage = String.format(
+        "<strong>REPLENISHING SPONSOR %s HANDS...</strong> (%d cards)\n\n",
+          quest.getSponsor().getName(),
+          quest.getNumCardsToAddToHand()
       );
 
-    List<AdventureCard> cards = quest.getCardsToReplenish();
-    List<AdventureCard> trimmedCards = quest.getSponsor().getTrimmedCards();
-    Player sponsor = quest.getSponsor();
+    String message = questAddToHand(quest.getSponsor(), game.getAdventureDeck().draw(quest.getNumCardsToAddToHand()));
 
-    sponsor.setNumCardsToTrim(sponsor.computeNumCardsToTrim(cards.size()));
-    if (sponsor.getNumCardsToTrim() > 0) {
-      while (cards.size() > Player.MAX_HAND_SIZE) {
-        trimmedCards.add(cards.remove(0));
-        sponsor.setNumCardsToTrim(sponsor.getNumCardsToTrim() - 1);
-      }
-    }
-
-    String trimMessage = sponsor.getNumCardsToTrim() > 0 ?
-      "You must trim your hand. Please discard a card.\n\n" : "";
-
-    response.put("message", baseMessage + trimMessage + getHandList(sponsor.getHand()));
+    response.put("message", baseMessage + message);
 
     return response;
   }
@@ -348,18 +354,13 @@ public class GameController {
   }
 
   @PostMapping("/submitTrimChoice")
-  public Map<String, Object> submitTrimChoice(@RequestParam String cardPosition) {
-    List<AdventureCard> cards = new ArrayList<>();
-    List<AdventureCard> trimmedCards = new ArrayList<>();
-    Player player = null;
-    int cardIndex = 0;
+  public Map<String, Object> submitTrimChoice(@RequestParam String cardPosition, @RequestParam int playerNum) {
+    System.out.println("submitTrimChoice: " + playerNum);
+    List<AdventureCard> cards = quest.getCardsToAddToHand();
+    Player player = game.getPlayers().get(playerNum - 1);
 
-    if (isQuest()) {
-      cards = quest.getCardsToReplenish();
-      trimmedCards = quest.getSponsor().getTrimmedCards();
-      player = quest.getSponsor();
-      cardIndex = Integer.parseInt(cardPosition) - 1;
-    }
+    int cardIndex = Integer.parseInt(cardPosition) - 1;
+    List<AdventureCard> trimmedCards = player.getTrimmedCards();
 
     Map<String, Object> response = new HashMap<>();
     response.put("trimComplete", false);
@@ -389,6 +390,97 @@ public class GameController {
     return response;
   }
 
+  @GetMapping("/setupAttack")
+  public Map<String, Object> setupAttack() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", String.format("""
+      <strong>%s SETTING UP ATTACK FOR STAGE %d...</strong>
+
+      %s
+      """, quest.getCurrentParticipant().getPlayer().getName(),
+        quest.getCurrentStage().getStageNumber(),
+        getAttackSetupRules()
+      ));
+    return response;
+  }
+
+  @PostMapping("/submitAttackSetupChoice")
+  public Map<String, Object> submitAttackSetupChoice(@RequestParam String cardPosition) {
+    Participant currentParticipant = quest.getCurrentParticipant();
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", "");
+    response.put("attackSetupComplete", false);
+    response.put("stageAttackSetupComplete", false);
+
+    if (cardPosition.equalsIgnoreCase("quit")) {
+      String message = String.format("""
+            <strong>STAGE %d ATTACK SETUP COMPLETE FOR %s.</strong>
+
+            <strong>CARDS IN ATTACK:</strong>
+            %s
+
+            Continue to the next player.
+            """,
+            quest.getCurrentStage().getStageNumber(),
+            currentParticipant.getPlayer().getName(),
+            currentParticipant.getAttackCards()
+        );
+
+      response.put("attackSetupComplete", true);
+      response.put("message", message);
+      quest.getNextParticipant();
+    } else {
+      int cardIndex = Integer.parseInt(cardPosition) - 1;
+      AdventureCard selectedCard = currentParticipant.getPlayer().getHand().get(cardIndex);
+
+      Map.Entry<Boolean, String> validCard = quest.validateAttackCard(currentParticipant.getAttackCards(), selectedCard);
+      boolean isValid = validCard.getKey();
+      String errorMessage = validCard.getValue();
+
+      if (isValid) {
+        currentParticipant.addCardToAttack(selectedCard);
+        response.put("message", String.format("""
+          <strong>CARDS IN ATTACK:</strong>
+          %s
+
+          %s
+          """,
+          currentParticipant.getAttackCards().toString(),
+          getHandList(currentParticipant.getPlayer().getHand())
+        ));
+      } else {
+        response.put("message", String.format("""
+          <strong>Invalid card selection.</strong> %s
+
+          <strong>CARDS IN ATTACK:</strong>
+          %s
+
+          %s
+
+          %s
+          """,
+          errorMessage,
+          currentParticipant.getAttackCards().toString(),
+          getHandList(currentParticipant.getPlayer().getHand()),
+          getAttackSetupRules()
+        ));
+      }
+    }
+
+    if (quest.getCurrentParticipant() == null) {
+      // END OF ATTACK SETUP
+      response.put("stageAttackSetupComplete", true);
+    }
+    return response;
+  }
+
+  @GetMapping("/resolveAttacks")
+  public Map<String, Object> resolveAttacks() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", "Made it to resolve attacks.");
+    return response;
+  }
+
   @GetMapping("/endTurn")
   public Map<String, Object> endTurn() {
     Map<String, Object> response = new HashMap<>();
@@ -406,9 +498,41 @@ public class GameController {
 
   // helper methods
 
-  private boolean isQuest() {
-    return quest != null;
+  private String questAddToHand(Player player, List<AdventureCard> cardsToAdd) {
+    quest.setCardsToAddToHand(cardsToAdd);
+
+    String message = String.format("""
+      <strong>ADVENTURE CARDS TO ADD TO HAND:</strong>
+      %s
+
+      """, quest.getCardsToAddToHand().toString()
+      );
+
+    String trimMessage = needsToTrimHand(player)
+      ? "You must trim your hand. Please discard a card.\n\n"
+      : "";
+
+    return message + trimMessage + getHandList(player.getHand());
   }
+
+  private boolean needsToTrimHand(Player player) {
+    List<AdventureCard> cards = quest.getCardsToAddToHand();
+    List<AdventureCard> trimmedCards = player.getTrimmedCards();
+
+    player.setNumCardsToTrim(player.computeNumCardsToTrim(cards.size()));
+    if (player.getNumCardsToTrim() > 0) {
+      while (cards.size() > Player.MAX_HAND_SIZE) {
+        trimmedCards.add(cards.remove(0));
+        player.setNumCardsToTrim(player.getNumCardsToTrim() - 1);
+      }
+    }
+
+    return player.getNumCardsToTrim() > 0;
+  }
+
+  // private boolean isQuest() {
+  //   return quest != null;
+  // }
 
   private String getQuestCards() {
     StringBuilder sb = new StringBuilder();
@@ -439,6 +563,14 @@ public class GameController {
       sb.append(String.format("%d. %s\n", i + 1, hand.get(i)));
     }
     return sb.toString();
+  }
+
+  private String getAttackSetupRules() {
+    return String.format("""
+      <strong>ATTACK SETUP RULES:</strong> Each stage attack must consist of only non-repeated Weapon cards.
+      Choose the cards you want to use to attack this stage.
+      Enter QUIT once you are satisfied with your attack setup.
+      """);
   }
 
   private String getStageSetupRules() {

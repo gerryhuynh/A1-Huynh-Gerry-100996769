@@ -33,6 +33,11 @@ public class Participant {
     display.printCardAddedToAttack(attackCards);
   }
 
+  public void addCardToAttack(AdventureCard card) {
+    attackCards.add(card);
+    player.getHand().remove(card);
+  }
+
   public List<AdventureCard> getAttackCards() {
     return attackCards;
   }

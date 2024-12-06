@@ -23,7 +23,8 @@ async function startGame() {
 
     // Set button states
     setButtonState("startGameButton", false);
-    setButtonState("endGameButton", true);
+    // TODO UNDO
+    // setButtonState("endGameButton", true);
     setButtonState("drawEventCardButton", true);
   } catch (error) {
     console.error("Error starting game:", error);
@@ -277,12 +278,33 @@ async function startNextPotentialParticipant() {
       document.getElementById("questCurrentStage").textContent = "-";
       disableGameInput();
       enableNextPlayerButton(replenishSponsorHands);
+    } else if (result.continueQuest) {
+      setButtonState("nextPlayerButton", false);
+      enableNextStageButton(nextAttackTurn);
     } else {
       enableGameInput("Enter Y or N...", submitParticipationChoice);
       setButtonState("nextPlayerButton", false);
     }
   } catch (error) {
     console.error("Error getting next potential participant:", error);
+  }
+}
+
+async function nextAttackTurn() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/nextAttackTurn`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    document.getElementById("questAttackTurn").textContent =
+      result.questAttackTurn;
+
+    enableGameInput("Choose a card position...", submitParticipantTrimChoice);
+    setButtonState("nextStageButton", false);
+    setButtonState("nextPlayerButton", false);
+  } catch (error) {
+    console.error("Error getting next attack turn:", error);
   }
 }
 
@@ -294,18 +316,98 @@ async function replenishSponsorHands() {
 
     document.getElementById("gameMessage").innerHTML = result.message;
 
-    enableGameInput("Choose a card position...", submitTrimChoice);
+    enableGameInput("Choose a card position...", submitSponsorTrimChoice);
     setButtonState("nextPlayerButton", false);
   } catch (error) {
     console.error("Error replenishing sponsor hands:", error);
   }
 }
 
-async function submitTrimChoice() {
+async function submitSponsorTrimChoice() {
+  const playerNum = document
+    .getElementById("questSponsor")
+    .textContent.substring(1);
+
+  const endQuestTurn = function () {
+    disableGameInput();
+    enableNextPlayerButton(endTurn);
+  };
+
+  submitTrimChoice(playerNum, endQuestTurn);
+}
+
+async function submitParticipantTrimChoice() {
+  const playerNum = document
+    .getElementById("questAttackTurn")
+    .textContent.substring(1);
+
+  submitTrimChoice(playerNum, setupAttack);
+}
+
+async function setupAttack() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/setupAttack`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML += result.message;
+    document.getElementById("gameMessage").style.whiteSpace = "pre-line";
+    enableGameInput("Choose a card position...", submitAttackSetupChoice);
+    setButtonState("nextStageButton", false);
+  } catch (error) {
+    console.error("Error getting next attack: ", error);
+  }
+}
+
+async function submitAttackSetupChoice() {
   try {
     const inputValue = document.getElementById("gameInput").value;
+    if (inputValue === "") {
+      return;
+    }
     const response = await fetch(
-      `${apiBaseUrl}/submitTrimChoice?cardPosition=${inputValue}`,
+      `${apiBaseUrl}/submitAttackSetupChoice?cardPosition=${inputValue}`,
+      {
+        method: "POST",
+      }
+    );
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    document.getElementById("gameInput").value = "";
+
+    if (result.attackSetupComplete) {
+      disableGameInput();
+      result.stageAttackSetupComplete
+        ? enableNextPlayerButton(resolveAttacks)
+        : enableNextPlayerButton(nextAttackTurn);
+    }
+
+    updatePlayersInfo();
+  } catch (error) {
+    console.error("Error submitting attack setup choice:", error);
+  }
+}
+
+async function resolveAttacks() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/resolveAttacks`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+  } catch (error) {
+    console.error("Error resolving attacks:", error);
+  }
+}
+
+async function submitTrimChoice(playerNum, trimCompleteAction) {
+  try {
+    console.log("submitTrimChoice", playerNum);
+    const inputValue = document.getElementById("gameInput").value;
+    const response = await fetch(
+      `${apiBaseUrl}/submitTrimChoice?cardPosition=${inputValue}&playerNum=${playerNum}`,
       {
         method: "POST",
       }
@@ -318,8 +420,7 @@ async function submitTrimChoice() {
 
     document.getElementById("gameInput").value = "";
     if (result.trimComplete) {
-      disableGameInput();
-      enableNextPlayerButton(endTurn);
+      trimCompleteAction();
     }
     updatePlayersInfo();
   } catch (error) {
