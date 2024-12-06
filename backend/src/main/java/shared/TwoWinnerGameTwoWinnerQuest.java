@@ -16,28 +16,28 @@ public class TwoWinnerGameTwoWinnerQuest {
   // Starting cards
 
   private static final AdventureType[] P1_HAND = {
+    FoeType.F5,
+    FoeType.F5,
+    FoeType.F10,
     FoeType.F10,
     FoeType.F15,
-    FoeType.F20,
-    FoeType.F25,
-    FoeType.F30,
-    FoeType.F40,
-    FoeType.F50,
-    WeaponType.S10,
-    WeaponType.S10,
-    WeaponType.S10,
+    FoeType.F15,
+    WeaponType.D5,
     WeaponType.H10,
-    WeaponType.B15
+    WeaponType.H10,
+    WeaponType.B15,
+    WeaponType.B15,
+    WeaponType.L20
   };
 
   private static final AdventureType[] P2_HAND = {
-    FoeType.F5,
-    FoeType.F5,
-    WeaponType.D5,
-    WeaponType.S10,
-    WeaponType.S10,
+    FoeType.F40,
+    FoeType.F50,
     WeaponType.H10,
     WeaponType.H10,
+    WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.S10,
     WeaponType.B15,
     WeaponType.B15,
     WeaponType.L20,
@@ -49,26 +49,26 @@ public class TwoWinnerGameTwoWinnerQuest {
     FoeType.F5,
     FoeType.F5,
     FoeType.F5,
-    FoeType.F10,
-    FoeType.F15,
-    FoeType.F25,
-    FoeType.F25,
-    FoeType.F30,
+    FoeType.F5,
     WeaponType.D5,
-    WeaponType.S10,
+    WeaponType.D5,
+    WeaponType.D5,
+    WeaponType.H10,
+    WeaponType.H10,
+    WeaponType.H10,
     WeaponType.H10,
     WeaponType.H10
   };
 
   private static final AdventureType[] P4_HAND = {
-    FoeType.F15,
-    FoeType.F30,
-    WeaponType.D5,
-    WeaponType.D5,
-    WeaponType.S10,
-    WeaponType.S10,
-    WeaponType.S10,
+    FoeType.F50,
+    FoeType.F70,
     WeaponType.H10,
+    WeaponType.H10,
+    WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.S10,
+    WeaponType.B15,
     WeaponType.B15,
     WeaponType.L20,
     WeaponType.L20,
@@ -76,27 +76,38 @@ public class TwoWinnerGameTwoWinnerQuest {
   };
 
   private static final AdventureType[] RIGGED_TOP_OF_DECK = {
-    FoeType.F70,
-    FoeType.F20,
-    FoeType.F35,
-    FoeType.F15,
-    FoeType.F10,
-    FoeType.F20,
-    FoeType.F10,
-    FoeType.F25,
-    FoeType.F15,
     FoeType.F5,
+    FoeType.F40,
+    FoeType.F10,
+    FoeType.F10,
+    FoeType.F30,
+    FoeType.F30,
+    FoeType.F15,
     FoeType.F15,
     FoeType.F20,
+    FoeType.F5,
+    FoeType.F10,
+    FoeType.F15,
+    FoeType.F15,
+    FoeType.F20,
+    FoeType.F20,
+    FoeType.F20,
+    FoeType.F20,
     FoeType.F25,
+    FoeType.F25,
+    FoeType.F30,
+    WeaponType.D5,
+    WeaponType.D5,
+    FoeType.F15,
+    FoeType.F15,
+    FoeType.F25,
+    FoeType.F25,
+    FoeType.F20,
+    FoeType.F20,
+    FoeType.F25,
+    FoeType.F30,
     WeaponType.S10,
-    WeaponType.S10,
-    WeaponType.H10,
-    WeaponType.L20,
-    WeaponType.S10,
-    WeaponType.S10,
-    WeaponType.H10,
-    WeaponType.H10,
+    WeaponType.B15,
     WeaponType.B15,
     WeaponType.L20
   };
@@ -143,9 +154,12 @@ public class TwoWinnerGameTwoWinnerQuest {
   // Inputs
 
   public static String getQ1StagesSetupInput() {
-    String p1StagesSetup = "1\nQUIT\n\n".repeat(4);
+    String p1Stage1Setup = "1\nQUIT\n\n";
+    String p1Stage2Setup = "1\n5\nQUIT\n\n";
+    String p1Stage3Setup = "1\n4\nQUIT\n\n";
+    String p1Stage4Setup = "1\n4\nQUIT\n\n\n";
 
-    return p1StagesSetup + "\n";
+    return p1Stage1Setup + p1Stage2Setup + p1Stage3Setup + p1Stage4Setup;
   }
 
   public static String getQ1AttackSetupInput(int playerNumber, int stageNumber) {

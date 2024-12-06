@@ -170,9 +170,8 @@ async function drawEventCard() {
       enableGameInput("Enter Y or N...", submitSponsorChoice);
       document.getElementById("questNumStages").textContent =
         result.questNumStages;
+      setButtonState("drawEventCardButton", false);
     }
-
-    setButtonState("drawEventCardButton", false);
   } catch (error) {
     console.error("Error drawing event card:", error);
   }

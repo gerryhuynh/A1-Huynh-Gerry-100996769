@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import game.quest.Quest;
+import game.enums.event.EType;
 import game.enums.event.QType;
 import game.cards.AdventureCard;
 import game.quest.Stage;
@@ -86,6 +87,7 @@ public class GameController {
     Map<String, Object> response = new HashMap<>();
     game.drawEventCard();
     // game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+    // game.getCurrentTurn().setEventCard(new EventCard(EType.PLAGUE));
 
     response.put("eventCardType", game.getCurrentEventCard().getType());
     response.put(
@@ -102,6 +104,22 @@ public class GameController {
       response.put("isQuest", true);
       response.put("questNumStages", quest.getNumStages());
       response.put("message", getNextPotentialSponsorPrompt());
+    } else {
+      Player player = game.getCurrentTurn().getPlayer();
+
+      switch ((EType) game.getCurrentEventCard().getType()) {
+        case PLAGUE:
+          int originalShields = player.getShields();
+          player.setShields(Math.max(player.getShields() - 2, 0));
+          response.put("message", String.format("%s's shields: %d -> %d", player.getName(), originalShields, player.getShields()));
+          break;
+        case QUEENS_FAVOR:
+          // TODO
+          break;
+        case PROSPERITY:
+          // TODO
+          break;
+      }
     }
 
     return response;
