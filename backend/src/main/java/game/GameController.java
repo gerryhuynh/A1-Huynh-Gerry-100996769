@@ -2,6 +2,8 @@ package game;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -40,6 +42,8 @@ public class GameController {
 
     response.put("players", players);
     response.put("currentGameTurn", game.getCurrentTurn().getPlayer().getName());
+    response.put("message", String.format("%s's turn.",
+        game.getCurrentTurn().getPlayer().getName()));
     return response;
   }
 
@@ -55,20 +59,78 @@ public class GameController {
 
   @GetMapping("/drawEventCard")
   public Map<String, Object> drawEventCard() {
+    Map<String, Object> response = new HashMap<>();
     game.drawEventCard();
 
-    if (game.getCurrentEventCard().getType() instanceof QType) {
-      QType questCard = (QType) game.getCurrentEventCard().getType();
-      quest = game.createQuest(questCard.getNumStages());
-    }
-
-    Map<String, Object> response = new HashMap<>();
     response.put("eventCardType", game.getCurrentEventCard().getType());
     response.put(
       "eventCardDescription",
       game.getCurrentEventCard().getType().getEffectDesc()
     );
+    response.put("message", "");
+    response.put("isQuest", false);
+
+    if (game.getCurrentEventCard().getType() instanceof QType) {
+      QType questType = (QType) game.getCurrentEventCard().getType();
+      quest = game.createQuest(questType.getNumStages());
+
+      response.put("isQuest", true);
+      response.put("questNumStages", quest.getNumStages());
+      response.put("message", getNextPotentialSponsorPrompt());
+    }
+
     return response;
+  }
+
+  @PostMapping("/submitSponsorChoice")
+  public Map<String, Object> submitSponsorChoice(@RequestParam String sponsorChoice) {
+    Map<String, Object> response = new HashMap<>();
+    response.put("sponsor", null);
+    response.put("message", "");
+    response.put("noSponsor", false);
+
+    if (sponsorChoice.equalsIgnoreCase("y") || sponsorChoice.equalsIgnoreCase("yes")) {
+      quest.setSponsor(quest.getCurrentPotentialSponsor());
+      response.put("sponsor", quest.getSponsor().getName());
+      response.put("message", String.format("%s will be the sponsor for this quest.", quest.getSponsor().getName()));
+    } else {
+      response.put("message", String.format("%s declined to be the sponsor. Get next player.",
+          quest.getCurrentPotentialSponsor().getName()));
+      quest.getNextPotentialSponsor(game.getPlayers(), game.getCurrentPlayer());
+
+      if (quest.getCurrentPotentialSponsor() == null) {
+        response.put("message", String.format("No sponsor found. Quest will not continue. %s's turn ends. Get next player.",
+        game.getCurrentTurn().getPlayer().getName()));
+        game.endTurn(); // turn switches to next player
+        response.put("noSponsor", true);
+      }
+    }
+
+    return response;
+  }
+
+  @GetMapping("/nextPotentialSponsor")
+  public Map<String, Object> nextPotentialSponsor() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", getNextPotentialSponsorPrompt());
+    return response;
+  }
+
+  @GetMapping("/nextPlayerTurn")
+  public Map<String, Object> nextPlayerTurn() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", String.format("%s's turn.",
+        game.getCurrentTurn().getPlayer().getName()));
+    response.put("currentGameTurn", game.getCurrentTurn().getPlayer().getName());
+    return response;
+  }
+
+  // helper methods
+
+  private String getNextPotentialSponsorPrompt() {
+    return String.format("%s, do you want to be the sponsor for this %d-stage quest?",
+        quest.getCurrentPotentialSponsor().getName(),
+        quest.getNumStages());
   }
 
   private void resetGame() {

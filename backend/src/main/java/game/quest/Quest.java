@@ -322,12 +322,17 @@ public class Quest {
     return currentParticipant;
   }
 
+  public Player getCurrentPotentialSponsor() {
+    return currentPotentialSponsor;
+  }
+
   public Player getSponsor() {
     return sponsor;
   }
 
   public void setSponsor(Player sponsor) {
     this.sponsor = sponsor;
+    this.currentPotentialSponsor = null;
   }
 
   public void setParticipants(List<Player> players) {

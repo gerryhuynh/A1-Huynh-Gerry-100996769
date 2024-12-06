@@ -3,10 +3,10 @@ const apiBaseUrl = "http://localhost:8080";
 async function startGame() {
   try {
     const response = await fetch(`${apiBaseUrl}/startGame`);
-    const data = await response.json();
-    console.log(data);
+    const result = await response.json();
+    console.log(result);
 
-    data.players.forEach((player) => {
+    result.players.forEach((player) => {
       const playerNum = player.playerName.substring(1);
       document.getElementById(`p${playerNum}-shields`).textContent =
         player.shields;
@@ -18,12 +18,13 @@ async function startGame() {
     });
 
     document.getElementById("currentGameTurn").textContent =
-      data.currentGameTurn;
+      result.currentGameTurn;
+    document.getElementById("gameMessage").innerHTML = result.message;
 
     // Set button states
-    setButtonState("startGame", false);
-    setButtonState("endGame", true);
-    setButtonState("drawEventCard", true);
+    setButtonState("startGameButton", false);
+    setButtonState("endGameButton", true);
+    setButtonState("drawEventCardButton", true);
   } catch (error) {
     console.error("Error starting game:", error);
   }
@@ -35,27 +36,28 @@ async function endGame() {
     const result = await response.text();
     console.log(result);
 
-    // Reset all player information
     for (let i = 1; i <= 4; i++) {
       document.getElementById(`p${i}-shields`).textContent = "-";
       document.getElementById(`p${i}-cardCount`).textContent = "-";
       document.getElementById(`p${i}-cards`).textContent = "-";
     }
 
-    // Reset game info
     document.getElementById("currentGameTurn").textContent = "-";
     document.getElementById("currentEventCard").textContent = "-";
-    document.getElementById("currentEventTurn").textContent = "-";
 
-    // Reset game message
+    document.getElementById("questNumStages").textContent = "-";
+    document.getElementById("questSponsor").textContent = "-";
+    document.getElementById("questTurn").textContent = "-";
+
     document.getElementById("gameMessage").innerHTML =
       "<em>Waiting to start...</em>";
 
-    // Reset button states
-    setButtonState("startGame", true);
-    setButtonState("drawEventCard", false);
-    setButtonState("nextPlayer", false);
-    setButtonState("endGame", false);
+    setButtonState("startGameButton", true);
+    setButtonState("drawEventCardButton", false);
+    setButtonState("nextPlayerButton", false);
+    setButtonState("endGameButton", false);
+
+    disableGameInput();
   } catch (error) {
     console.error("Error ending game:", error);
   }
@@ -66,31 +68,117 @@ async function drawEventCard() {
     const response = await fetch(`${apiBaseUrl}/drawEventCard`);
     const result = await response.json();
 
-    document.getElementById("gameMessage").innerHTML =
-      "<strong>Drawn Event Card: </strong>" +
-      result.eventCardType +
-      " - " +
-      result.eventCardDescription;
+    document.getElementById("gameMessage").innerHTML = `
+      <p><strong>Drawn Event Card: </strong>${result.eventCardType} - ${result.eventCardDescription}</p>
+      <p>${result.message}</p>
+    `;
 
     document.getElementById("currentEventCard").textContent =
       result.eventCardType;
 
-    setButtonState("drawEventCard", false);
+    isQuest = result.isQuest;
+
+    if (isQuest) {
+      enableGameInput("Enter Y or N...", submitSponsorChoice);
+      document.getElementById("questNumStages").textContent =
+        result.questNumStages;
+    }
+
+    setButtonState("drawEventCardButton", false);
   } catch (error) {
     console.error("Error drawing event card:", error);
   }
 }
 
-async function nextPlayer() {
+async function submitSponsorChoice() {
   try {
-    const response = await fetch(`${apiBaseUrl}/next`);
-    const result = await response.text();
+    const inputValue = document.getElementById("gameInput").value;
+    const response = await fetch(
+      `${apiBaseUrl}/submitSponsorChoice?sponsorChoice=${inputValue}`,
+      {
+        method: "POST",
+      }
+    );
+    const result = await response.json();
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    if (result.sponsor) {
+      document.getElementById("questSponsor").textContent = result.sponsor;
+    } else {
+      enableNextPlayerButton(promptNextPotentialSponsor);
+      if (result.noSponsor) {
+        enableNextPlayerButton(startNextPlayerTurn);
+      }
+    }
+
+    disableGameInput();
+  } catch (error) {
+    console.error("Error submitting sponsor choice:", error);
+  }
+}
+
+async function promptNextPotentialSponsor() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/nextPotentialSponsor`);
+    const result = await response.json();
     console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    enableGameInput("Enter Y or N...", submitSponsorChoice);
+    setButtonState("nextPlayerButton", false);
   } catch (error) {
     console.error("Error getting next player:", error);
   }
 }
 
-function setButtonState(action, enabled) {
-  document.querySelector(`button[onclick="${action}()"]`).disabled = !enabled;
+async function startNextPlayerTurn() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/nextPlayerTurn`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    document.getElementById("currentEventCard").textContent = "-";
+    document.getElementById("questNumStages").textContent = "-";
+    setButtonState("drawEventCardButton", true);
+    document.getElementById("currentGameTurn").textContent =
+      result.currentGameTurn;
+    setButtonState("nextPlayerButton", false);
+  } catch (error) {
+    console.error("Error getting next player turn:", error);
+  }
 }
+
+// Helper functions
+
+function setButtonState(id, enabled) {
+  document.getElementById(id).disabled = !enabled;
+}
+
+function enableNextPlayerButton(action) {
+  setButtonState("nextPlayerButton", true);
+  document.getElementById("nextPlayerButton").onclick = action;
+}
+
+function enableGameInput(message, submitAction) {
+  document.getElementById("gameInput").placeholder = message;
+  document.getElementById("gameInput").disabled = false;
+  setButtonState("submitButton", true);
+  document.getElementById("submitButton").onclick = submitAction;
+}
+
+function disableGameInput() {
+  document.getElementById("gameInput").value = "";
+  document.getElementById("gameInput").placeholder = "";
+  document.getElementById("gameInput").disabled = true;
+  setButtonState("submitButton", false);
+}
+
+document.getElementById("gameInput").onkeydown = function (event) {
+  if (event.key === "Enter") {
+    const submitButton = document.getElementById("submitButton");
+    if (!submitButton.disabled && submitButton.onclick) {
+      submitButton.onclick();
+    }
+  }
+};

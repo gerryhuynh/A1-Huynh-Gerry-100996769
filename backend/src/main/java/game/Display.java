@@ -227,7 +227,7 @@ public class Display {
   public void promptEndTurn(String playerName) {
     print(String.format("\n%s'S TURN ENDED.", playerName));
     print("\nPress the return key to end your turn and clear the display.");
-    input.nextLine();
+    // input.nextLine();
   }
 
   public void promptNextPlayer() {

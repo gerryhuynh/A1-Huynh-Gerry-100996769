@@ -69,6 +69,30 @@
         border-radius: 3px;
         margin: 10px 0;
       }
+
+      .input-group {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+      }
+
+      .input-group input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid;
+        border-radius: 5px;
+      }
+
+      .input-group input:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .input-group button {
+        padding: 10px 20px;
+        cursor: pointer;
+        width: auto;
+      }
     </style>
   </head>
   <body>
@@ -82,10 +106,6 @@
       <p>
         <strong>Current Event Card:</strong>
         <span id="currentEventCard">-</span>
-      </p>
-      <p>
-        <strong>Current Event Turn:</strong>
-        <span id="currentEventTurn">-</span>
       </p>
     </div>
 
@@ -151,28 +171,54 @@
       </div>
     </div>
 
+    <div class="card quest-info">
+      <h2>QUEST</h2>
+      <p>
+        <strong>Number of Stages:</strong>
+        <span id="questNumStages">-</span>
+      </p>
+      <p>
+        <strong>Quest Sponsor:</strong>
+        <span id="questSponsor">-</span>
+      </p>
+      <p>
+        <strong>Attacker Turn:</strong>
+        <span id="questTurn">-</span>
+      </p>
+    </div>
+
     <div class="card game-info">
       <h2>GAME</h2>
       <p id="gameMessage"><em>Waiting to start...</em></p>
+      <div class="input-group">
+        <input type="text" id="gameInput" placeholder="" disabled />
+        <button id="submitButton" disabled>Submit</button>
+      </div>
     </div>
 
     <div class="button-group">
-      <button onclick="startGame()">Start Game</button>
-      <button onclick="drawEventCard()" disabled>Draw Event Card</button>
-      <button onclick="nextPlayer()" disabled>Next Player</button>
-      <button onclick="endGame()" disabled>End Game</button>
+      <button id="startGameButton" onclick="startGame()">Start Game</button>
+      <button id="drawEventCardButton" onclick="drawEventCard()" disabled>
+        Draw Event Card
+      </button>
+      <button id="nextPlayerButton" disabled>Next Player</button>
+      <button id="endGameButton" onclick="endGame()" disabled>End Game</button>
     </div>
 
     <h2>Scenarios</h2>
     <div class="button-group">
-      <button onclick="startA1Scenario()">Start A1_scenario</button>
-      <button onclick="start2WinnerGame()">
+      <button id="startA1ScenarioButton" onclick="startA1Scenario()">
+        Start A1_scenario
+      </button>
+      <button id="start2WinnerGameButton" onclick="start2WinnerGame()">
         Start 2winner_game_2winner_quest
       </button>
-      <button onclick="start1WinnerGame()">
+      <button id="start1WinnerGameButton" onclick="start1WinnerGame()">
         Start 1winner_game_with_events
       </button>
-      <button onclick="start0WinnerQuest()">Start 0_winner_quest</button>
+      <button id="start0WinnerQuestButton" onclick="start0WinnerQuest()">
+        Start 0_winner_quest
+      </button>
     </div>
 
     <script src="script.js"></script>
