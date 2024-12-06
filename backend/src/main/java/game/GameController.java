@@ -15,8 +15,16 @@ import game.quest.Quest;
 import game.enums.event.QType;
 import game.cards.AdventureCard;
 import game.quest.Stage;
-import game.cards.EventCard;
+// import game.cards.EventCard;
 import game.quest.Participant;
+import shared.A1Scenario;
+import shared.TwoWinnerGameTwoWinnerQuest;
+import shared.OneWinnerGameWithEvents;
+import shared.ZeroWinnerQuest;
+import shared.TestAdventureDeck;
+import shared.TestEventDeck;
+import game.decks.AdventureDeck;
+import game.decks.EventDeck;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:8081")
@@ -29,6 +37,17 @@ public class GameController {
   public Map<String, Object> startGame() {
     resetGame();
 
+    return gameSetup();
+  }
+
+  @GetMapping("/startScenario")
+  public Map<String, Object> startScenario(@RequestParam String scenario) {
+    resetGame(scenario);
+
+    return gameSetup();
+  }
+
+  public Map<String, Object> gameSetup() {
     Map<String, Object> response = new HashMap<>();
     List<Map<String, Object>> players = new ArrayList<>();
 
@@ -48,6 +67,7 @@ public class GameController {
     response.put("currentGameTurn", game.getCurrentTurn().getPlayer().getName());
     response.put("message", String.format("%s's turn.",
         game.getCurrentTurn().getPlayer().getName()));
+
     return response;
   }
 
@@ -64,9 +84,8 @@ public class GameController {
   @GetMapping("/drawEventCard")
   public Map<String, Object> drawEventCard() {
     Map<String, Object> response = new HashMap<>();
-    // game.drawEventCard();
-    // TODO. TEST. TEMP
-    game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
+    game.drawEventCard();
+    // game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
 
     response.put("eventCardType", game.getCurrentEventCard().getType());
     response.put(
@@ -651,5 +670,33 @@ public class GameController {
     game = new Game();
     game.setupPlayers();
     game.dealAdventureCards();
+  }
+
+  private void resetGame(String scenario) {
+    AdventureDeck adventureDeck = getAdventureDeckForScenario(scenario);
+    EventDeck eventDeck = getEventDeckForScenario(scenario);
+    game = new Game(adventureDeck, eventDeck);
+    game.setupPlayers();
+    game.dealAdventureCards();
+  }
+
+  private AdventureDeck getAdventureDeckForScenario(String scenario) {
+    return switch (scenario) {
+      case "A1_scenario" -> new TestAdventureDeck(A1Scenario.getAdventureCards());
+      case "2winner_game_2winner_quest" -> new TestAdventureDeck(TwoWinnerGameTwoWinnerQuest.getAdventureCards());
+      case "1winner_game_with_events" -> new TestAdventureDeck(OneWinnerGameWithEvents.getAdventureCards());
+      case "0_winner_quest" -> new TestAdventureDeck(ZeroWinnerQuest.getAdventureCards());
+      default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    };
+  }
+
+  private EventDeck getEventDeckForScenario(String scenario) {
+    return switch (scenario) {
+      case "A1_scenario" -> new TestEventDeck(A1Scenario.getEventCards());
+      case "2winner_game_2winner_quest" -> new TestEventDeck(TwoWinnerGameTwoWinnerQuest.getEventCards());
+      case "1winner_game_with_events" -> new TestEventDeck(OneWinnerGameWithEvents.getEventCards());
+      case "0_winner_quest" -> new TestEventDeck(ZeroWinnerQuest.getEventCards());
+      default -> throw new IllegalArgumentException("Unknown scenario: " + scenario);
+    };
   }
 }

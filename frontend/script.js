@@ -1,33 +1,93 @@
 const apiBaseUrl = "http://localhost:8080";
 
+function setupGame(result) {
+  console.log(result);
+
+  result.players.forEach((player) => {
+    const playerNum = player.playerName.substring(1);
+    document.getElementById(`p${playerNum}-shields`).textContent =
+      player.shields;
+    document.getElementById(`p${playerNum}-cardCount`).textContent =
+      player.cardCount;
+    document.getElementById(`p${playerNum}-cards`).textContent = player.cards
+      .replace("[", "")
+      .replace("]", "");
+  });
+
+  document.getElementById("currentGameTurn").textContent =
+    result.currentGameTurn;
+  document.getElementById("gameMessage").innerHTML = result.message;
+
+  // Set button states
+  setButtonState("startGameButton", false);
+  setButtonState("startA1ScenarioButton", false);
+  setButtonState("start2WinnerGameButton", false);
+  setButtonState("start1WinnerGameButton", false);
+  setButtonState("start0WinnerQuestButton", false);
+  setButtonState("endGameButton", true);
+  setButtonState("drawEventCardButton", true);
+}
+
 async function startGame() {
   try {
     const response = await fetch(`${apiBaseUrl}/startGame`);
     const result = await response.json();
-    console.log(result);
 
-    result.players.forEach((player) => {
-      const playerNum = player.playerName.substring(1);
-      document.getElementById(`p${playerNum}-shields`).textContent =
-        player.shields;
-      document.getElementById(`p${playerNum}-cardCount`).textContent =
-        player.cardCount;
-      document.getElementById(`p${playerNum}-cards`).textContent = player.cards
-        .replace("[", "")
-        .replace("]", "");
-    });
-
-    document.getElementById("currentGameTurn").textContent =
-      result.currentGameTurn;
-    document.getElementById("gameMessage").innerHTML = result.message;
-
-    // Set button states
-    setButtonState("startGameButton", false);
-    // TODO UNDO
-    // setButtonState("endGameButton", true);
-    setButtonState("drawEventCardButton", true);
+    setupGame(result);
   } catch (error) {
     console.error("Error starting game:", error);
+  }
+}
+
+async function startA1Scenario() {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/startScenario?scenario=A1_scenario`
+    );
+    const result = await response.json();
+
+    setupGame(result);
+  } catch (error) {
+    console.error("Error starting A1 scenario:", error);
+  }
+}
+
+async function start2WinnerGame() {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/startScenario?scenario=2winner_game_2winner_quest`
+    );
+    const result = await response.json();
+
+    setupGame(result);
+  } catch (error) {
+    console.error("Error starting 2 winner game:", error);
+  }
+}
+
+async function start1WinnerGame() {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/startScenario?scenario=1winner_game_with_events`
+    );
+    const result = await response.json();
+
+    setupGame(result);
+  } catch (error) {
+    console.error("Error starting 1 winner game:", error);
+  }
+}
+
+async function start0WinnerQuest() {
+  try {
+    const response = await fetch(
+      `${apiBaseUrl}/startScenario?scenario=0_winner_quest`
+    );
+    const result = await response.json();
+
+    setupGame(result);
+  } catch (error) {
+    console.error("Error starting 0 winner quest:", error);
   }
 }
 
@@ -76,6 +136,10 @@ async function endGame() {
       "<em>Waiting to start...</em>";
 
     setButtonState("startGameButton", true);
+    setButtonState("startA1ScenarioButton", true);
+    setButtonState("start2WinnerGameButton", true);
+    setButtonState("start1WinnerGameButton", true);
+    setButtonState("start0WinnerQuestButton", true);
     setButtonState("drawEventCardButton", false);
     setButtonState("nextPlayerButton", false);
     setButtonState("nextStageButton", false);

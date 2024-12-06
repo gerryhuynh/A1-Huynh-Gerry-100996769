@@ -31,6 +31,15 @@ public class Game {
     );
   }
 
+  public Game(AdventureDeck adventureDeck, EventDeck eventDeck) {
+    this(
+      adventureDeck,
+      eventDeck,
+      new Display(new PrintWriter(System.out)),
+      false
+    );
+  }
+
   public Game(AdventureDeck adventureDeck, EventDeck eventDeck, Display display) {
     this(
       adventureDeck,
