@@ -35,15 +35,13 @@ public class GameController {
       Player player = game.getPlayers().get(i);
       Map<String, Object> playerData = new HashMap<>();
 
-      playerData.put("playerName", "P" + (i + 1));
+      playerData.put("playerName", player.getName());
       playerData.put("shields", player.getShields());
       playerData.put("cardCount", player.getHand().size());
       playerData.put("cards", player.getHand().toString());
 
       players.add(playerData);
     }
-
-    game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
 
     response.put("players", players);
     response.put("currentGameTurn", game.getCurrentTurn().getPlayer().getName());
@@ -65,7 +63,9 @@ public class GameController {
   @GetMapping("/drawEventCard")
   public Map<String, Object> drawEventCard() {
     Map<String, Object> response = new HashMap<>();
-    game.drawEventCard();
+    // game.drawEventCard();
+    // TODO. TEST. TEMP
+    game.getCurrentTurn().setEventCard(new EventCard(QType.Q2));
 
     response.put("eventCardType", game.getCurrentEventCard().getType());
     response.put(
@@ -106,7 +106,7 @@ public class GameController {
       if (quest.getCurrentPotentialSponsor() == null) {
         response.put("message", String.format("No sponsor found. Quest will not continue. %s's turn ends. Get next player.",
         game.getCurrentTurn().getPlayer().getName()));
-        game.endTurn(); // turn switches to next player
+        endTurn(); // turn switches to next player
         response.put("noSponsor", true);
       }
     }
@@ -134,13 +134,12 @@ public class GameController {
   public Map<String, Object> nextStage() {
     Map<String, Object> response = new HashMap<>();
     response.put("currentStage", quest.getCurrentStage().getStageNumber());
-    response.put("currentAttackTurn", quest.getCurrentParticipant());
     response.put("message", String.format("""
       <strong>ATTACK PHASE...</strong>
 
       <strong>ELIGIBLE PARTICIPANTS:</strong> %s
 
-      %s, do you want to participate for this stage?
+      %s, do you want to be a participant for this stage?
 
       %s
         """, quest.getParticipants().toString(),
@@ -233,7 +232,7 @@ public class GameController {
 
         %s
         """, quest.getCurrentSetupStage().getStageNumber(),
-        getHandList(game.getCurrentTurn().getPlayer().getHand()),
+        getHandList(quest.getSponsor().getHand()),
         getStageSetupRules()
         ));
     return response;
@@ -244,10 +243,172 @@ public class GameController {
     Map<String, Object> response = new HashMap<>();
     response.put("message", "");
 
+    if (participationChoice.equalsIgnoreCase("y") || participationChoice.equalsIgnoreCase("yes")) {
+      quest.getActiveParticipants().add(quest.getCurrentPotentialParticipant());
+      response.put("message", String.format("%s will be a participant for this stage.",
+          quest.getCurrentPotentialParticipant()));
+    } else {
+      response.put("message", String.format("%s will not be a participant for this stage.",
+          quest.getCurrentPotentialParticipant()));
+    }
+
+    quest.getNextPotentialParticipant();
+
+    if (quest.getCurrentPotentialParticipant() == null) {
+      // END OF PARTICIPANTS FINDING
+      quest.replaceParticipants();
+      System.out.println("\n\nCURRENT PARTICIPANT:");
+      System.out.println(quest.getCurrentParticipant());
+    }
+
+    return response;
+  }
+
+  @GetMapping("/nextPotentialParticipant")
+  public Map<String, Object> nextPotentialParticipant() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", "");
+    response.put("questComplete", false);
+
+    if (quest.getCurrentPotentialParticipant() == null && quest.getActiveParticipants().size() == 0) {
+      response.put("message", """
+        QUEST COMPLETE!
+        No participants were successful in defeating the quest's stages. Return to the sponsor.
+        """);
+      response.put("questComplete", true);
+    } else {
+      response.put("message", String.format("""
+        %s, do you want to be a participant for this stage?
+
+      %s
+        """, quest.getCurrentPotentialParticipant().getPlayer().getName(),
+        getHandList(quest.getCurrentPotentialParticipant().getPlayer().getHand())
+        ));
+    }
+    return response;
+  }
+
+  @GetMapping("/replenishSponsorHands")
+  public Map<String, Object> replenishSponsorHands() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("message", "");
+
+    quest.setCardsToReplenish(game.getAdventureDeck().draw(quest.getNumCardsToReplenish()));
+
+    String baseMessage = String.format("""
+      <strong>REPLENISHING SPONSOR %s HANDS...</strong> (%d cards)
+
+      <strong>ADVENTURE CARDS TO ADD TO HAND:</strong>
+      %s
+
+      """, quest.getSponsor().getName(),
+        quest.getNumCardsToReplenish(),
+        quest.getCardsToReplenish().toString()
+      );
+
+    List<AdventureCard> cards = quest.getCardsToReplenish();
+    List<AdventureCard> trimmedCards = quest.getSponsor().getTrimmedCards();
+    Player sponsor = quest.getSponsor();
+
+    sponsor.setNumCardsToTrim(sponsor.computeNumCardsToTrim(cards.size()));
+    if (sponsor.getNumCardsToTrim() > 0) {
+      while (cards.size() > Player.MAX_HAND_SIZE) {
+        trimmedCards.add(cards.remove(0));
+        sponsor.setNumCardsToTrim(sponsor.getNumCardsToTrim() - 1);
+      }
+    }
+
+    String trimMessage = sponsor.getNumCardsToTrim() > 0 ?
+      "You must trim your hand. Please discard a card.\n\n" : "";
+
+    response.put("message", baseMessage + trimMessage + getHandList(sponsor.getHand()));
+
+    return response;
+  }
+
+  @GetMapping("/updatePlayersInfo")
+  public Map<String, Object> updatePlayersInfo() {
+    Map<String, Object> response = new HashMap<>();
+    List<Map<String, Object>> players = new ArrayList<>();
+
+    for (int i = 0; i < game.getPlayers().size(); i++) {
+      Player player = game.getPlayers().get(i);
+      Map<String, Object> playerData = new HashMap<>();
+
+      playerData.put("playerName", player.getName());
+      playerData.put("shields", player.getShields());
+      playerData.put("cardCount", player.getHand().size());
+      playerData.put("cards", player.getHand().toString());
+
+      players.add(playerData);
+    }
+
+    response.put("players", players);
+    return response;
+  }
+
+  @PostMapping("/submitTrimChoice")
+  public Map<String, Object> submitTrimChoice(@RequestParam String cardPosition) {
+    List<AdventureCard> cards = new ArrayList<>();
+    List<AdventureCard> trimmedCards = new ArrayList<>();
+    Player player = null;
+    int cardIndex = 0;
+
+    if (isQuest()) {
+      cards = quest.getCardsToReplenish();
+      trimmedCards = quest.getSponsor().getTrimmedCards();
+      player = quest.getSponsor();
+      cardIndex = Integer.parseInt(cardPosition) - 1;
+    }
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("trimComplete", false);
+    response.put("message", "");
+
+    trimmedCards.add(player.getHand().remove(cardIndex));
+    player.setNumCardsToTrim(player.getNumCardsToTrim() - 1);
+    response.put("message", String.format("""
+      You must continue trimming your hand. Please discard another card.
+
+      %s
+      """, getHandList(player.getHand())
+      ));
+
+    if (player.getNumCardsToTrim() < 1) {
+      player.getHand().addAll(cards);
+      player.sortHand();
+      response.put("message", String.format("""
+        Trim complete.
+
+        %s
+        """, getHandList(player.getHand())
+        ));
+      response.put("trimComplete", true);
+    }
+
+    return response;
+  }
+
+  @GetMapping("/endTurn")
+  public Map<String, Object> endTurn() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("winners", "");
+
+    List<Player> winners = game.endTurn();
+    quest = null;
+
+    if (winners.size() > 0) {
+      response.put("winners", winners.toString());
+    }
+
     return response;
   }
 
   // helper methods
+
+  private boolean isQuest() {
+    return quest != null;
+  }
 
   private String getQuestCards() {
     StringBuilder sb = new StringBuilder();

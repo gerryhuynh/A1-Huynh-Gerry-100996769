@@ -30,6 +30,27 @@ async function startGame() {
   }
 }
 
+async function updatePlayersInfo() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/updatePlayersInfo`);
+    const result = await response.json();
+    console.log(result);
+
+    result.players.forEach((player) => {
+      const playerNum = player.playerName.substring(1);
+      document.getElementById(`p${playerNum}-shields`).textContent =
+        player.shields;
+      document.getElementById(`p${playerNum}-cardCount`).textContent =
+        player.cardCount;
+      document.getElementById(`p${playerNum}-cards`).textContent = player.cards
+        .replace("[", "")
+        .replace("]", "");
+    });
+  } catch (error) {
+    console.error("Error updating players info:", error);
+  }
+}
+
 async function endGame() {
   try {
     const response = await fetch(`${apiBaseUrl}/endGame`);
@@ -144,6 +165,7 @@ async function startNextPlayerTurn() {
     document.getElementById("gameMessage").innerHTML = result.message;
     document.getElementById("currentEventCard").textContent = "-";
     document.getElementById("questNumStages").textContent = "-";
+    document.getElementById("questSponsor").textContent = "-";
     setButtonState("drawEventCardButton", true);
     document.getElementById("currentGameTurn").textContent =
       result.currentGameTurn;
@@ -181,6 +203,8 @@ async function submitStageSetupChoice() {
     } else {
       document.getElementById("gameInput").value = "";
     }
+
+    updatePlayersInfo();
   } catch (error) {
     console.error("Error submitting stage setup choice:", error);
   }
@@ -211,8 +235,6 @@ async function nextStage() {
 
     document.getElementById("questCurrentStage").textContent =
       result.currentStage;
-    document.getElementById("questAttackTurn").textContent =
-      result.currentAttackTurn;
 
     document.getElementById("gameMessage").innerHTML = result.message;
     document.getElementById("gameMessage").style.whiteSpace = "pre-line";
@@ -237,8 +259,86 @@ async function submitParticipationChoice() {
     console.log(result);
 
     document.getElementById("gameMessage").innerHTML = result.message;
+    disableGameInput();
+    enableNextPlayerButton(startNextPotentialParticipant);
   } catch (error) {
     console.error("Error submitting participation choice:", error);
+  }
+}
+
+async function startNextPotentialParticipant() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/nextPotentialParticipant`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    if (result.questComplete) {
+      document.getElementById("questCurrentStage").textContent = "-";
+      disableGameInput();
+      enableNextPlayerButton(replenishSponsorHands);
+    } else {
+      enableGameInput("Enter Y or N...", submitParticipationChoice);
+      setButtonState("nextPlayerButton", false);
+    }
+  } catch (error) {
+    console.error("Error getting next potential participant:", error);
+  }
+}
+
+async function replenishSponsorHands() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/replenishSponsorHands`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+
+    enableGameInput("Choose a card position...", submitTrimChoice);
+    setButtonState("nextPlayerButton", false);
+  } catch (error) {
+    console.error("Error replenishing sponsor hands:", error);
+  }
+}
+
+async function submitTrimChoice() {
+  try {
+    const inputValue = document.getElementById("gameInput").value;
+    const response = await fetch(
+      `${apiBaseUrl}/submitTrimChoice?cardPosition=${inputValue}`,
+      {
+        method: "POST",
+      }
+    );
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    document.getElementById("gameMessage").style.whiteSpace = "pre-line";
+
+    document.getElementById("gameInput").value = "";
+    if (result.trimComplete) {
+      disableGameInput();
+      enableNextPlayerButton(endTurn);
+    }
+    updatePlayersInfo();
+  } catch (error) {
+    console.error("Error submitting trim choice:", error);
+  }
+}
+
+async function endTurn() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/endTurn`);
+    const result = await response.json();
+    console.log(result);
+    document.getElementById("gameMessage").innerHTML = result.message;
+
+    if (!result.winners) {
+      startNextPlayerTurn();
+    }
+  } catch (error) {
+    console.error("Error checking winners:", error);
   }
 }
 

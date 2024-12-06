@@ -21,6 +21,9 @@ public class Quest {
   private boolean isActive;
   private List<Participant> participants;
   private Participant currentParticipant;
+  private Participant currentPotentialParticipant;
+  private List<Participant> activeParticipants;
+  private List<AdventureCard> cardsToReplenish;
   private Player sponsor;
   private Player currentPotentialSponsor;
   private int sponsorNumCardsUsed;
@@ -37,6 +40,8 @@ public class Quest {
     this.currentStage = stages.get(0);
     this.participants = new ArrayList<>();
     this.currentParticipant = null;
+    this.currentPotentialParticipant = null;
+    this.activeParticipants = new ArrayList<>();
     this.sponsor = null;
     this.currentPotentialSponsor = currentPlayer;
   }
@@ -123,10 +128,27 @@ public class Quest {
     }
   }
 
+  public void getNextPotentialParticipant() {
+    int currentIndex = participants.indexOf(currentPotentialParticipant);
+    if (currentIndex < participants.size() - 1) {
+      currentPotentialParticipant = participants.get(currentIndex + 1);
+    } else {
+      currentPotentialParticipant = null;
+    }
+  }
+
+  public void replaceParticipants() {
+    participants = activeParticipants;
+    currentParticipant = participants.isEmpty() ? null : participants.get(0);
+  }
+
   public void replenishSponsorHand(Display display, AdventureDeck adventureDeck) {
-    int numCardsToDraw = sponsorNumCardsUsed + numStages;
-    display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), numCardsToDraw));
-    sponsor.addToHand(adventureDeck.draw(numCardsToDraw), display);
+    display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), getNumCardsToReplenish()));
+    sponsor.addToHand(adventureDeck.draw(getNumCardsToReplenish()), display);
+  }
+
+  public int getNumCardsToReplenish() {
+    return sponsorNumCardsUsed + numStages;
   }
 
   public void rewardShields(Display display) {
@@ -225,6 +247,7 @@ public class Quest {
       }
     }
     currentParticipant = participants.get(0);
+    currentPotentialParticipant = participants.get(0);
   }
 
   public void setup(Display display) {
@@ -335,6 +358,10 @@ public class Quest {
     sponsorNumCardsUsed++;
   }
 
+  public void removeParticipant(Participant participant) {
+    participants.remove(participant);
+  }
+
   // Getters and Setters
 
   public int getNumStages() {
@@ -396,6 +423,22 @@ public class Quest {
 
   public Stage getCurrentSetupStage() {
     return currentSetupStage;
+  }
+
+  public Participant getCurrentPotentialParticipant() {
+    return currentPotentialParticipant;
+  }
+
+  public List<Participant> getActiveParticipants() {
+    return activeParticipants;
+  }
+
+  public List<AdventureCard> getCardsToReplenish() {
+    return cardsToReplenish;
+  }
+
+  public void setCardsToReplenish(List<AdventureCard> cardsToReplenish) {
+    this.cardsToReplenish = cardsToReplenish;
   }
 
   @Override

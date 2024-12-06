@@ -14,11 +14,20 @@ public class Player {
   private final String name;
   private final List<AdventureCard> hand;
   private int shields;
+  private int numCardsToTrim;
+  private List<AdventureCard> trimmedCards;
 
     public Player(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
         this.shields = 0;
+        this.numCardsToTrim = 0;
+        this.trimmedCards = new ArrayList<>();
+    }
+
+    public void overWriteHand(List<AdventureCard> cards, Display display) {
+      hand.clear();
+      addToHand(cards, display, true);
     }
 
     public List<AdventureCard> addToHand(List<AdventureCard> cards, Display display) {
@@ -41,11 +50,6 @@ public class Player {
 
       if (!setup) display.printHand(hand);
       return trimmedCards;
-    }
-
-    public void overWriteHand(List<AdventureCard> cards, Display display) {
-      hand.clear();
-      addToHand(cards, display, true);
     }
 
     public int computeNumCardsToTrim(int numCardsToAdd) {
@@ -93,6 +97,18 @@ public class Player {
 
     public void setShields(int shields) {
         this.shields = shields;
+    }
+
+    public void setNumCardsToTrim(int numCardsToTrim) {
+      this.numCardsToTrim = numCardsToTrim;
+    }
+
+    public int getNumCardsToTrim() {
+      return numCardsToTrim;
+    }
+
+    public List<AdventureCard> getTrimmedCards() {
+      return trimmedCards;
     }
 
     @Override
