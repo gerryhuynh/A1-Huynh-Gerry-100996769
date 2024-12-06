@@ -172,6 +172,21 @@ public class Quest {
     display.promptReturnToSponsor();
   }
 
+  public String rewardShields() {
+    String message = "<strong>QUEST COMPLETE!</strong>\n";
+    if (participants.size() > 0) {
+      message += String.format("\n<strong>REWARDING %d SHIELDS TO PARTICIPANTS...</strong>\n", numStages);
+      for (Participant participant : participants) {
+        int originalShields = participant.getPlayer().getShields();
+        participant.getPlayer().setShields(participant.getPlayer().getShields() + numStages);
+        message += String.format("\n<strong>%s's shields:</strong> %d -> %d", participant.getPlayer().getName(), originalShields, participant.getPlayer().getShields());
+      }
+    } else {
+      message += "\n<strong>No participants were successful in defeating the quest's stages.</strong>";
+    }
+    return message;
+  }
+
   public void resolveAttacks(Display display) {
     display.print(String.format("\nRESOLVING STAGE %d ATTACKS...", currentStage.getStageNumber()));
     int stageValue = currentStage.getValue();

@@ -521,6 +521,14 @@ public class GameController {
     return response;
   }
 
+  @GetMapping("/rewardShields")
+  public Map<String, Object> rewardShields() {
+    Map<String, Object> response = new HashMap<>();
+    String message = quest.rewardShields();
+    response.put("message", message);
+    return response;
+  }
+
   @GetMapping("/endTurn")
   public Map<String, Object> endTurn() {
     Map<String, Object> response = new HashMap<>();
@@ -530,7 +538,11 @@ public class GameController {
     quest = null;
 
     if (winners.size() > 0) {
-      response.put("winners", winners.toString());
+      String winnersMessage = "";
+      for (Player winner : winners) {
+        winnersMessage += String.format("- %s\n", winner.toString());
+      }
+      response.put("winners", winnersMessage);
     }
 
     return response;

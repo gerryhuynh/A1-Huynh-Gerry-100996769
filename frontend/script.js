@@ -167,6 +167,8 @@ async function startNextPlayerTurn() {
     document.getElementById("currentEventCard").textContent = "-";
     document.getElementById("questNumStages").textContent = "-";
     document.getElementById("questSponsor").textContent = "-";
+    document.getElementById("questCurrentStage").textContent = "-";
+    document.getElementById("questAttackTurn").textContent = "-";
     setButtonState("drawEventCardButton", true);
     document.getElementById("currentGameTurn").textContent =
       result.currentGameTurn;
@@ -408,14 +410,29 @@ async function resolveAttacks() {
 
     document.getElementById("gameMessage").innerHTML = result.message;
 
-    if (result.questComplete) {
-      enableNextPlayerButton(endTurn);
-    } else {
-      setButtonState("nextPlayerButton", false);
-      enableNextStageButton(nextStage);
-    }
+    setButtonState("nextPlayerButton", false);
+
+    result.questComplete
+      ? enableNextStageButton(rewardShields)
+      : enableNextStageButton(nextStage);
   } catch (error) {
     console.error("Error resolving attacks:", error);
+  }
+}
+
+async function rewardShields() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/rewardShields`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    setButtonState("nextStageButton", false);
+    enableNextPlayerButton(replenishSponsorHands);
+
+    updatePlayersInfo();
+  } catch (error) {
+    console.error("Error rewarding shields:", error);
   }
 }
 
@@ -449,14 +466,26 @@ async function endTurn() {
     const response = await fetch(`${apiBaseUrl}/endTurn`);
     const result = await response.json();
     console.log(result);
-    document.getElementById("gameMessage").innerHTML = result.message;
 
     if (!result.winners) {
       startNextPlayerTurn();
+    } else {
+      setButtonState("nextPlayerButton", false);
+      setButtonState("endGameButton", true);
+      showWinners(result.winners);
     }
   } catch (error) {
     console.error("Error checking winners:", error);
   }
+}
+
+function showWinners(winners) {
+  document.getElementById("gameMessage").innerHTML = `
+    <strong>GAME OVER!</strong>
+    <br />
+    <strong>WINNERS:</strong>
+    ${winners}
+  `;
 }
 
 // Helper functions
