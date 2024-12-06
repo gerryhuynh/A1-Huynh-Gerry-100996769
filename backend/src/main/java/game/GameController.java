@@ -165,9 +165,9 @@ public class GameController {
 
       if (isValid) {
         response.put("message", String.format("""
-          STAGE %d SETUP COMPLETE.
+          <strong>STAGE %d SETUP COMPLETE.</strong>
 
-          CARDS ADDED TO STAGE: %s
+          <strong>CARDS ADDED TO STAGE:</strong> %s
 
           Continue to the next stage.
           """, quest.getCurrentSetupStage().getStageNumber(),
@@ -268,15 +268,15 @@ public class GameController {
     response.put("continueQuest", false);
     response.put("questComplete", false);
 
-    if (quest.getCurrentPotentialParticipant() == null && quest.getActiveParticipants().size() == 0) {
+    if (quest.getCurrentPotentialParticipant() == null && quest.getParticipants().size() == 0) {
       response.put("message", """
-        QUEST COMPLETE!
+        <strong>QUEST COMPLETE!</strong>
         No participants were successful in defeating the quest's stages. Return to the sponsor.
         """);
       response.put("questComplete", true);
     } else if (quest.getCurrentPotentialParticipant() == null) {
       response.put("message", String.format("""
-        Participants found: %s
+        <strong>Participants found:</strong> %s
 
         Starting Stage %d for %s.
         """, quest.getParticipants().toString(),
@@ -302,6 +302,7 @@ public class GameController {
     Map<String, Object> response = new HashMap<>();
     response.put("message", "");
     response.put("questAttackTurn", currentParticipant.getName());
+    response.put("needToTrim", true);
 
     response.put("message", String.format("""
       <strong>%s's turn.</strong>
@@ -310,6 +311,8 @@ public class GameController {
       """, currentParticipant.getName(),
         questAddToHand(currentParticipant, game.getAdventureDeck().draw(1))
       ));
+
+    response.put("needToTrim", needsToTrimHand(currentParticipant));
 
     return response;
   }
@@ -477,7 +480,44 @@ public class GameController {
   @GetMapping("/resolveAttacks")
   public Map<String, Object> resolveAttacks() {
     Map<String, Object> response = new HashMap<>();
-    response.put("message", "Made it to resolve attacks.");
+    response.put("message", "");
+
+    int stageValue = quest.getCurrentStage().getValue();
+    int participantAttackValue = 0;
+    String message = String.format(
+      """
+      <strong>RESOLVING STAGE %d ATTACKS...</strong>
+
+      <strong>Sponsor's Defense:</strong> %s. <strong>Value:</strong> %d
+      """, quest.getCurrentStage().getStageNumber(),
+        quest.getCurrentStage().getCards().toString(),
+        stageValue
+      );
+
+    for (Participant participant : quest.getParticipants()) {
+      participantAttackValue = participant.getAttackValue();
+      message += String.format("\n<strong>%s ATTACK VALUE:</strong> %d", participant.getPlayer().getName(), participantAttackValue);
+
+      if (participantAttackValue >= stageValue) {
+        message += String.format("\n%s's attack is successful! You will continue to the next stage.\n", participant.getPlayer().getName());
+        quest.getActiveParticipants().add(participant);
+      } else {
+        message += String.format("\n%s's attack is unsuccessful! You are no longer eligible to continue the quest.\n", participant.getPlayer().getName());
+      }
+
+      participant.clearAttackCards();
+    }
+
+    quest.replaceParticipants();
+    quest.setCurrentPotentialParticipant(quest.getCurrentParticipant());
+    quest.getNextStage();
+
+    if (quest.getCurrentStage() == null) {
+      response.put("questComplete", true);
+    }
+
+    response.put("message", message);
+
     return response;
   }
 
@@ -501,18 +541,26 @@ public class GameController {
   private String questAddToHand(Player player, List<AdventureCard> cardsToAdd) {
     quest.setCardsToAddToHand(cardsToAdd);
 
-    String message = String.format("""
-      <strong>ADVENTURE CARDS TO ADD TO HAND:</strong>
-      %s
+    String message = "";
+    String trimMessage = "";
+    String continueMessage = "";
 
-      """, quest.getCardsToAddToHand().toString()
-      );
+    if (needsToTrimHand(player)) {
+      message = "<strong>ADVENTURE CARDS TO ADD TO HAND:</strong>\n";
+      trimMessage = "You must trim your hand. Please discard a card.\n\n";
+    } else{
+      player.getHand().addAll(quest.getCardsToAddToHand());
+      player.sortHand();
+      quest.setCardsToAddToHand(new ArrayList<>());
 
-    String trimMessage = needsToTrimHand(player)
-      ? "You must trim your hand. Please discard a card.\n\n"
-      : "";
+      message = "<strong>ADVENTURE CARDS ADDED TO HAND:</strong>\n";
+      trimMessage = "No need to trim your hand.\n\n";
+      continueMessage = "\n<strong>Press Submit to continue...</strong>\n";
+    }
 
-    return message + trimMessage + getHandList(player.getHand());
+    message += String.format("%s\n\n", cardsToAdd.toString());
+
+    return message + trimMessage + getHandList(player.getHand()) + continueMessage;
   }
 
   private boolean needsToTrimHand(Player player) {

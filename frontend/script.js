@@ -300,9 +300,19 @@ async function nextAttackTurn() {
     document.getElementById("questAttackTurn").textContent =
       result.questAttackTurn;
 
-    enableGameInput("Choose a card position...", submitParticipantTrimChoice);
+    if (result.needToTrim) {
+      enableGameInput("Choose a card position...", submitParticipantTrimChoice);
+    } else {
+      document.getElementById("gameInput").placeholder =
+        "Press Submit to continue...";
+      document.getElementById("gameInput").disabled = true;
+      setButtonState("submitButton", true);
+      document.getElementById("submitButton").onclick = setupAttack;
+    }
     setButtonState("nextStageButton", false);
     setButtonState("nextPlayerButton", false);
+
+    updatePlayersInfo();
   } catch (error) {
     console.error("Error getting next attack turn:", error);
   }
@@ -397,6 +407,13 @@ async function resolveAttacks() {
     console.log(result);
 
     document.getElementById("gameMessage").innerHTML = result.message;
+
+    if (result.questComplete) {
+      enableNextPlayerButton(endTurn);
+    } else {
+      setButtonState("nextPlayerButton", false);
+      enableNextStageButton(nextStage);
+    }
   } catch (error) {
     console.error("Error resolving attacks:", error);
   }
@@ -404,7 +421,6 @@ async function resolveAttacks() {
 
 async function submitTrimChoice(playerNum, trimCompleteAction) {
   try {
-    console.log("submitTrimChoice", playerNum);
     const inputValue = document.getElementById("gameInput").value;
     const response = await fetch(
       `${apiBaseUrl}/submitTrimChoice?cardPosition=${inputValue}&playerNum=${playerNum}`,

@@ -138,9 +138,15 @@ public class Quest {
   }
 
   public void replaceParticipants() {
-    participants = activeParticipants;
+    participants = new ArrayList<>(activeParticipants);
+    activeParticipants.clear();
     currentParticipant = participants.isEmpty() ? null : participants.get(0);
   }
+
+  // public void replaceParticipants(List<Participant> activeParticipants) {
+  //   participants = new ArrayList<>(activeParticipants);
+  //   currentParticipant = participants.isEmpty() ? null : participants.get(0);
+  // }
 
   public void replenishSponsorHand(Display display, AdventureDeck adventureDeck) {
     display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), getNumCardsToAddToHand()));
@@ -455,6 +461,10 @@ public class Quest {
 
   public void setCardsToAddToHand(List<AdventureCard> cardsToAddToHand) {
     this.cardsToAddToHand = cardsToAddToHand;
+  }
+
+  public void setCurrentPotentialParticipant(Participant currentPotentialParticipant) {
+    this.currentPotentialParticipant = currentPotentialParticipant;
   }
 
   @Override
