@@ -47,7 +47,8 @@ async function endGame() {
 
     document.getElementById("questNumStages").textContent = "-";
     document.getElementById("questSponsor").textContent = "-";
-    document.getElementById("questTurn").textContent = "-";
+    document.getElementById("questCurrentStage").textContent = "-";
+    document.getElementById("questAttackTurn").textContent = "-";
 
     document.getElementById("gameMessage").innerHTML =
       "<em>Waiting to start...</em>";
@@ -55,6 +56,7 @@ async function endGame() {
     setButtonState("startGameButton", true);
     setButtonState("drawEventCardButton", false);
     setButtonState("nextPlayerButton", false);
+    setButtonState("nextStageButton", false);
     setButtonState("endGameButton", false);
 
     disableGameInput();
@@ -103,7 +105,9 @@ async function submitSponsorChoice() {
 
     document.getElementById("gameMessage").innerHTML = result.message;
     if (result.sponsor) {
+      // GO TO NEXT STEP HERE
       document.getElementById("questSponsor").textContent = result.sponsor;
+      enableNextStageButton(nextStageSetup);
     } else {
       enableNextPlayerButton(promptNextPotentialSponsor);
       if (result.noSponsor) {
@@ -149,6 +153,95 @@ async function startNextPlayerTurn() {
   }
 }
 
+async function submitStageSetupChoice() {
+  try {
+    const inputValue = document.getElementById("gameInput").value;
+    if (inputValue === "") {
+      return;
+    }
+    const response = await fetch(
+      `${apiBaseUrl}/submitStageSetupChoice?cardPosition=${inputValue}`,
+      {
+        method: "POST",
+      }
+    );
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    document.getElementById("gameMessage").style.whiteSpace = "pre-line";
+
+    if (result.stageSetupComplete) {
+      disableGameInput();
+      result.questSetupComplete
+        ? enableNextStageButton(nextStage)
+        : enableNextStageButton(nextStageSetup);
+    } else if (result.validCardAdded) {
+      document.getElementById("gameInput").value = "";
+    } else {
+      document.getElementById("gameInput").value = "";
+    }
+  } catch (error) {
+    console.error("Error submitting stage setup choice:", error);
+  }
+}
+
+async function nextStageSetup() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/nextStageSetup`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    document.getElementById("gameMessage").style.whiteSpace = "pre-line";
+    enableGameInput("Choose a card position...", submitStageSetupChoice);
+    document.getElementById("questCurrentStage").textContent =
+      result.currentStage;
+    setButtonState("nextStageButton", false);
+  } catch (error) {
+    console.error("Error getting next stage:", error);
+  }
+}
+
+async function nextStage() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/nextStage`);
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("questCurrentStage").textContent =
+      result.currentStage;
+    document.getElementById("questAttackTurn").textContent =
+      result.currentAttackTurn;
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+    document.getElementById("gameMessage").style.whiteSpace = "pre-line";
+
+    enableGameInput("Enter Y or N...", submitParticipationChoice);
+    setButtonState("nextStageButton", false);
+  } catch (error) {
+    console.error("Error getting next stage:", error);
+  }
+}
+
+async function submitParticipationChoice() {
+  try {
+    const inputValue = document.getElementById("gameInput").value;
+    const response = await fetch(
+      `${apiBaseUrl}/submitParticipationChoice?participationChoice=${inputValue}`,
+      {
+        method: "POST",
+      }
+    );
+    const result = await response.json();
+    console.log(result);
+
+    document.getElementById("gameMessage").innerHTML = result.message;
+  } catch (error) {
+    console.error("Error submitting participation choice:", error);
+  }
+}
+
 // Helper functions
 
 function setButtonState(id, enabled) {
@@ -158,6 +251,11 @@ function setButtonState(id, enabled) {
 function enableNextPlayerButton(action) {
   setButtonState("nextPlayerButton", true);
   document.getElementById("nextPlayerButton").onclick = action;
+}
+
+function enableNextStageButton(action) {
+  setButtonState("nextStageButton", true);
+  document.getElementById("nextStageButton").onclick = action;
 }
 
 function enableGameInput(message, submitAction) {
