@@ -305,11 +305,8 @@ async function nextAttackTurn() {
     if (result.needToTrim) {
       enableGameInput("Choose a card position...", submitParticipantTrimChoice);
     } else {
-      document.getElementById("gameInput").placeholder =
-        "Press Submit to continue...";
-      document.getElementById("gameInput").disabled = true;
-      setButtonState("submitButton", true);
-      document.getElementById("submitButton").onclick = setupAttack;
+      document.getElementById("gameInput").value = "";
+      enableGameInput("Press Submit to continue...", setupAttack);
     }
     setButtonState("nextStageButton", false);
     setButtonState("nextPlayerButton", false);
@@ -328,8 +325,12 @@ async function replenishSponsorHands() {
 
     document.getElementById("gameMessage").innerHTML = result.message;
 
-    enableGameInput("Choose a card position...", submitSponsorTrimChoice);
-    setButtonState("nextPlayerButton", false);
+    if (result.needToTrim) {
+      enableGameInput("Choose a card position...", submitSponsorTrimChoice);
+      setButtonState("nextPlayerButton", false);
+    } else {
+      endQuestTurn();
+    }
   } catch (error) {
     console.error("Error replenishing sponsor hands:", error);
   }
@@ -340,12 +341,12 @@ async function submitSponsorTrimChoice() {
     .getElementById("questSponsor")
     .textContent.substring(1);
 
-  const endQuestTurn = function () {
-    disableGameInput();
-    enableNextPlayerButton(endTurn);
-  };
-
   submitTrimChoice(playerNum, endQuestTurn);
+}
+
+function endQuestTurn() {
+  disableGameInput();
+  enableNextPlayerButton(endTurn);
 }
 
 async function submitParticipantTrimChoice() {

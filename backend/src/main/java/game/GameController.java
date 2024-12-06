@@ -321,6 +321,7 @@ public class GameController {
   public Map<String, Object> replenishSponsorHands() {
     Map<String, Object> response = new HashMap<>();
     response.put("message", "");
+    response.put("needToTrim", true);
 
     String baseMessage = String.format(
         "<strong>REPLENISHING SPONSOR %s HANDS...</strong> (%d cards)\n\n",
@@ -330,6 +331,7 @@ public class GameController {
 
     String message = questAddToHand(quest.getSponsor(), game.getAdventureDeck().draw(quest.getNumCardsToAddToHand()));
 
+    response.put("needToTrim", needsToTrimHand(quest.getSponsor()));
     response.put("message", baseMessage + message);
 
     return response;
@@ -512,7 +514,7 @@ public class GameController {
     quest.setCurrentPotentialParticipant(quest.getCurrentParticipant());
     quest.getNextStage();
 
-    if (quest.getCurrentStage() == null) {
+    if (quest.getCurrentStage() == null || quest.getParticipants().size() == 0) {
       response.put("questComplete", true);
     }
 
@@ -555,7 +557,6 @@ public class GameController {
 
     String message = "";
     String trimMessage = "";
-    String continueMessage = "";
 
     if (needsToTrimHand(player)) {
       message = "<strong>ADVENTURE CARDS TO ADD TO HAND:</strong>\n";
@@ -567,12 +568,11 @@ public class GameController {
 
       message = "<strong>ADVENTURE CARDS ADDED TO HAND:</strong>\n";
       trimMessage = "No need to trim your hand.\n\n";
-      continueMessage = "\n<strong>Press Submit to continue...</strong>\n";
     }
 
     message += String.format("%s\n\n", cardsToAdd.toString());
 
-    return message + trimMessage + getHandList(player.getHand()) + continueMessage;
+    return message + trimMessage + getHandList(player.getHand());
   }
 
   private boolean needsToTrimHand(Player player) {
