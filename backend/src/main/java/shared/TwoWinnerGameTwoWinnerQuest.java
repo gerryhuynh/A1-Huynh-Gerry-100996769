@@ -213,7 +213,7 @@ public class TwoWinnerGameTwoWinnerQuest {
   private static String getQ1S1AttackSetupInputForPlayer(int playerNumber) {
     switch (playerNumber) {
       case 2:
-        return "8\nQUIT\n\n";
+        return "\nQUIT\n\n";
       case 3:
         return "9\nQUIT\n\n";
       case 4:
