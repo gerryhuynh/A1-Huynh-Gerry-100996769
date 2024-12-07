@@ -16,7 +16,7 @@ import game.enums.event.EType;
 import game.enums.event.QType;
 import game.cards.AdventureCard;
 import game.quest.Stage;
-import game.cards.EventCard;
+// import game.cards.EventCard;
 import game.quest.Participant;
 import shared.A1Scenario;
 import shared.TwoWinnerGameTwoWinnerQuest;

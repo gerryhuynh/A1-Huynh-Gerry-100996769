@@ -1,7 +1,8 @@
 const { Builder, By, until } = require("selenium-webdriver");
 const { getWinners } = require("./script.js");
 
-const defaultWaitTime = 1;
+const defaultWaitTime = 2000;
+const longWaitTime = 15000;
 
 async function runTest() {
   let driver = await new Builder().forBrowser("chrome").build();
@@ -11,21 +12,19 @@ async function runTest() {
 
     await runA1Scenario(driver);
 
-    // const endGameButton = await driver.findElement(By.id("endGameButton"));
-    // await endGameButton.click();
-    // await driver.sleep(defaultWaitTime);
+    const endGameButton = await driver.findElement(By.id("endGameButton"));
+    await endGameButton.click();
+    await driver.sleep(defaultWaitTime);
 
-    // await runTwoWinnerScenario(driver);
+    await runTwoWinnerScenario(driver);
 
-    // await endGameButton.click();
-    // await driver.sleep(defaultWaitTime);
+    await endGameButton.click();
+    await driver.sleep(defaultWaitTime);
 
-    // await runZeroWinnerScenario(driver);
+    await runZeroWinnerScenario(driver);
 
-    await driver.sleep(1000000);
-
-    // await endGameButton.click();
-    // await driver.sleep(defaultWaitTime);
+    await endGameButton.click();
+    await driver.sleep(defaultWaitTime);
   } catch (error) {
     console.error("Test encountered an error:", error);
   } finally {
@@ -219,7 +218,6 @@ async function runZeroWinnerScenario(driver) {
   await gameInput.sendKeys("1");
   await driver.sleep(defaultWaitTime);
   await submitButton.click();
-  await driver.sleep(defaultWaitTime);
 
   // Assertions
 
@@ -284,7 +282,7 @@ async function runZeroWinnerScenario(driver) {
 
   console.log("0_winner_quest completed successfully");
 
-  await driver.sleep(15000);
+  await driver.sleep(longWaitTime);
 }
 
 async function runTwoWinnerScenario(driver) {
@@ -915,7 +913,6 @@ async function runTwoWinnerScenario(driver) {
   await driver.sleep(defaultWaitTime);
 
   await nextPlayerButton.click();
-  await driver.sleep(defaultWaitTime);
 
   // Assertions
 
@@ -984,7 +981,7 @@ async function runTwoWinnerScenario(driver) {
 
   console.log("2winner_game_2winner_quest completed successfully");
 
-  await driver.sleep(15000);
+  await driver.sleep(longWaitTime);
 }
 
 async function runA1Scenario(driver) {
@@ -1458,7 +1455,6 @@ async function runA1Scenario(driver) {
   await gameInput.sendKeys("1");
   await driver.sleep(defaultWaitTime);
   await submitButton.click();
-  await driver.sleep(defaultWaitTime);
 
   // Assertions
 
@@ -1523,7 +1519,7 @@ async function runA1Scenario(driver) {
 
   console.log("A1_scenario completed successfully");
 
-  await driver.sleep(15000);
+  await driver.sleep(longWaitTime);
 }
 
 runTest();
