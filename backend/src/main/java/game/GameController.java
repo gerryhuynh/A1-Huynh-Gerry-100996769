@@ -587,6 +587,13 @@ public class GameController {
     return response;
   }
 
+  @GetMapping("/getWinners")
+  public Map<String, Object> getWinners() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("winners", game.getWinners().toString());
+    return response;
+  }
+
   // helper methods
 
   private String addToHand(Player player, List<AdventureCard> cardsToAdd) {

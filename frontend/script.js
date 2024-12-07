@@ -540,6 +540,17 @@ async function endTurn() {
   }
 }
 
+async function getWinners() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/getWinners`);
+    const result = await response.json();
+    console.log(result);
+    return result.winners;
+  } catch (error) {
+    console.error("Error getting winners:", error);
+  }
+}
+
 function showWinners(winners) {
   document.getElementById("gameMessage").innerHTML = `
     <strong>GAME OVER!</strong>
@@ -579,11 +590,17 @@ function disableGameInput() {
   setButtonState("submitButton", false);
 }
 
-document.getElementById("gameInput").onkeydown = function (event) {
-  if (event.key === "Enter") {
-    const submitButton = document.getElementById("submitButton");
-    if (!submitButton.disabled && submitButton.onclick) {
-      submitButton.onclick();
+if (typeof document !== "undefined") {
+  document.getElementById("gameInput").onkeydown = function (event) {
+    if (event.key === "Enter") {
+      const submitButton = document.getElementById("submitButton");
+      if (!submitButton.disabled && submitButton.onclick) {
+        submitButton.onclick();
+      }
     }
-  }
-};
+  };
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { getWinners };
+}
