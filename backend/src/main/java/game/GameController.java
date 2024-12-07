@@ -16,7 +16,7 @@ import game.enums.event.EType;
 import game.enums.event.QType;
 import game.cards.AdventureCard;
 import game.quest.Stage;
-// import game.cards.EventCard;
+import game.cards.EventCard;
 import game.quest.Participant;
 import shared.A1Scenario;
 import shared.TwoWinnerGameTwoWinnerQuest;
@@ -341,15 +341,12 @@ public class GameController {
     response.put("questAttackTurn", currentParticipant.getName());
     response.put("needToTrim", true);
 
-    response.put("message", String.format("""
-      <strong>%s's turn.</strong>
+    List<AdventureCard> drawnCards = game.getAdventureDeck().draw(1);
 
-      %s
-      """, currentParticipant.getName(),
-        questAddToHand(currentParticipant, game.getAdventureDeck().draw(1))
-      ));
+    String message = addToHand(currentParticipant, drawnCards);
 
-    response.put("needToTrim", needsToTrimHand(currentParticipant));
+    response.put("message", message);
+    response.put("needToTrim", currentParticipant.needToTrimHand());
 
     return response;
   }
@@ -366,9 +363,10 @@ public class GameController {
           quest.getNumCardsToAddToHand()
       );
 
-    String message = questAddToHand(quest.getSponsor(), game.getAdventureDeck().draw(quest.getNumCardsToAddToHand()));
+    List<AdventureCard> drawnCards = game.getAdventureDeck().draw(quest.getNumCardsToAddToHand());
+    String message = addToHand(quest.getSponsor(), drawnCards);
 
-    response.put("needToTrim", needsToTrimHand(quest.getSponsor()));
+    response.put("needToTrim", quest.getSponsor().needToTrimHand());
     response.put("message", baseMessage + message);
 
     return response;
@@ -397,29 +395,25 @@ public class GameController {
 
   @PostMapping("/submitTrimChoice")
   public Map<String, Object> submitTrimChoice(@RequestParam String cardPosition, @RequestParam int playerNum) {
-    System.out.println("submitTrimChoice: " + playerNum);
-    List<AdventureCard> cards = quest.getCardsToAddToHand();
+    Map<String, Object> response = new HashMap<>();
+    response.put("trimComplete", false);
+    response.put("message", "");
+
     Player player = game.getPlayers().get(playerNum - 1);
 
     int cardIndex = Integer.parseInt(cardPosition) - 1;
     List<AdventureCard> trimmedCards = player.getTrimmedCards();
 
-    Map<String, Object> response = new HashMap<>();
-    response.put("trimComplete", false);
-    response.put("message", "");
-
     trimmedCards.add(player.getHand().remove(cardIndex));
-    player.setNumCardsToTrim(player.getNumCardsToTrim() - 1);
-    response.put("message", String.format("""
-      You must continue trimming your hand. Please discard another card.
 
-      %s
-      """, getHandList(player.getHand())
-      ));
+    if (player.needToTrimHand()) {
+      response.put("message", String.format("""
+        You must continue trimming your hand. Please discard another card.
 
-    if (player.getNumCardsToTrim() < 1) {
-      player.getHand().addAll(cards);
-      player.sortHand();
+        %s
+        """, getHandList(player.getHand())
+        ));
+    } else {
       response.put("message", String.format("""
         Trim complete.
 
@@ -436,7 +430,7 @@ public class GameController {
   public Map<String, Object> setupAttack() {
     Map<String, Object> response = new HashMap<>();
     response.put("message", String.format("""
-      <strong>%s SETTING UP ATTACK FOR STAGE %d...</strong>
+      <strong>\n%s SETTING UP ATTACK FOR STAGE %d...</strong>
 
       %s
       """, quest.getCurrentParticipant().getPlayer().getName(),
@@ -589,47 +583,26 @@ public class GameController {
 
   // helper methods
 
-  private String questAddToHand(Player player, List<AdventureCard> cardsToAdd) {
-    quest.setCardsToAddToHand(cardsToAdd);
+  private String addToHand(Player player, List<AdventureCard> cardsToAdd) {
+    player.addToHand(cardsToAdd);
 
-    String message = "";
-    String trimMessage = "";
+    String message = String.format("""
+      <strong>%s's turn.</strong>
 
-    if (needsToTrimHand(player)) {
-      message = "<strong>ADVENTURE CARDS TO ADD TO HAND:</strong>\n";
-      trimMessage = "You must trim your hand. Please discard a card.\n\n";
-    } else{
-      player.getHand().addAll(quest.getCardsToAddToHand());
-      player.sortHand();
-      quest.setCardsToAddToHand(new ArrayList<>());
+      <strong>ADVENTURE CARDS DRAWN:</strong>
+      %s
+      """, player.getName(),
+      cardsToAdd.toString()
+      );
 
-      message = "<strong>ADVENTURE CARDS ADDED TO HAND:</strong>\n";
-      trimMessage = "No need to trim your hand.\n\n";
-    }
+    message += player.needToTrimHand()
+      ? "\nYou must trim your hand. Please discard a card.\n\n"
+      : "No need to trim your hand.\n\n";
 
-    message += String.format("%s\n\n", cardsToAdd.toString());
+    message += getHandList(player.getHand());
 
-    return message + trimMessage + getHandList(player.getHand());
+    return message;
   }
-
-  private boolean needsToTrimHand(Player player) {
-    List<AdventureCard> cards = quest.getCardsToAddToHand();
-    List<AdventureCard> trimmedCards = player.getTrimmedCards();
-
-    player.setNumCardsToTrim(player.computeNumCardsToTrim(cards.size()));
-    if (player.getNumCardsToTrim() > 0) {
-      while (cards.size() > Player.MAX_HAND_SIZE) {
-        trimmedCards.add(cards.remove(0));
-        player.setNumCardsToTrim(player.getNumCardsToTrim() - 1);
-      }
-    }
-
-    return player.getNumCardsToTrim() > 0;
-  }
-
-  // private boolean isQuest() {
-  //   return quest != null;
-  // }
 
   private String getQuestCards() {
     StringBuilder sb = new StringBuilder();

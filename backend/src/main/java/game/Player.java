@@ -30,6 +30,19 @@ public class Player {
       addToHand(cards, display, true);
     }
 
+    public boolean needToTrimHand() {
+      return hand.size() > MAX_HAND_SIZE;
+    }
+
+    public int numCardsToTrim() {
+      return needToTrimHand() ? hand.size() - MAX_HAND_SIZE : 0;
+    }
+
+    public void addToHand(List<AdventureCard> cards) {
+      hand.addAll(cards);
+      sortHand();
+    }
+
     public List<AdventureCard> addToHand(List<AdventureCard> cards, Display display) {
       return addToHand(cards, display, false);
     }

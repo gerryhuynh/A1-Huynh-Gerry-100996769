@@ -488,6 +488,11 @@ async function runA1Scenario(driver) {
   await submitButton.click();
   await driver.sleep(defaultWaitTime);
 
+  await gameInput.sendKeys("1");
+  await driver.sleep(defaultWaitTime);
+  await submitButton.click();
+  await driver.sleep(defaultWaitTime);
+
   const p1Shields = await driver.findElement(By.id("p1-shields"));
   const p1ShieldsText = await p1Shields.getText();
   const p1CardCount = await driver.findElement(By.id("p1-cardCount"));
