@@ -160,18 +160,24 @@ async function drawEventCard() {
       <p><strong>Drawn Event Card: </strong>${result.eventCardType} - ${result.eventCardDescription}</p>
       <p>${result.message}</p>
     `;
+    document.getElementById("gameMessage").style.whiteSpace = "pre-line";
 
     document.getElementById("currentEventCard").textContent =
       result.eventCardType;
 
-    isQuest = result.isQuest;
-
-    if (isQuest) {
+    setButtonState("drawEventCardButton", false);
+    if (result.isQuest) {
       enableGameInput("Enter Y or N...", submitSponsorChoice);
       document.getElementById("questNumStages").textContent =
         result.questNumStages;
-      setButtonState("drawEventCardButton", false);
+    } else if (result.needToTrim) {
+      enableGameInput("Choose a card position...", () =>
+        submitTrimChoice("currentGameTurn", endEventTurn)
+      );
+    } else {
+      endEventTurn();
     }
+    updatePlayersInfo();
   } catch (error) {
     console.error("Error drawing event card:", error);
   }
@@ -366,7 +372,9 @@ async function nextAttackTurn() {
       result.questAttackTurn;
 
     if (result.needToTrim) {
-      enableGameInput("Choose a card position...", submitParticipantTrimChoice);
+      enableGameInput("Choose a card position...", () =>
+        submitTrimChoice("questAttackTurn", setupAttack)
+      );
     } else {
       document.getElementById("gameInput").value = "";
       enableGameInput("Press Submit to continue...", setupAttack);
@@ -389,35 +397,21 @@ async function replenishSponsorHands() {
     document.getElementById("gameMessage").innerHTML = result.message;
 
     if (result.needToTrim) {
-      enableGameInput("Choose a card position...", submitSponsorTrimChoice);
+      enableGameInput("Choose a card position...", () =>
+        submitTrimChoice("questSponsor", endEventTurn)
+      );
       setButtonState("nextPlayerButton", false);
     } else {
-      endQuestTurn();
+      endEventTurn();
     }
   } catch (error) {
     console.error("Error replenishing sponsor hands:", error);
   }
 }
 
-async function submitSponsorTrimChoice() {
-  const playerNum = document
-    .getElementById("questSponsor")
-    .textContent.substring(1);
-
-  submitTrimChoice(playerNum, endQuestTurn);
-}
-
-function endQuestTurn() {
+function endEventTurn() {
   disableGameInput();
   enableNextPlayerButton(endTurn);
-}
-
-async function submitParticipantTrimChoice() {
-  const playerNum = document
-    .getElementById("questAttackTurn")
-    .textContent.substring(1);
-
-  submitTrimChoice(playerNum, setupAttack);
 }
 
 async function setupAttack() {
@@ -500,8 +494,11 @@ async function rewardShields() {
   }
 }
 
-async function submitTrimChoice(playerNum, trimCompleteAction) {
+async function submitTrimChoice(playerNumSourceId, trimCompleteAction) {
   try {
+    const playerNum = document
+      .getElementById(playerNumSourceId)
+      .textContent.substring(1);
     const inputValue = document.getElementById("gameInput").value;
     const response = await fetch(
       `${apiBaseUrl}/submitTrimChoice?cardPosition=${inputValue}&playerNum=${playerNum}`,

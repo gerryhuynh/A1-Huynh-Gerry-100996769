@@ -114,7 +114,11 @@ public class GameController {
           response.put("message", String.format("%s's shields: %d -> %d", player.getName(), originalShields, player.getShields()));
           break;
         case QUEENS_FAVOR:
-          // TODO
+          List<AdventureCard> drawnCards = game.getAdventureDeck().draw(2);
+          String message = String.format("%s drew 2 adventure cards.\n\n", player.getName());
+          message += addToHand(player, drawnCards);
+          response.put("message", message);
+          response.put("needToTrim", player.needToTrimHand());
           break;
         case PROSPERITY:
           // TODO
@@ -343,7 +347,9 @@ public class GameController {
 
     List<AdventureCard> drawnCards = game.getAdventureDeck().draw(1);
 
-    String message = addToHand(currentParticipant, drawnCards);
+    String message = String.format("<strong>%s's turn.</strong>\n\n", currentParticipant.getName());
+
+    message += addToHand(currentParticipant, drawnCards);
 
     response.put("message", message);
     response.put("needToTrim", currentParticipant.needToTrimHand());
@@ -587,13 +593,9 @@ public class GameController {
     player.addToHand(cardsToAdd);
 
     String message = String.format("""
-      <strong>%s's turn.</strong>
-
       <strong>ADVENTURE CARDS DRAWN:</strong>
       %s
-      """, player.getName(),
-      cardsToAdd.toString()
-      );
+      """, cardsToAdd.toString());
 
     message += player.needToTrimHand()
       ? "\nYou must trim your hand. Please discard a card.\n\n"
