@@ -45,4 +45,14 @@ public class Stage {
   public List<AdventureCard> getCards() {
     return cards;
   }
+
+  @Override
+  public String toString() {
+    return String.format(
+      "Stage{stageNumber=%d, cards=%s, value=%d}",
+      stageNumber,
+      cards,
+      getValue()
+    );
+  }
 }

@@ -324,7 +324,7 @@ public class GameSteps {
   }
 
   private boolean isFirstStage() {
-    return quest.getStages().getFirst() == quest.getCurrentStage();
+    return quest.getStages().get(0) == quest.getCurrentStage();
   }
 
   private String getQuestStagesSetupInputForScenario(String scenario) {

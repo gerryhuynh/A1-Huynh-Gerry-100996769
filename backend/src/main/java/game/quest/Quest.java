@@ -3,6 +3,7 @@ package game.quest;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 import game.Display;
 import game.Player;
@@ -20,9 +21,13 @@ public class Quest {
   private boolean isActive;
   private List<Participant> participants;
   private Participant currentParticipant;
+  private Participant currentPotentialParticipant;
+  private List<Participant> activeParticipants;
+  private List<AdventureCard> cardsToAddToHand;
   private Player sponsor;
   private Player currentPotentialSponsor;
   private int sponsorNumCardsUsed;
+  private Stage currentSetupStage;
 
   public Quest(int numStages, Player currentPlayer) {
     this.isActive = true;
@@ -31,9 +36,12 @@ public class Quest {
     for (int i = 0; i < numStages; i++) {
       this.stages.add(new Stage(i + 1));
     }
+    this.currentSetupStage = stages.get(0);
     this.currentStage = stages.get(0);
     this.participants = new ArrayList<>();
     this.currentParticipant = null;
+    this.currentPotentialParticipant = null;
+    this.activeParticipants = new ArrayList<>();
     this.sponsor = null;
     this.currentPotentialSponsor = currentPlayer;
   }
@@ -99,7 +107,7 @@ public class Quest {
   public void promptForParticipants(Display display) {
     display.printParticipants(participants);
     participants = display.promptForParticipants(participants);
-    currentParticipant = participants.get(0);
+    currentParticipant = participants.isEmpty() ? null : participants.get(0);
   }
 
   public void getNextParticipant() {
@@ -120,10 +128,33 @@ public class Quest {
     }
   }
 
+  public void getNextPotentialParticipant() {
+    int currentIndex = participants.indexOf(currentPotentialParticipant);
+    if (currentIndex < participants.size() - 1) {
+      currentPotentialParticipant = participants.get(currentIndex + 1);
+    } else {
+      currentPotentialParticipant = null;
+    }
+  }
+
+  public void replaceParticipants() {
+    participants = new ArrayList<>(activeParticipants);
+    activeParticipants.clear();
+    currentParticipant = participants.isEmpty() ? null : participants.get(0);
+  }
+
+  // public void replaceParticipants(List<Participant> activeParticipants) {
+  //   participants = new ArrayList<>(activeParticipants);
+  //   currentParticipant = participants.isEmpty() ? null : participants.get(0);
+  // }
+
   public void replenishSponsorHand(Display display, AdventureDeck adventureDeck) {
-    int numCardsToDraw = sponsorNumCardsUsed + numStages;
-    display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), numCardsToDraw));
-    sponsor.addToHand(adventureDeck.draw(numCardsToDraw), display);
+    display.print(String.format("\nREPLENISHING SPONSOR %s HANDS... (%d cards)", sponsor.getName(), getNumCardsToAddToHand()));
+    sponsor.addToHand(adventureDeck.draw(getNumCardsToAddToHand()), display);
+  }
+
+  public int getNumCardsToAddToHand() {
+    return sponsorNumCardsUsed + numStages;
   }
 
   public void rewardShields(Display display) {
@@ -139,6 +170,21 @@ public class Quest {
       display.print("No participants were successful in defeating the quest's stages.");
     }
     display.promptReturnToSponsor();
+  }
+
+  public String rewardShields() {
+    String message = "<strong>QUEST COMPLETE!</strong>\n";
+    if (participants.size() > 0) {
+      message += String.format("\n<strong>REWARDING %d SHIELDS TO PARTICIPANTS...</strong>\n", numStages);
+      for (Participant participant : participants) {
+        int originalShields = participant.getPlayer().getShields();
+        participant.getPlayer().setShields(participant.getPlayer().getShields() + numStages);
+        message += String.format("\n<strong>%s's shields:</strong> %d -> %d", participant.getPlayer().getName(), originalShields, participant.getPlayer().getShields());
+      }
+    } else {
+      message += "\n<strong>No participants were successful in defeating the quest's stages.</strong>";
+    }
+    return message;
   }
 
   public void resolveAttacks(Display display) {
@@ -195,6 +241,22 @@ public class Quest {
     }
   }
 
+  public Map.Entry<Boolean, String> validateAttackCard(List<AdventureCard> attackCards, AdventureCard card) {
+    if (card.getType() instanceof WeaponType) {
+      boolean hasDuplicateWeapon = attackCards.stream()
+        .filter(c -> c.getType() instanceof WeaponType)
+        .anyMatch(c -> c.getType().equals(card.getType()));
+
+      if (hasDuplicateWeapon) {
+        return Map.entry(false, "Duplicate Weapon cards are not allowed in a stage.");
+      }
+    }
+    if (card.getType() instanceof FoeType) {
+      return Map.entry(false, "Foe cards are not allowed in an attack.");
+    }
+    return Map.entry(true, "");
+  }
+
   public boolean validateAttackCard(List<AdventureCard> attackCards, AdventureCard card, Display display) {
     if (card.getType() instanceof WeaponType) {
       boolean hasDuplicateWeapon = attackCards.stream()
@@ -221,35 +283,49 @@ public class Quest {
         participants.add(new Participant(player));
       }
     }
+    currentParticipant = participants.get(0);
+    currentPotentialParticipant = participants.get(0);
   }
 
   public void setup(Display display) {
-    for (int i = 0; i < numStages; i++) {
-      boolean validQuit = false;
-      boolean validCard = false;
-      Stage stage = stages.get(i);
-      display.printStageSetup(i + 1, sponsor.getHand());
-      while (true) {
-        if (stage.getCards().size() != 0) {
-          display.printHand(sponsor.getHand());
-        }
-        int cardIndex = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
-        if (cardIndex == QUIT) {
-          validQuit = validateStageSetupQuit(stage, display);
-          if (validQuit) {
-            break;
-          }
-        }
-        if (cardIndex != QUIT) {
-          validCard = validateStageSetupCard(stage, sponsor.getHand().get(cardIndex), display);
-          if (validCard) {
-            addCardToStage(stage, sponsor.getHand().get(cardIndex), display);
-          }
+    while (currentSetupStage != null) {
+      setupStage(display);
+      getNextSetupStage();
+    }
+    display.printQuestSetupComplete(this);
+  }
+
+  public void setupStage(Display display) {
+    boolean validQuit = false;
+    boolean validCard = false;
+    display.printStageSetup(currentSetupStage.getStageNumber(), sponsor.getHand());
+
+    while (true) {
+      if (currentSetupStage.getCards().size() != 0) {
+        display.printHand(sponsor.getHand());
+      }
+      int cardIndex = display.promptForCardIndexWithQuit(sponsor.getHand().size(), true);
+      if (cardIndex == QUIT) {
+        validQuit = validateStageSetupQuit(currentSetupStage, display);
+        if (validQuit) {
+          break;
         }
       }
-      if (i == numStages - 1) {
-        display.printQuestSetupComplete(this);
+      if (cardIndex != QUIT) {
+        validCard = validateStageSetupCard(currentSetupStage, sponsor.getHand().get(cardIndex), display);
+        if (validCard) {
+          addCardToStage(currentSetupStage, sponsor.getHand().get(cardIndex), display);
+        }
       }
+    }
+  }
+
+  public void getNextSetupStage() {
+    int currentIndex = stages.indexOf(currentSetupStage);
+    if (currentIndex < stages.size() - 1) {
+      currentSetupStage = stages.get(currentIndex + 1);
+    } else {
+      currentSetupStage = null;
     }
   }
 
@@ -269,6 +345,19 @@ public class Quest {
     return true;
   }
 
+  public Map.Entry<Boolean, String> validateStageSetupQuit(Stage stage) {
+    if (stage.getCards().size() == 0) {
+      return Map.entry(false, "A stage cannot be empty.");
+    }
+    if (stages.indexOf(stage) > 0) {
+      Stage previousStage = stages.get(stages.indexOf(stage) - 1);
+      if (previousStage.getValue() >= stage.getValue()) {
+        return Map.entry(false, "Insufficient value for this stage.");
+      }
+    }
+    return Map.entry(true, "");
+  }
+
   public boolean validateStageSetupCard(Stage stage, AdventureCard card, Display display) {
     if (card.getType() instanceof FoeType && stage.hasFoe()) {
       display.print("Only one Foe card is allowed per stage.");
@@ -283,11 +372,31 @@ public class Quest {
     return true;
   }
 
+  public Map.Entry<Boolean, String> validateStageSetupCard(Stage stage, AdventureCard card) {
+    if (card.getType() instanceof FoeType && stage.hasFoe()) {
+      return Map.entry(false, "Only one Foe card is allowed per stage.");
+    }
+    if (card.getType() instanceof WeaponType && stage.hasWeapon(card)) {
+      return Map.entry(false, "Duplicate Weapon cards are not allowed in a stage.");
+    }
+    return Map.entry(true, "");
+  }
+
   public void addCardToStage(Stage stage, AdventureCard card, Display display) {
     stage.addCard(card);
     sponsor.getHand().remove(card);
     sponsorNumCardsUsed++;
     display.printCardAddedToStage(stage.getCards());
+  }
+
+  public void addCardToStage(Stage stage, AdventureCard card) {
+    stage.addCard(card);
+    sponsor.getHand().remove(card);
+    sponsorNumCardsUsed++;
+  }
+
+  public void removeParticipant(Participant participant) {
+    participants.remove(participant);
   }
 
   // Getters and Setters
@@ -322,12 +431,17 @@ public class Quest {
     return currentParticipant;
   }
 
+  public Player getCurrentPotentialSponsor() {
+    return currentPotentialSponsor;
+  }
+
   public Player getSponsor() {
     return sponsor;
   }
 
   public void setSponsor(Player sponsor) {
     this.sponsor = sponsor;
+    this.currentPotentialSponsor = null;
   }
 
   public void setParticipants(List<Player> players) {
@@ -342,5 +456,47 @@ public class Quest {
 
   public void setSponsorNumCardsUsed(int sponsorNumCardsUsed) {
     this.sponsorNumCardsUsed = sponsorNumCardsUsed;
+  }
+
+  public Stage getCurrentSetupStage() {
+    return currentSetupStage;
+  }
+
+  public Participant getCurrentPotentialParticipant() {
+    return currentPotentialParticipant;
+  }
+
+  public List<Participant> getActiveParticipants() {
+    return activeParticipants;
+  }
+
+  public List<AdventureCard> getCardsToAddToHand() {
+    return cardsToAddToHand;
+  }
+
+  public void setCardsToAddToHand(List<AdventureCard> cardsToAddToHand) {
+    this.cardsToAddToHand = cardsToAddToHand;
+  }
+
+  public void setCurrentPotentialParticipant(Participant currentPotentialParticipant) {
+    this.currentPotentialParticipant = currentPotentialParticipant;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+      "Quest{numStages=%d, stages=%s, currentStage=%s, isActive=%b, " +
+      "participants=%s, currentParticipant=%s, sponsor=%s, " +
+      "currentPotentialSponsor=%s, sponsorNumCardsUsed=%d}",
+      numStages,
+      stages,
+      currentStage,
+      isActive,
+      participants,
+      currentParticipant,
+      sponsor != null ? sponsor.getName() : "null",
+      currentPotentialSponsor != null ? currentPotentialSponsor.getName() : "null",
+      sponsorNumCardsUsed
+    );
   }
 }

@@ -31,6 +31,15 @@ public class Game {
     );
   }
 
+  public Game(AdventureDeck adventureDeck, EventDeck eventDeck) {
+    this(
+      adventureDeck,
+      eventDeck,
+      new Display(new PrintWriter(System.out)),
+      false
+    );
+  }
+
   public Game(AdventureDeck adventureDeck, EventDeck eventDeck, Display display) {
     this(
       adventureDeck,
@@ -111,13 +120,15 @@ public class Game {
     currentTurn.setPlayer(players.get(nextIndex));
   }
 
-  public void endTurn() {
+  public List<Player> endTurn() {
     currentTurn.endTurn(display);
     checkWinners();
     if (winners.size() > 0) {
       endGame(winners);
+    } else {
+      nextTurn();
     }
-    nextTurn();
+    return winners;
   }
 
   public void checkWinners() {
